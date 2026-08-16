@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IQC Dashboard — BM-QLCL-IQC-02-01</title>
+<style>
+  :root{
+    --navy-deep:#0F2540;
+    --navy:#1F3864;
+    --blue:#2E5395;
+    --teal:#0E7C86;
+    --light:#DCE6F1;
+    --grey:#F4F6FA;
+    --card:#FFFFFF;
+    --border:#E1E6EF;
+    --gold:#FFF2CC; --goldtxt:#7F6000;
+    --red:#9C0006; --redbg:#FBE1E3;
+    --green:#2F5D3A; --greenbg:#E4F2E7;
+    --text:#1C2530; --muted:#697488;
+    --sidebar-w:268px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    font-family:"Segoe UI","Inter","Calibri",Arial,sans-serif;
+    color:var(--text); background:var(--grey); margin:0; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  button{font-family:inherit;}
+
+  /* ===================== SIDEBAR ===================== */
+  .sidebar{
+    position:fixed; top:0; left:0; width:var(--sidebar-w); height:100vh;
+    background:linear-gradient(180deg,var(--navy-deep),#152D4D 65%,#122642);
+    color:#EAF0FA; display:flex; flex-direction:column; z-index:40;
+    border-right:1px solid rgba(255,255,255,.06);
+  }
+  .brand{padding:22px 20px 14px; border-bottom:1px solid rgba(255,255,255,.09);}
+  .brand .eyebrow{font-size:10.5px; letter-spacing:1.2px; color:#7FA6D9; font-weight:700; text-transform:uppercase;}
+  .brand h1{font-size:17px; margin:4px 0 2px; font-weight:800; color:#fff; letter-spacing:.2px;}
+  .brand .sub{font-size:11.5px; color:#9FB3CE;}
+
+  .lj-strip{margin:14px 20px 4px; height:34px; opacity:.9;}
+  .lj-strip svg{width:100%; height:100%; display:block;}
+
+  .nav{flex:1; padding:14px 12px; overflow-y:auto;}
+  .nav-item{
+    display:flex; align-items:flex-start; gap:10px; padding:10px 12px; border-radius:8px;
+    cursor:pointer; margin-bottom:4px; color:#C9D6EA; border:1px solid transparent;
+    transition:background .15s,border-color .15s;
+  }
+  .nav-item:hover{background:rgba(255,255,255,.06);}
+  .nav-item.active{background:rgba(14,124,134,.28); border-color:rgba(14,124,134,.55); color:#fff;}
+  .nav-item .ic{font-size:16px; flex:none; width:20px; text-align:center; margin-top:1px;}
+  .nav-item .lbl{font-size:13.5px; font-weight:700;}
+  .nav-item .desc{font-size:11px; color:#94A7C2; font-weight:400; margin-top:1px;}
+  .nav-item.active .desc{color:#BFE0E3;}
+  .nav-badge{
+    margin-left:auto; background:rgba(255,255,255,.14); color:#fff; font-size:10.5px; font-weight:700;
+    padding:1px 7px; border-radius:10px; flex:none; align-self:center;
+  }
+  .nav-badge.cao{background:var(--red); color:#fff;}
+
+  .sidebar-foot{padding:14px 20px 18px; border-top:1px solid rgba(255,255,255,.09); font-size:10.5px; color:#8CA0BC;}
+  .sidebar-foot div{margin-bottom:2px;}
+  .backup-actions{display:flex; gap:6px; margin-top:10px;}
+  .backup-btn{flex:1; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); color:#DCE6F1; font-size:10.5px; font-weight:700; padding:7px 4px; border-radius:6px; cursor:pointer;}
+  .backup-btn:hover{background:rgba(255,255,255,.17); border-color:rgba(255,255,255,.35);}
+
+  /* ===================== MAIN ===================== */
+  .main{margin-left:var(--sidebar-w); min-height:100vh; padding-bottom:60px;}
+  .topbar{
+    position:sticky; top:0; z-index:30; background:#fff; border-bottom:1px solid var(--border);
+    padding:16px 32px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  }
+  .topbar h2{margin:0; font-size:19px; color:var(--navy); font-weight:800;}
+  .topbar .tsub{font-size:12px; color:var(--muted); font-style:italic; margin-top:2px;}
+  .topbar .spacer{flex:1;}
+  .status-msg{font-size:12px; font-weight:700; min-width:70px; text-align:right;}
+  .btn{background:var(--blue); color:#fff; border:none; padding:9px 16px; border-radius:6px; font-size:12.5px; cursor:pointer; font-weight:600;}
+  .btn:hover{opacity:.9;}
+  .btn.secondary{background:#eef1f6; color:var(--navy); border:1px solid var(--border);}
+  .btn.gold{background:var(--goldtxt); color:#fff;}
+  .btn.ghost{background:transparent; color:var(--blue); border:1px solid var(--light);}
+
+  .content{padding:26px 32px 10px;}
+  .storage-banner{background:var(--gold); color:var(--goldtxt); border:1px solid #e8d488; border-radius:8px; padding:11px 16px; font-size:12.5px; margin-bottom:18px; line-height:1.5;}
+  .storage-banner b{font-weight:800;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* ===================== OVERVIEW ===================== */
+  .kpi-row{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:22px;}
+  .kpi-card{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:18px 18px 16px; position:relative; overflow:hidden;}
+  .kpi-card .num{font-size:30px; font-weight:800; color:var(--navy); line-height:1;}
+  .kpi-card .lbl{font-size:12px; color:var(--muted); margin-top:6px;}
+  .kpi-card .bar{position:absolute; left:0; top:0; width:4px; height:100%; background:var(--blue);}
+  .kpi-card.cao .num{color:var(--red);} .kpi-card.cao .bar{background:var(--red);}
+  .kpi-card.thap .num{color:var(--green);} .kpi-card.thap .bar{background:var(--green);}
+  .kpi-card.thang .bar{background:var(--goldtxt);}
+
+  .grid-2{display:grid; grid-template-columns:1.1fr 1fr; gap:18px; margin-bottom:18px;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden;}
+  .panel-head{padding:13px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px;}
+  .panel-head h3{margin:0; font-size:13.5px; color:var(--navy); font-weight:800; flex:1;}
+  .panel-head .hint{font-size:11px; color:var(--muted);}
+  .panel-body{padding:16px 18px;}
+  .empty-note{color:#9aa3b2; font-size:12.5px; font-style:italic; text-align:center; padding:22px 10px;}
+
+  .donut-wrap{display:flex; align-items:center; gap:20px; flex-wrap:wrap;}
+  .legend{list-style:none; margin:0; padding:0; font-size:12.5px; flex:1; min-width:150px;}
+  .legend li{display:flex; align-items:center; gap:8px; padding:4px 0;}
+  .legend .sw{width:11px; height:11px; border-radius:3px; flex:none;}
+  .legend .lv{margin-left:auto; font-weight:700; color:var(--navy);}
+
+  .barlist{display:flex; flex-direction:column; gap:10px;}
+  .barlist .row{display:grid; grid-template-columns:120px 1fr 30px; align-items:center; gap:8px; font-size:12px;}
+  .barlist .row .name{color:#444; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .barlist .track{background:var(--grey); border-radius:5px; height:12px; overflow:hidden;}
+  .barlist .fill{height:100%; border-radius:5px; background:var(--blue);}
+  .barlist .val{text-align:right; font-weight:700; color:var(--navy);}
+
+  .trend{display:flex; align-items:flex-end; gap:10px; height:110px; padding-top:6px;}
+  .trend .col{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:6px;}
+  .trend .stick{width:60%; background:linear-gradient(180deg,var(--teal),#0a5a62); border-radius:4px 4px 0 0; min-height:3px;}
+  .trend .m{font-size:10.5px; color:var(--muted);}
+  .trend .v{font-size:11px; font-weight:700; color:var(--navy);}
+
+  .recent-table{width:100%; border-collapse:collapse; font-size:12.5px;}
+  .recent-table th{text-align:left; font-size:11px; color:var(--muted); padding:6px 8px; border-bottom:1px solid var(--border); text-transform:uppercase; letter-spacing:.3px;}
+  .recent-table td{padding:8px 8px; border-bottom:1px solid #eef0f4;}
+  .recent-table tr:last-child td{border-bottom:none;}
+  .recent-table tr:hover td{background:var(--grey); cursor:pointer;}
+
+  .pill{display:inline-block; font-size:10.5px; font-weight:700; padding:2px 9px; border-radius:12px;}
+  .pill.thap{background:var(--greenbg); color:var(--green);}
+  .pill.cao{background:var(--redbg); color:var(--red);}
+  .pill.na{background:var(--grey); color:#777;}
+
+  .quick-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:4px;}
+
+  /* ===================== CONFIG VIEW ===================== */
+  .cfg-note{font-size:12.5px; color:#a06a00; background:var(--gold); padding:10px 14px; border-radius:6px; margin-bottom:18px;}
+  .cfg-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px;}
+  .cfg-group{border:1px solid var(--border); border-radius:10px; padding:14px 16px; background:var(--card);}
+  .cfg-group > label{font-weight:700; font-size:13px; color:var(--navy); display:block; margin-bottom:8px;}
+  .tags{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; min-height:20px;}
+  .tag{background:var(--light); color:var(--navy); padding:3px 8px 3px 10px; border-radius:14px; font-size:12px; display:flex; align-items:center; gap:6px;}
+  .tag button{background:none; border:none; color:var(--navy); cursor:pointer; font-weight:800; font-size:12px; line-height:1; padding:0;}
+  .tag button:hover{color:var(--red);}
+  .tag-add{display:flex; gap:6px;}
+  .tag-add input{flex:1; border:1px solid var(--border); border-radius:5px; padding:7px 9px; font-size:12.5px;}
+  .tag-add button{background:var(--blue); color:#fff; border:none; border-radius:5px; padding:7px 11px; font-size:12px; cursor:pointer; white-space:nowrap;}
+  .cfg-group.wide{grid-column:1 / -1;}
+  .cfg-group select{width:100%; padding:7px; border:1px solid var(--border); border-radius:5px; font-size:12.5px; margin-bottom:8px;}
+  .quick-presets{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;}
+  .preset-btn{background:#fff; border:1px solid var(--border); color:var(--navy); font-size:11.5px; font-weight:700; padding:5px 11px; border-radius:16px; cursor:pointer;}
+  .preset-btn:hover{background:var(--light); border-color:var(--blue);}
+  .preset-btn.combo{background:var(--light); border-color:#b9cbe8;}
+  .preset-btn.combo:hover{background:#cddcf2; border-color:var(--blue);}
+  .empty-hint{font-size:11.5px; color:#999; font-style:italic;}
+
+  table.tea{width:100%; border-collapse:collapse; font-size:12.5px; margin-top:6px;}
+  table.tea th{background:var(--navy); color:#fff; text-align:left; padding:7px 8px; font-size:11.5px;}
+  table.tea td{padding:6px 8px; border-bottom:1px solid var(--border);}
+  table.tea input,table.tea select{width:100%; border:1px solid var(--border); border-radius:4px; padding:5px 6px; font-size:12px;}
+  table.tea tr:nth-child(even) td{background:var(--grey);}
+  .tea-actions button{border:none; background:none; cursor:pointer; font-size:14px;}
+  .add-row-btn{background:var(--blue); color:#fff; border:none; border-radius:5px; padding:7px 11px; font-size:12px; cursor:pointer; margin-top:8px;}
+
+  /* ===================== FORM VIEW ===================== */
+  .meta-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px 16px; margin-bottom:18px; background:var(--card); border:1px solid var(--border); padding:16px; border-radius:10px;}
+  .meta-grid label{font-size:11.5px; font-weight:700; color:var(--navy); display:block; margin-bottom:3px;}
+  .meta-grid input{width:100%; border:none; border-bottom:1.5px solid var(--border); background:transparent; padding:4px 2px; font-size:13px; font-family:inherit;}
+  .meta-grid input:focus{outline:none; border-bottom-color:var(--blue);}
+
+  .step{border:1px solid var(--border); border-radius:10px; margin-bottom:16px; overflow:hidden; background:var(--card);}
+  .step-head{background:var(--navy); color:#fff; padding:11px 16px; display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none;}
+  .step-head .num{background:#fff; color:var(--navy); font-weight:800; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; flex:none;}
+  .step-head h4{margin:0; font-size:15px; flex:1;}
+  .step-head .goal{font-size:11.5px; opacity:.85; font-style:italic;}
+  .step-head .chevron{transition:transform .2s; font-size:12px;}
+  .step.collapsed .chevron{transform:rotate(-90deg);}
+  .step-body{padding:16px 18px 18px;}
+  .step.collapsed .step-body{display:none;}
+
+  .resp{font-size:12px; color:var(--blue); font-style:italic; margin-bottom:10px;}
+  .resp b{font-style:normal;}
+
+  .checklist{list-style:none; margin:0 0 12px; padding:0;}
+  .checklist li{display:flex; align-items:flex-start; gap:8px; padding:5px 0; font-size:13.5px; border-bottom:1px dashed #e5e5e5;}
+  .checklist li:last-child{border-bottom:none;}
+  .checklist input[type=checkbox]{margin-top:3px; width:16px; height:16px; accent-color:var(--blue); flex:none;}
+
+  .field-row{display:grid; grid-template-columns:repeat(2,1fr); gap:10px 18px; margin:10px 0;}
+  .field-row.three{grid-template-columns:repeat(3,1fr);}
+  .field{display:flex; flex-direction:column;}
+  .field label{font-size:11.5px; font-weight:700; color:#444; margin-bottom:3px;}
+  .field input,.field select,textarea{border:1px solid var(--border); border-radius:5px; padding:7px 9px; font-size:13px; font-family:inherit; width:100%;}
+  textarea{resize:vertical; min-height:50px;}
+
+  .radio-group{display:flex; gap:16px; margin:8px 0 4px; flex-wrap:wrap;}
+  .radio-group label{display:flex; align-items:center; gap:6px; font-size:13px; background:var(--grey); padding:6px 12px; border-radius:20px; cursor:pointer; border:1px solid transparent;}
+  .radio-group input{accent-color:var(--blue);}
+  .radio-group label:has(input:checked){background:var(--light); border-color:var(--blue); font-weight:600;}
+  .radio-group label.auto-hidden{display:none;}
+  .radio-group label.auto-picked{background:var(--greenbg); border-color:var(--green);}
+
+  .note{background:var(--light); border-left:4px solid var(--blue); padding:8px 12px; font-size:12.5px; font-style:italic; color:#333; border-radius:0 6px 6px 0; margin:10px 0;}
+  .warn{background:var(--redbg); border-left:4px solid var(--red); padding:8px 12px; font-size:12.5px; font-style:italic; color:var(--red); border-radius:0 6px 6px 0; margin:10px 0; font-weight:600;}
+  .formula{background:var(--gold); color:var(--goldtxt); font-weight:700; text-align:center; padding:8px; border-radius:6px; font-size:13px; margin:10px 0;}
+
+  table.mini{width:100%; border-collapse:collapse; font-size:12.5px; margin:10px 0;}
+  table.mini th{background:var(--navy); color:#fff; text-align:left; padding:6px 8px; font-size:11.5px;}
+  table.mini td{padding:6px 8px; border-bottom:1px solid var(--border); vertical-align:top;}
+  table.mini tr:nth-child(even) td{background:var(--grey);}
+
+  .subtitle{font-weight:700; color:var(--navy); font-size:13.5px; margin:14px 0 6px;}
+  .outrow{margin-top:10px; font-size:12px; color:#444; background:#fbfbfb; border:1px dashed var(--border); padding:8px 10px; border-radius:6px;}
+  .outrow b{color:var(--navy);}
+
+  .signrow{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:20px; text-align:center;}
+  .signbox{border:1px solid var(--border); border-radius:8px; padding:12px; min-height:90px; background:var(--card);}
+  .signbox .role{font-weight:700; font-size:12.5px; color:var(--navy); margin-bottom:40px;}
+  .signbox .who input{border:none; border-top:1px solid var(--border); width:100%; text-align:center; font-size:12px; padding-top:6px;}
+
+  .form-toolbar{display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap; margin-bottom:14px; align-items:center;}
+  .save-indicator{font-size:12px; font-weight:700; padding:6px 12px; border-radius:20px; margin-right:auto; display:flex; align-items:center; gap:6px; white-space:nowrap;}
+  .save-indicator .dot{width:8px; height:8px; border-radius:50%; flex:none;}
+  .save-indicator.clean{background:var(--grey); color:var(--muted);}
+  .save-indicator.clean .dot{background:#B9C2D0;}
+  .save-indicator.dirty{background:var(--gold); color:var(--goldtxt);}
+  .save-indicator.dirty .dot{background:#C99A00; animation:pulse 1.2s infinite;}
+  .save-indicator.saved{background:var(--greenbg); color:var(--green);}
+  .save-indicator.saved .dot{background:#2F9E44;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+  /* ===================== RECORDS VIEW ===================== */
+  .search-row{display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;}
+  .search-row input, .search-row select{flex:1; min-width:160px; border:1px solid var(--border); border-radius:6px; padding:9px 10px; font-size:13px;}
+  .search-row button{background:var(--green); color:#fff; border:none; border-radius:6px; padding:9px 16px; cursor:pointer; font-size:13px; font-weight:600;}
+  table.rec-table{width:100%; border-collapse:collapse; font-size:12.5px;}
+  table.rec-table th{background:var(--greenbg); color:var(--green); text-align:left; padding:8px 8px; font-size:11.5px; border-bottom:2px solid var(--green);}
+  table.rec-table td{padding:8px 8px; border-bottom:1px solid var(--border);}
+  table.rec-table tr:hover td{background:var(--grey);}
+  .rec-actions a, .rec-actions button{border:none; background:none; cursor:pointer; font-size:14px; padding:2px 4px; text-decoration:none;}
+  .rec-actions a{color:var(--blue);}
+  .rec-actions button{color:var(--red);}
+  .rec-empty{text-align:center; color:#999; font-style:italic; padding:26px; font-size:13px;}
+
+  footer.pagefoot{text-align:center; font-size:11px; color:#999; margin-top:26px; padding:0 32px;}
+
+  /* ===================== RESPONSIVE ===================== */
+  @media (max-width: 980px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    .grid-2{grid-template-columns:1fr;}
+    .cfg-grid{grid-template-columns:1fr;}
+    .meta-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width: 760px){
+    :root{--sidebar-w:0px;}
+    .sidebar{width:220px; transform:translateX(-100%); transition:transform .2s; box-shadow:6px 0 24px rgba(0,0,0,.25);}
+    .sidebar.open{transform:translateX(0);}
+    .main{margin-left:0;}
+    .kpi-row{grid-template-columns:1fr 1fr;}
+    .field-row, .field-row.three{grid-template-columns:1fr;}
+    .signrow{grid-template-columns:1fr;}
+    .menu-toggle{display:inline-flex !important;}
+  }
+  .menu-toggle{display:none; align-items:center; justify-content:center; width:34px; height:34px; border-radius:7px; background:var(--grey); border:1px solid var(--border); cursor:pointer; font-size:16px;}
+  .backdrop{display:none; position:fixed; inset:0; background:rgba(10,20,35,.4); z-index:35;}
+  .backdrop.show{display:block;}
+
+  @media print{
+    .sidebar, .topbar, .backdrop{display:none !important;}
+    .main{margin-left:0;}
+    body{background:#fff;}
+    .step{break-inside:avoid;}
+    .step.collapsed .step-body{display:block !important;}
+    .step-head .chevron{display:none;}
+    .form-toolbar{display:none;}
+  }
+  /* ===================== FIREBASE AUTH ===================== */
+  .auth-gate{position:fixed;inset:0;background:rgba(15,37,64,.96);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .auth-gate.hidden{display:none;}
+  .auth-card{width:min(420px,100%);background:#fff;border-radius:14px;padding:28px;box-shadow:0 24px 70px rgba(0,0,0,.35);text-align:center;}
+  .auth-card h2{margin:0 0 8px;color:var(--navy);}
+  .auth-card p{margin:0 0 20px;color:var(--muted);font-size:13px;}
+  .auth-card button{width:100%;background:#fff;color:#1f1f1f;border:1px solid #cfd5df;border-radius:7px;padding:11px 14px;font-weight:700;cursor:pointer;}
+  .auth-card button:hover{background:#f7f8fa;}
+  .auth-error{color:var(--red);font-size:12px;min-height:18px;margin-top:12px;}
+  .user-chip{display:none;align-items:center;gap:8px;font-size:12px;color:var(--navy);}
+  .user-chip.visible{display:flex;}
+  .user-chip img{width:28px;height:28px;border-radius:50%;}
+  .user-chip button{border:1px solid var(--border);background:#fff;border-radius:6px;padding:5px 8px;cursor:pointer;font-size:11px;}
+
+</style>
+</head>
+<body>
+<div class="auth-gate" id="authGate">
+  <div class="auth-card">
+    <h2>IQC Dashboard</h2>
+    <p>Đăng nhập bằng Google để truy cập dữ liệu dùng chung trên Firebase.</p>
+    <button id="googleSignInBtn" type="button">Đăng nhập với Google</button>
+    <div class="auth-error" id="authError"></div>
+  </div>
+</div>
+
+
+<div class="backdrop" id="backdrop" onclick="closeSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="eyebrow">BM-QLCL-IQC-02-01</div>
+    <h1>IQC Dashboard</h1>
+    <div class="sub">Khắc phục sự cố nội kiểm tra (IQC)</div>
+  </div>
+  <div class="lj-strip" aria-hidden="true">
+    <svg viewBox="0 0 240 34" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0" y1="10" x2="240" y2="10" stroke="#3a5a80" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="0" y1="17" x2="240" y2="17" stroke="#5b83ad" stroke-width="1.2"/>
+      <line x1="0" y1="24" x2="240" y2="24" stroke="#3a5a80" stroke-width="1" stroke-dasharray="3 3"/>
+      <polyline points="6,18 26,15 46,19 66,12 86,17 106,16 126,8 146,17 166,18 186,14 206,17 226,16" fill="none" stroke="#7FD9CE" stroke-width="1.6"/>
+      <circle cx="126" cy="8" r="3.4" fill="#FF6B6B"/>
+      <circle cx="6" cy="18" r="2" fill="#7FD9CE"/><circle cx="26" cy="15" r="2" fill="#7FD9CE"/>
+      <circle cx="46" cy="19" r="2" fill="#7FD9CE"/><circle cx="66" cy="12" r="2" fill="#7FD9CE"/>
+      <circle cx="86" cy="17" r="2" fill="#7FD9CE"/><circle cx="106" cy="16" r="2" fill="#7FD9CE"/>
+      <circle cx="146" cy="17" r="2" fill="#7FD9CE"/><circle cx="166" cy="18" r="2" fill="#7FD9CE"/>
+      <circle cx="186" cy="14" r="2" fill="#7FD9CE"/><circle cx="206" cy="17" r="2" fill="#7FD9CE"/>
+      <circle cx="226" cy="16" r="2" fill="#7FD9CE"/>
+    </svg>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-item active" data-view="overview" onclick="showView('overview')">
+      <span class="ic">📊</span>
+      <div><div class="lbl">Tổng quan</div><div class="desc">Thống kê &amp; biểu đồ nhanh</div></div>
+    </div>
+    <div class="nav-item" data-view="config" onclick="showView('config')">
+      <span class="ic">⚙️</span>
+      <div><div class="lbl">Cấu hình danh mục</div><div class="desc">Ca, thiết bị, XN, nhân sự, TEa</div></div>
+    </div>
+    <div class="nav-item" data-view="form" onclick="showView('form')">
+      <span class="ic">📋</span>
+      <div><div class="lbl">Biểu mẫu khắc phục</div><div class="desc">6 bước xử lý sự cố IQC</div></div>
+    </div>
+    <div class="nav-item" data-view="records" onclick="showView('records')">
+      <span class="ic">📁</span>
+      <div><div class="lbl">Lưu hồ sơ</div><div class="desc">Tìm kiếm, xem, xoá</div></div>
+      <span class="nav-badge" id="navBadgeRecords">0</span>
+    </div>
+  </nav>
+
+  <div class="sidebar-foot">
+    <div>Tài liệu tham chiếu: BMSH-QLCL-IQC-02</div>
+    <div>Lần ban hành: 01</div>
+    <div id="storageModeNote">Dữ liệu dùng chung — mọi thay đổi áp dụng cho toàn khoa.</div>
+    <div class="backup-actions">
+      <button class="backup-btn" onclick="exportAllData()" title="Tải xuống file sao lưu toàn bộ cấu hình + hồ sơ">⬇️ Xuất dữ liệu</button>
+      <button class="backup-btn" onclick="triggerImport()" title="Nạp dữ liệu từ file sao lưu đã xuất trước đó">⬆️ Nhập dữ liệu</button>
+    </div>
+    <input type="file" id="importFileInput" accept="application/json,.json" style="display:none" onchange="handleImportFile(event)">
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="topbar">
+    <button class="menu-toggle" onclick="openSidebar()">☰</button>
+    <div>
+      <h2 id="pageTitle">Tổng quan</h2>
+      <div class="tsub" id="pageSub">Thống kê nhanh theo mức nguy cơ, xét nghiệm, thiết bị</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="user-chip" id="userChip"><img id="userPhoto" alt=""><span id="userName"></span><button type="button" id="signOutBtn">Đăng xuất</button></div>
+    <span class="status-msg" id="statusMsg"></span>
+  </div>
+
+  <div class="content">
+    <div class="storage-banner" id="storageBanner" style="display:none;"></div>
+    <div class="storage-banner" id="configDebugPanel" style="display:none; background:#EAF1FB; color:#1F3864; border-color:#B9CBE8;"></div>
+
+
+    <!-- ===================== OVERVIEW VIEW ===================== -->
+    <div class="view active" id="view-overview">
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="bar"></div><div class="num" id="kpiTotal">0</div><div class="lbl">Tổng số hồ sơ</div></div>
+        <div class="kpi-card cao"><div class="bar"></div><div class="num" id="kpiCao">0</div><div class="lbl">Nguy cơ cao (rà soát toàn bộ)</div></div>
+        <div class="kpi-card thap"><div class="bar"></div><div class="num" id="kpiThap">0</div><div class="lbl">Nguy cơ thấp</div></div>
+        <div class="kpi-card thang"><div class="bar"></div><div class="num" id="kpiThang">0</div><div class="lbl">Sự cố trong tháng này</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><h3>Phân bố mức nguy cơ (Bước 5)</h3><span class="hint">Toàn bộ hồ sơ</span></div>
+          <div class="panel-body" id="riskDonutWrap"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Sự cố theo tháng</h3><span class="hint">6 tháng gần nhất</span></div>
+          <div class="panel-body" id="trendWrap"></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><h3>Xét nghiệm có nhiều sự cố nhất</h3></div>
+          <div class="panel-body" id="byXNWrap"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Thiết bị có nhiều sự cố nhất</h3></div>
+          <div class="panel-body" id="byTBWrap"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Hồ sơ gần đây</h3>
+          <div class="quick-actions">
+            <button class="btn gold" onclick="goNewRecord()">🆕 Hồ sơ mới</button>
+            <button class="btn ghost" onclick="showView('records')">📁 Xem tất cả</button>
+          </div>
+        </div>
+        <div class="panel-body" id="recentWrap"></div>
+      </div>
+    </div>
+
+    <!-- ===================== CONFIG VIEW ===================== -->
+    <div class="view" id="view-config">
+      <div class="cfg-note">Dữ liệu ở trang này được lưu chung (<code>window.storage</code> — chế độ <b>shared</b>) và được dùng để gợi ý nhập liệu ở Biểu mẫu khắc phục. Mọi thay đổi có hiệu lực ngay cho toàn bộ dashboard.</div>
+
+      <div class="cfg-grid">
+        <div class="cfg-group">
+          <label>Ca làm việc</label>
+          <div class="tags" id="tags-caLamViec"></div>
+          <div class="tag-add"><input id="new-caLamViec" placeholder="VD: Ca sáng"><button onclick="addTag('caLamViec','new-caLamViec')">+ Thêm</button></div>
+        </div>
+        <div class="cfg-group">
+          <label>Thiết bị / Hệ thống</label>
+          <div class="tags" id="tags-thietBi"></div>
+          <div class="tag-add"><input id="new-thietBi" placeholder="VD: Cobas 6000"><button onclick="addTag('thietBi','new-thietBi')">+ Thêm</button></div>
+        </div>
+        <div class="cfg-group">
+          <label>Danh mục xét nghiệm</label>
+          <div class="tags" id="tags-xetNghiem"></div>
+          <div class="tag-add"><input id="new-xetNghiem" placeholder="VD: Glucose"><button onclick="addTag('xetNghiem','new-xetNghiem')">+ Thêm</button></div>
+        </div>
+        <div class="cfg-group">
+          <label>Quy tắc vi phạm (Westgard)</label>
+          <div class="tags" id="tags-quyTac"></div>
+          <div class="tag-add"><input id="new-quyTac" placeholder="VD: 2:2s"><button onclick="addTag('quyTac','new-quyTac')">+ Thêm</button></div>
+        </div>
+
+        <div class="cfg-group wide">
+          <label>Mức IQC vi phạm — thiết lập riêng theo từng xét nghiệm</label>
+          <select id="mucXNSelect" onchange="renderMucForXN()"></select>
+          <div class="quick-presets">
+            <button type="button" class="preset-btn" onclick="addQuickMuc(['Mức 1'])">Level 1</button>
+            <button type="button" class="preset-btn" onclick="addQuickMuc(['Mức 2'])">Level 2</button>
+            <button type="button" class="preset-btn" onclick="addQuickMuc(['Mức 3'])">Level 3</button>
+            <button type="button" class="preset-btn combo" onclick="addQuickMuc(['Mức 1','Mức 2'])">Cả 2 Level (1+2)</button>
+            <button type="button" class="preset-btn combo" onclick="addQuickMuc(['Mức 1','Mức 2','Mức 3'])">Cả 3 Level (1+2+3)</button>
+          </div>
+          <div class="tags" id="tags-muc"></div>
+          <div class="tag-add"><input id="new-muc" placeholder="VD: Mức 2 (bệnh lý)"><button onclick="addMucForXN()">+ Thêm mức QC cho xét nghiệm đã chọn</button></div>
+          <div class="empty-hint" id="mucHint"></div>
+        </div>
+
+        <div class="cfg-group">
+          <label>Danh sách nhân viên (người thực hiện)</label>
+          <div class="tags" id="tags-nhanVien"></div>
+          <div class="tag-add"><input id="new-nhanVien" placeholder="Họ tên"><button onclick="addTag('nhanVien','new-nhanVien')">+ Thêm</button></div>
+        </div>
+        <div class="cfg-group">
+          <label>Phụ trách QC</label>
+          <div class="tags" id="tags-phuTrachQC"></div>
+          <div class="tag-add"><input id="new-phuTrachQC" placeholder="Họ tên"><button onclick="addTag('phuTrachQC','new-phuTrachQC')">+ Thêm</button></div>
+        </div>
+        <div class="cfg-group wide">
+          <label>Người phê duyệt (Trưởng khoa / Giám đốc PXN)</label>
+          <div class="tags" id="tags-nguoiPheDuyet"></div>
+          <div class="tag-add"><input id="new-nguoiPheDuyet" placeholder="Họ tên"><button onclick="addTag('nguoiPheDuyet','new-nguoiPheDuyet')">+ Thêm</button></div>
+        </div>
+
+        <div class="cfg-group wide">
+          <label>Ngưỡng TEa (Total allowable error) &amp; SD/CV nội bộ của từng xét nghiệm</label>
+          <div class="empty-hint" style="margin-bottom:6px;">TEa, Bias hiệu năng PP và SD/CV khai báo ở đây sẽ được Biểu mẫu khắc phục (Bước 4.2 và Bước 5) tự động lấy về theo tên xét nghiệm. ΔSEcrit/ΔREcrit được tính sẵn tại đây (theo hồ sơ thẩm định phương pháp) và Bước 5 sẽ lấy nguyên giá trị này về, không tính lại theo bias của từng sự cố.</div>
+          <div style="overflow-x:auto;">
+          <table class="tea">
+            <tr>
+              <th style="width:15%">Xét nghiệm</th>
+              <th style="width:9%">TEa (%)</th>
+              <th style="width:12%">Bias hiệu năng PP (%)</th>
+              <th style="width:11%">SD/CV nội bộ (%)</th>
+              <th style="width:10%">ΔSEcrit</th>
+              <th style="width:10%">ΔREcrit</th>
+              <th style="width:13%">Nguồn tham khảo</th>
+              <th style="width:14%">Ghi chú</th>
+              <th></th>
+            </tr>
+            <tbody id="teaTableBody"></tbody>
+          </table>
+          </div>
+          <button class="add-row-btn" onclick="addTeaRow()">+ Thêm dòng ngưỡng TEa</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== FORM VIEW ===================== -->
+    <div class="view" id="view-form">
+      <div class="form-toolbar">
+        <span class="save-indicator clean" id="saveIndicator"><span class="dot"></span><span id="saveIndicatorText">Chưa có thay đổi</span></span>
+        <button class="btn secondary" onclick="expandAllSteps()">Mở tất cả bước</button>
+        <button class="btn secondary" onclick="collapseAllSteps()">Thu gọn bước</button>
+        <button class="btn gold" onclick="newRecord()">🆕 Hồ sơ mới</button>
+        <button class="btn" onclick="saveRecord()">💾 Lưu hồ sơ</button>
+        <button class="btn" onclick="window.print()">🖨️ In / Lưu PDF</button>
+      </div>
+
+      <div class="meta-grid">
+        <div class="field"><label>Ngày xảy ra sự cố</label><input type="date" data-key="ngay"></div>
+        <div class="field"><label>Giờ phát hiện</label><input type="time" data-key="gio"></div>
+        <div class="field"><label>Mã sự cố</label><input type="text" data-key="maSuCo" id="maSuCoInput" placeholder="Tự sinh khi Lưu hồ sơ"></div>
+        <div class="field"><label>Ca làm việc</label><input type="text" list="dl-caLamViec" data-key="caLamViec"></div>
+
+        <div class="field"><label>Danh mục xét nghiệm</label><input type="text" list="dl-xetNghiem" data-key="xetNghiem" id="xetNghiemInput" oninput="updateMucQCOptions(); updateNguongBias(); updateB5Calc();"></div>
+        <div class="field"><label>Thiết bị / Hệ thống</label><input type="text" list="dl-thietBi" data-key="thietBi"></div>
+        <div class="field"><label>Mức IQC vi phạm</label><input type="text" list="dl-mucQC" data-key="mucQC" placeholder="Chọn xét nghiệm trước"></div>
+        <div class="field"><label>Quy tắc vi phạm</label><input type="text" list="dl-quyTac" data-key="quyTac" id="quyTacInput" oninput="updateSection43()"></div>
+
+        <div class="field"><label>Người phát hiện / trực ca</label><input type="text" list="dl-nhanVien" data-key="nguoiPhatHien"></div>
+        <div class="field"><label>Phụ trách QC xử lý</label><input type="text" list="dl-phuTrachQC" data-key="phuTrachQC"></div>
+        <div class="field" style="grid-column:span 2;"><label>Người phê duyệt (Trưởng khoa/Giám đốc PXN)</label><input type="text" list="dl-nguoiPheDuyet" data-key="nguoiPheDuyet"></div>
+      </div>
+
+      <datalist id="dl-caLamViec"></datalist>
+      <datalist id="dl-xetNghiem"></datalist>
+      <datalist id="dl-thietBi"></datalist>
+      <datalist id="dl-mucQC"></datalist>
+      <datalist id="dl-quyTac"></datalist>
+      <datalist id="dl-nhanVien"></datalist>
+      <datalist id="dl-phuTrachQC"></datalist>
+      <datalist id="dl-nguoiPheDuyet"></datalist>
+
+      <!-- BƯỚC 1 -->
+      <div class="step">
+        <div class="step-head" onclick="toggleStep(this)">
+          <div class="num">1</div>
+          <h4>Tạm dừng ban hành kết quả và cô lập sự cố</h4>
+          <div class="goal">Ngăn kết quả sai lan ra ngoài</div>
+          <div class="chevron">▼</div>
+        </div>
+        <div class="step-body">
+          <div class="resp">Trách nhiệm thực hiện: <b>Kỹ thuật viên trực ca phát hiện sự cố; báo cáo ngay cho phụ trách ca/phụ trách QC.</b></div>
+          <ul class="checklist">
+            <li><input type="checkbox" data-key="chk1_1"><span>Đã tạm dừng ban hành mọi kết quả bệnh nhân liên quan đến xét nghiệm/thiết bị đang có QC không đạt</span></li>
+            <li><input type="checkbox" data-key="chk1_2"><span>Đã xác định chính xác phạm vi bị ảnh hưởng (xét nghiệm / thiết bị / ca làm việc)</span></li>
+            <li><input type="checkbox" data-key="chk1_3"><span>Đã thông báo ngay cho phụ trách ca và/hoặc phụ trách chất lượng</span></li>
+          </ul>
+          <div class="field-row three">
+            <div class="field"><label>Thời điểm dừng trả KQ</label><input type="time" data-key="thoiDiemDung"></div>
+            <div class="field"><label>Phạm vi ảnh hưởng (XN/TB/ca)</label><input type="text" data-key="phamViAH"></div>
+            <div class="field"><label>Người được thông báo</label><input type="text" list="dl-nhanVien" data-key="nguoiDuocTB"></div>
+          </div>
+          <div class="warn">Cảnh báo an toàn người bệnh: Tuyệt đối không trả kết quả bệnh nhân của xét nghiệm/thiết bị đang có sự cố cho đến khi hoàn tất Bước 3 (QC đạt trở lại) — kể cả khi có áp lực về thời gian trả kết quả.</div>
+          <div class="outrow"><b>Hồ sơ cần lưu:</b> thời điểm phát hiện sự cố, xét nghiệm/thiết bị/ca bị ảnh hưởng.</div>
+        </div>
+      </div>
+
+      <!-- BƯỚC 2 -->
+      <div class="step">
+        <div class="step-head" onclick="toggleStep(this)">
+          <div class="num">2</div>
+          <h4>Kiểm tra nhanh các yếu tố thường gặp</h4>
+          <div class="goal">Loại trừ nguyên nhân đơn giản, phổ biến</div>
+          <div class="chevron">▼</div>
+        </div>
+        <div class="step-body">
+          <div class="resp">Trách nhiệm thực hiện: <b>Kỹ thuật viên trực ca, có thể phối hợp phụ trách QC.</b></div>
+          <table class="mini">
+            <tr><th style="width:22%">Nhóm yếu tố</th><th style="width:8%">Đã KT</th><th>Nội dung kiểm tra / ghi chú</th></tr>
+            <tr><td>Vật liệu QC</td><td style="text-align:center"><input type="checkbox" data-key="chk2_vatlieu"></td><td>Hạn dùng, tình trạng hoàn nguyên, điều kiện bảo quản — <input type="text" data-key="note2_vatlieu" style="width:60%;border:none;border-bottom:1px solid var(--border);"></td></tr>
+            <tr><td>Thuốc thử</td><td style="text-align:center"><input type="checkbox" data-key="chk2_thuocthu"></td><td>Số lô, hạn dùng, bảo quản, mới thay lô — <input type="text" data-key="note2_thuocthu" style="width:60%;border:none;border-bottom:1px solid var(--border);"></td></tr>
+            <tr><td>Hiệu chuẩn</td><td style="text-align:center"><input type="checkbox" data-key="chk2_hieuchuan"></td><td>Thời điểm hiệu chuẩn gần nhất, thay đổi thiết lập — <input type="text" data-key="note2_hieuchuan" style="width:55%;border:none;border-bottom:1px solid var(--border);"></td></tr>
+            <tr><td>Bảo trì thiết bị</td><td style="text-align:center"><input type="checkbox" data-key="chk2_baotri"></td><td>Bảo trì/sửa chữa/thay linh kiện gần đây — <input type="text" data-key="note2_baotri" style="width:58%;border:none;border-bottom:1px solid var(--border);"></td></tr>
+            <tr><td>Điều kiện môi trường</td><td style="text-align:center"><input type="checkbox" data-key="chk2_moitruong"></td><td>Nhiệt độ phòng, nguồn điện, nguồn nước — <input type="text" data-key="note2_moitruong" style="width:55%;border:none;border-bottom:1px solid var(--border);"></td></tr>
+            <tr><td>Thao tác</td><td style="text-align:center"><input type="checkbox" data-key="chk2_thaotac"></td><td>Pipet, trộn mẫu, vị trí, nhập sai thông tin QC — <input type="text" data-key="note2_thaotac" style="width:50%;border:none;border-bottom:1px solid var(--border);"></td></tr>
+          </table>
+          <div class="note">Nếu phát hiện và khắc phục được nguyên nhân rõ ràng ở bước này → vẫn chuyển sang Bước 3 để xác nhận lại bằng QC. Không kết luận "đã xong" chỉ dựa vào kiểm tra trực quan.</div>
+        </div>
+      </div>
+
+      <!-- BƯỚC 3 -->
+      <div class="step">
+        <div class="step-head" onclick="toggleStep(this)">
+          <div class="num">3</div>
+          <h4>Chạy lại QC</h4>
+          <div class="goal">Xác nhận sự cố có còn tồn tại hay không</div>
+          <div class="chevron">▼</div>
+        </div>
+        <div class="step-body">
+          <div class="resp">Trách nhiệm thực hiện: <b>Kỹ thuật viên trực ca.</b></div>
+          <div class="field-row three">
+            <div class="field"><label>Mức QC chạy lại</label><input type="text" data-key="mucQCChayLai"></div>
+            <div class="field"><label>Giá trị đo được</label><input type="text" data-key="giaTriDo"></div>
+            <div class="field"><label>Thời điểm chạy lại</label><input type="time" data-key="thoiDiemChayLai"></div>
+          </div>
+          <div class="radio-group">
+            <label><input type="radio" name="b3" value="dat" data-key="b3"> QC đạt → có thể tiếp tục trả kết quả (vẫn cần đánh giá lại theo Bước 5 nếu nghi ngờ ảnh hưởng trước đó)</label>
+            <label><input type="radio" name="b3" value="khongdat" data-key="b3"> QC vẫn không đạt → chuyển Bước 4, KHÔNG trả kết quả bệnh nhân</label>
+          </div>
+          <div class="outrow"><b>Hồ sơ cần lưu:</b> kết quả QC chạy lại (giá trị, mức, thời điểm).</div>
+        </div>
+      </div>
+
+      <!-- BƯỚC 4 -->
+      <div class="step">
+        <div class="step-head" onclick="toggleStep(this)">
+          <div class="num">4</div>
+          <h4>Xác minh nguyên nhân và đo lại Bias</h4>
+          <div class="goal">Xác định đúng bản chất sai số và khắc phục</div>
+          <div class="chevron">▼</div>
+        </div>
+        <div class="step-body">
+          <div class="resp">Trách nhiệm thực hiện: <b>Phụ trách QC, phối hợp kỹ thuật viên và/hoặc kỹ sư ứng dụng nếu cần.</b></div>
+
+          <div class="subtitle">4.1. Hành động xác minh / khắc phục đã thực hiện</div>
+          <ul class="checklist">
+            <li><input type="checkbox" data-key="chk4_1"><span>Hiệu chuẩn lại thiết bị</span></li>
+            <li><input type="checkbox" data-key="chk4_2"><span>Thay thuốc thử / điện cực / cartridge</span></li>
+            <li><input type="checkbox" data-key="chk4_3"><span>Chạy mẫu kiểm tra độc lập (mẫu lưu / mẫu đối chứng đã biết giá trị)</span></li>
+            <li><input type="checkbox" data-key="chk4_4"><span>Đối chiếu kết quả trên thiết bị khác / phương pháp khác (nếu có)</span></li>
+          </ul>
+          <div class="field"><label>Mô tả chi tiết hành động đã thực hiện</label><textarea data-key="moTa4"></textarea></div>
+
+          <div class="subtitle">4.2. Đo lại Bias (bắt buộc)</div>
+          <div class="field-row three">
+            <div class="field"><label>Bias trước khắc phục (%)</label><input type="text" data-key="biasTruoc" id="biasTruocInput" oninput="updateBiasConclusion(); updateB5Calc();"></div>
+            <div class="field"><label>Bias sau khắc phục (%)</label><input type="text" data-key="biasSau" id="biasSauInput" oninput="updateBiasConclusion()"></div>
+            <div class="field">
+              <label>Ngưỡng Bias cho phép (≤ 1/4 TEa, %)</label>
+              <div style="display:flex; gap:6px;">
+                <input type="text" data-key="nguongBias" id="nguongBiasInput" oninput="onNguongBiasManualEdit(); updateBiasConclusion();" style="flex:1;">
+                <button type="button" class="btn secondary" style="padding:7px 9px; font-size:12px;" title="Tính lại tự động theo bảng TEa" onclick="updateNguongBias(true)">🔄</button>
+              </div>
+              <div class="empty-hint" id="nguongBiasHint" style="margin-top:4px;"></div>
+            </div>
+          </div>
+          <div class="radio-group" id="b4biasGroup">
+            <label id="b4bias-ok-label"><input type="radio" name="b4bias" value="ok" data-key="b4bias" onclick="onB4BiasManualPick()"> Bias sau khắc phục ĐÃ về trong ngưỡng cho phép</label>
+            <label id="b4bias-notok-label"><input type="radio" name="b4bias" value="notok" data-key="b4bias" onclick="onB4BiasManualPick()"> Bias sau khắc phục VẪN vượt ngưỡng cho phép</label>
+          </div>
+          <div class="empty-hint" id="b4biasAutoHint" style="margin:-4px 0 10px;"></div>
+          <div class="radio-group">
+            <label><input type="radio" name="b4nature" value="hethong" data-key="b4nature"> Kết luận: sai số HỆ THỐNG (bias lệch rõ, nhất quán)</label>
+            <label><input type="radio" name="b4nature" value="ngaunhien" data-key="b4nature"> Kết luận: sai số NGẪU NHIÊN (kết quả phân tán, bias không lệch rõ)</label>
+          </div>
+          <div class="empty-hint">Bản chất sai số (hệ thống/ngẫu nhiên) cần đánh giá bằng chuyên môn — không thể suy ra chỉ từ 2 số Bias trước/sau, nên mục này vẫn cần bạn tự chọn.</div>
+          <div class="note">Nếu Bias đo lại vẫn vượt ngưỡng cho phép dù đã thực hiện đủ các hành động khắc phục — KHÔNG kết luận sự cố đã xử lý xong. Báo cáo ngay lên Trưởng khoa/Giám đốc phòng xét nghiệm để xem xét tạm ngừng xét nghiệm hoặc chuyển gửi mẫu.</div>
+
+          <div class="empty-hint" id="section43Hint">Mục 4.3 chỉ áp dụng khi <b>Quy tắc vi phạm</b> (ở phần thông tin chung phía trên) thuộc nhóm lỗi hệ thống — 2:2s, 4:1s, 8x, 10x, 7T. Hãy chọn/nhập quy tắc vi phạm phù hợp để hiện mục này.</div>
+          <div id="section43" style="display:none;">
+            <div class="subtitle">4.3. Trường hợp đặc biệt — dịch chuyển do 8x trở lên: có xây lại giới hạn kiểm soát (set mean mới) không?</div>
+            <table class="mini">
+              <tr><th style="width:26%">Tình huống</th><th style="width:37%">Bản chất</th><th>Cách xử lý đúng</th></tr>
+              <tr><td>Lỗi thật sự (hiệu chuẩn trôi, thuốc thử xuống cấp, matrix effect bất thường, lỗi thiết bị)</td><td>Sai số không mong muốn, cần loại bỏ</td><td>Khắc phục nguyên nhân gốc → Bias phải quay về quanh <b>mean cũ</b> → <b>KHÔNG</b> set mean mới</td></tr>
+              <tr><td>Thay đổi được chấp nhận (đổi lô QC/chuẩn hợp lệ, cập nhật phương pháp đã phê duyệt)</td><td>Không phải lỗi, chỉ là "nền" mới hợp lệ</td><td>Bias vẫn đạt so với giá trị đích → <b>CÓ THỂ</b> set mean mới</td></tr>
+            </table>
+            <ul class="checklist">
+              <li><input type="checkbox" data-key="chk4dk1"><span>Điều kiện 1: Nguyên nhân dịch chuyển là thay đổi hợp lệ, có ghi nhận (đổi lô/calibrator...)</span></li>
+              <li><input type="checkbox" data-key="chk4dk2"><span>Điều kiện 2: Bias đo lại vẫn trong ngưỡng cho phép (≤ 1/4 TEa)</span></li>
+              <li><input type="checkbox" data-key="chk4dk3"><span>Điều kiện 3: Đủ số liệu thống kê để tính mean/SD mới (tối thiểu ≈ 20 điểm QC)</span></li>
+            </ul>
+            <div class="radio-group">
+              <label><input type="radio" name="b4mean" value="reset" data-key="b4mean"> Đủ 3 điều kiện → ĐƯỢC xây lại giới hạn kiểm soát (mean/SD mới)</label>
+              <label><input type="radio" name="b4mean" value="noreset" data-key="b4mean"> Chưa đủ điều kiện → KHÔNG set mean mới, tiếp tục điều tra khắc phục</label>
+              <label><input type="radio" name="b4mean" value="na" data-key="b4mean"> Không áp dụng (không phải trường hợp 8x)</label>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Mean mới (nếu set lại)</label><input type="text" data-key="meanMoi"></div>
+              <div class="field"><label>SD mới (nếu set lại)</label><input type="text" data-key="sdMoi"></div>
+            </div>
+            <div class="warn">Không cho phép reset mean tuỳ tiện mỗi khi 8x xảy ra mà không kiểm tra Bias trước — rủi ro "đuổi theo mean" (mean chasing) sẽ khiến sai số thật bị "hợp thức hoá", làm QC mất khả năng phát hiện sai số thực sự, ảnh hưởng âm thầm đến kết quả bệnh nhân. Việc set mean mới bắt buộc có phê duyệt của Trưởng khoa/Giám đốc phòng xét nghiệm.</div>
+          </div>
+
+          <div class="outrow"><b>Hồ sơ cần lưu:</b> hành động khắc phục, Bias trước/sau, bản chất sai số, căn cứ xây lại giới hạn kiểm soát (nếu có) và người phê duyệt.</div>
+        </div>
+      </div>
+
+      <!-- BƯỚC 5 -->
+      <div class="step">
+        <div class="step-head" onclick="toggleStep(this)">
+          <div class="num">5</div>
+          <h4>Quyết định xử lý kết quả bệnh nhân</h4>
+          <div class="goal">Xác định định lượng phạm vi và mức độ cần rà soát</div>
+          <div class="chevron">▼</div>
+        </div>
+        <div class="step-body">
+          <div class="resp">Trách nhiệm thực hiện: <b>Phụ trách QC đề xuất; Trưởng khoa/Giám đốc y khoa phòng xét nghiệm quyết định và phê duyệt.</b></div>
+
+          <div class="field-row three">
+            <div class="field"><label>Lần QC đạt gần nhất trước sự cố</label><input type="datetime-local" data-key="lanQCDatGanNhat"></div>
+            <div class="field"><label>Thời điểm QC đạt trở lại / khắc phục xong</label><input type="datetime-local" data-key="thoiDiemKhacPhucXong"></div>
+            <div class="field"><label>Số kết quả BN trong khoảng ảnh hưởng</label><input type="text" data-key="soKQAnhHuong"></div>
+          </div>
+
+          <div class="formula">ΔSEcrit = [(TEa − Bias) / SD] − 1,65 &nbsp;&nbsp;&nbsp; ΔREcrit = (TEa − Bias) / (1,65 × SD)</div>
+          <div class="field-row three">
+            <div class="field"><label>TEa (%)</label><input type="text" data-key="tea5" id="tea5Input" oninput="onTea5ManualEdit(); updateB5Calc();"></div>
+            <div class="field"><label>Bias quan sát trong sự cố (%)</label><input type="text" data-key="bias5" id="bias5Input" oninput="onBias5ManualEdit(); updateB5Calc();"></div>
+            <div class="field"><label>SD/CV nội bộ (%)</label><input type="text" data-key="sd5" id="sd5Input" oninput="onSd5ManualEdit(); updateB5Calc();"></div>
+          </div>
+          <div class="empty-hint" id="b5SourceHint" style="margin:-4px 0 10px;"></div>
+          <div class="field-row">
+            <div class="field"><label>ΔSEcrit (tự động tính)</label><input type="text" data-key="dSEcrit" id="dSEcritInput" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
+            <div class="field"><label>ΔREcrit (tự động tính)</label><input type="text" data-key="dREcrit" id="dREcritInput" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
+          </div>
+          <div class="empty-hint" id="b5CalcHint" style="margin-top:-6px;"></div>
+          <div class="formula" id="b5DegBox" style="background:#EAF1FB; color:var(--navy); display:none;"></div>
+
+          <table class="mini">
+            <tr><th style="width:30%">So sánh</th><th style="width:35%">Ý nghĩa</th><th>Hướng xử lý</th></tr>
+            <tr><td>Độ lệch quan sát &lt; ΔSEcrit/ΔREcrit</td><td>Sai số nhỏ hơn ngưỡng có ý nghĩa y khoa</td><td>Nguy cơ thấp; rà soát mức thông thường, ưu tiên XN quyết định điều trị cao</td></tr>
+            <tr><td>Độ lệch quan sát ≥ ΔSEcrit/ΔREcrit</td><td>Sai số đã vượt ngưỡng có ý nghĩa y khoa</td><td>Nguy cơ cao; rà soát TOÀN BỘ kết quả trong khoảng ảnh hưởng, ưu tiên thông báo lâm sàng sớm</td></tr>
+          </table>
+
+          <div class="radio-group" id="b5Group">
+            <label id="b5-thap-label"><input type="radio" name="b5" value="thap" data-key="b5" onclick="onB5ManualPick()"> Kết luận: Nguy cơ THẤP — rà soát mức thông thường</label>
+            <label id="b5-cao-label"><input type="radio" name="b5" value="cao" data-key="b5" onclick="onB5ManualPick()"> Kết luận: Nguy cơ CAO — rà soát toàn bộ + thông báo lâm sàng</label>
+          </div>
+          <div class="empty-hint" id="b5AutoHint" style="margin:-4px 0 10px;"></div>
+          <div class="field"><label>Danh sách/khoảng kết quả bệnh nhân được rà soát</label><textarea data-key="danhSachRaSoat"></textarea></div>
+          <div class="field"><label>Đã thông báo lâm sàng / ban hành lại kết quả chỉnh sửa (nếu có)</label><textarea data-key="thongBaoLamSang"></textarea></div>
+
+          <div class="outrow"><b>Hồ sơ cần lưu:</b> khoảng thời gian/danh sách KQ bị ảnh hưởng, kết quả đối chiếu ΔSEcrit/ΔREcrit, quyết định rà soát/thông báo, người phê duyệt.</div>
+        </div>
+      </div>
+
+      <!-- BƯỚC 6 -->
+      <div class="step">
+        <div class="step-head" onclick="toggleStep(this)">
+          <div class="num">6</div>
+          <h4>Ghi nhận sự cố và hành động khắc phục / phòng ngừa</h4>
+          <div class="goal">Không để sự cố tái diễn</div>
+          <div class="chevron">▼</div>
+        </div>
+        <div class="step-body">
+          <div class="resp">Trách nhiệm thực hiện: <b>Phụ trách QC lập báo cáo; Trưởng khoa/Giám đốc phòng xét nghiệm phê duyệt.</b></div>
+          <div class="field"><label>Nguyên nhân gốc (root cause)</label><textarea data-key="nguyenNhanGoc"></textarea></div>
+          <div class="field"><label>Hành động khắc phục đã thực hiện</label><textarea data-key="hanhDongKP"></textarea></div>
+          <div class="field"><label>Hành động phòng ngừa đề xuất (tránh tái diễn)</label><textarea data-key="hanhDongPN"></textarea></div>
+          <ul class="checklist">
+            <li><input type="checkbox" data-key="chk6_1"><span>Đã cập nhật quy trình nội bộ (nếu sự cố cho thấy quy trình hiện tại chưa đủ chặt chẽ)</span></li>
+            <li><input type="checkbox" data-key="chk6_2"><span>Nếu liên quan thay đổi lô thuốc thử/lô hiệu chuẩn hoặc IQC trôi/lệch kéo dài: đã đánh giá lại Bias trước khi trả kết quả thường quy</span></li>
+            <li><input type="checkbox" data-key="chk6_3"><span>Đã đề xuất rà soát lại bảng TEa/ngân sách sai số cho xét nghiệm này (định kỳ tối thiểu hằng năm)</span></li>
+          </ul>
+          <div class="outrow"><b>Hồ sơ cần lưu:</b> báo cáo sự cố hoàn chỉnh, cập nhật quy trình nội bộ (nếu có), biên bản phê duyệt.</div>
+        </div>
+      </div>
+
+      <!-- KÝ DUYỆT -->
+      <div class="signrow">
+        <div class="signbox">
+          <div class="role">Người thực hiện</div>
+          <div class="who"><input type="text" data-key="kyThucHien" placeholder="Họ tên / Chữ ký"></div>
+        </div>
+        <div class="signbox">
+          <div class="role">Phụ trách QC</div>
+          <div class="who"><input type="text" data-key="kyPhuTrachQC" placeholder="Họ tên / Chữ ký"></div>
+        </div>
+        <div class="signbox">
+          <div class="role">Trưởng khoa / Giám đốc PXN</div>
+          <div class="who"><input type="text" data-key="kyPheDuyet" placeholder="Họ tên / Chữ ký"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== RECORDS VIEW ===================== -->
+    <div class="view" id="view-records">
+      <div class="panel">
+        <div class="panel-head"><h3>📁 Danh sách hồ sơ — dữ liệu dùng chung</h3></div>
+        <div class="panel-body">
+          <div class="search-row">
+            <input type="text" id="searchInput" placeholder="Tìm theo mã sự cố, xét nghiệm, thiết bị, ngày, nhân viên..." oninput="renderRecords()">
+            <select id="filterRisk" onchange="renderRecords()">
+              <option value="">-- Tất cả mức nguy cơ --</option>
+              <option value="thap">Nguy cơ thấp</option>
+              <option value="cao">Nguy cơ cao</option>
+              <option value="na">Chưa xác định</option>
+            </select>
+            <button onclick="renderRecords()">🔍 Tìm</button>
+          </div>
+          <div id="recTableWrap"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="pagefoot">
+    Bộ hồ sơ khắc phục IQC — BM-QLCL-IQC-02-01 · tham chiếu BMSH-QLCL-IQC-02 và Hướng dẫn quản lý TEa – Bias – Sigma metric (BMSH-QLCL-TEa-01). Dữ liệu cấu hình và hồ sơ đã lưu dùng chung cho mọi người dùng mở dashboard này.
+  </footer>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBzyR2j-ixAbc83bcJGFpP7twgrY_ycN90",
+  authDomain: "lam-uyen.firebaseapp.com",
+  projectId: "lam-uyen",
+  storageBucket: "lam-uyen.firebasestorage.app",
+  messagingSenderId: "894698953139",
+  appId: "1:894698953139:web:9ed3c0016bc44d77fd53c6",
+  measurementId: "G-YVWHYMQ4NL"
+};
+firebase.initializeApp(firebaseConfig);
+const firebaseAuth = firebase.auth();
+const firebaseDb = firebase.firestore();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+let iqcAppStarted = false;
+
+window.storage = {
+  async get(key){
+    console.debug('[Firestore GET] requesting dashboardData/' + key);
+    const started = performance.now();
+    try{
+      const snap = await firebaseDb.collection('dashboardData').doc(key).get();
+      const elapsed = Math.round(performance.now() - started);
+      console.debug('[Firestore GET] response', {key, exists:snap.exists, elapsedMs:elapsed});
+      if(!snap.exists) return null;
+      const data = snap.data() || {};
+      return {key, value:data.value, shared:true, exists:true};
+    }catch(e){
+      console.error('[Firestore GET] FAILED dashboardData/' + key, e);
+      throw e;
+    }
+  },
+  async set(key,value){
+    console.debug('[Firestore SET] dashboardData/' + key);
+    try{
+      await firebaseDb.collection('dashboardData').doc(key).set({
+        value,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedBy: firebaseAuth.currentUser ? firebaseAuth.currentUser.uid : null
+      }, {merge:true});
+      console.debug('[Firestore SET] success dashboardData/' + key);
+      return {key,value,shared:true};
+    }catch(e){
+      console.error('[Firestore SET] FAILED dashboardData/' + key, e);
+      throw e;
+    }
+  },
+  async delete(key){
+    console.debug('[Firestore DELETE] dashboardData/' + key);
+    try{
+      await firebaseDb.collection('dashboardData').doc(key).delete();
+      return {key,deleted:true,shared:true};
+    }catch(e){
+      console.error('[Firestore DELETE] FAILED dashboardData/' + key, e);
+      throw e;
+    }
+  }
+};
+
+function showAuthError(message){
+  const el=document.getElementById('authError');
+  if(el) el.textContent=message || '';
+}
+
+document.getElementById('googleSignInBtn').addEventListener('click', async ()=>{
+  showAuthError('');
+  try{
+    await firebaseAuth.signInWithPopup(googleProvider);
+  }catch(e){
+    console.error(e);
+    showAuthError(e && e.message ? e.message : 'Không thể đăng nhập.');
+  }
+});
+
+document.getElementById('signOutBtn').addEventListener('click', async ()=>{
+  await firebaseAuth.signOut();
+  location.reload();
+});
+
+firebaseAuth.onAuthStateChanged(async user=>{
+  const gate=document.getElementById('authGate');
+  const chip=document.getElementById('userChip');
+  if(!user){
+    if(gate) gate.classList.remove('hidden');
+    if(chip) chip.classList.remove('visible');
+    return;
+  }
+  if(gate) gate.classList.add('hidden');
+  if(chip) chip.classList.add('visible');
+  const name=document.getElementById('userName');
+  const photo=document.getElementById('userPhoto');
+  if(name) name.textContent=user.displayName || user.email || 'Người dùng';
+  if(photo){ photo.src=user.photoURL || ''; photo.style.display=user.photoURL?'':'none'; }
+  if(!iqcAppStarted && typeof window.startIQCApp === 'function'){
+    iqcAppStarted=true;
+    await window.startIQCApp();
+  }
+});
+</script>
+
+<script>
+/* ============================================================
+   MASTER CONFIG (shared)
+============================================================ */
+const DEFAULT_CONFIG = {
+  caLamViec: ["Ca sáng","Ca chiều","Trực đêm"],
+  xetNghiem: [],
+  thietBi: [],
+  quyTac: ["1:2s (cảnh báo)","1:3s","2:2s","R:4s","4:1s","8x","10x","7T"],
+  mucIQCByXN: {},
+  nhanVien: [],
+  phuTrachQC: [],
+  nguoiPheDuyet: [],
+  teaList: []
+};
+let config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+let recordIndex = [];
+let currentId = null;
+
+// Runtime diagnostics for Firestore master-config loading.
+const configDebug = {
+  source: 'DEFAULT_CONFIG',
+  status: 'not-started',
+  documentExists: false,
+  hasValue: false,
+  loadedAt: null,
+  errorCode: '',
+  errorMessage: ''
+};
+
+function configSummary(){
+  return {
+    caLamViec: Array.isArray(config.caLamViec) ? config.caLamViec.length : 0,
+    xetNghiem: Array.isArray(config.xetNghiem) ? config.xetNghiem.length : 0,
+    thietBi: Array.isArray(config.thietBi) ? config.thietBi.length : 0,
+    quyTac: Array.isArray(config.quyTac) ? config.quyTac.length : 0,
+    teaList: Array.isArray(config.teaList) ? config.teaList.length : 0
+  };
+}
+
+function renderConfigDebug(){
+  const el = document.getElementById('configDebugPanel');
+  if(!el) return;
+  const sum = configSummary();
+  const ok = configDebug.source === 'FIRESTORE';
+  const statusText = ok ? 'Firestore master-config' : 'DEFAULT_CONFIG / fallback';
+  const errorText = configDebug.errorCode || configDebug.errorMessage
+    ? '<br><b>Lỗi:</b> ' + escapeHtml((configDebug.errorCode ? configDebug.errorCode + ' — ' : '') + configDebug.errorMessage)
+    : '';
+  el.style.display = '';
+  el.innerHTML = '<b>🔎 Debug cấu hình:</b> nguồn = <b>' + statusText + '</b>' +
+    ' · trạng thái = <b>' + escapeHtml(configDebug.status) + '</b>' +
+    ' · document = <b>' + (configDebug.documentExists ? 'có' : 'không') + '</b>' +
+    ' · value = <b>' + (configDebug.hasValue ? 'có' : 'không') + '</b>' +
+    '<br>Đã nạp: XN <b>' + sum.xetNghiem + '</b> · thiết bị <b>' + sum.thietBi + '</b> · quy tắc <b>' + sum.quyTac + '</b> · TEa <b>' + sum.teaList + '</b>' +
+    (configDebug.loadedAt ? ' · lúc <b>' + escapeHtml(configDebug.loadedAt) + '</b>' : '') + errorText +
+    '<br><button type="button" class="btn secondary" style="margin-top:7px; padding:6px 10px;" onclick="reloadConfigDebug()">🔄 Tải lại master-config</button>';
+}
+
+async function reloadConfigDebug(){
+  await loadConfig();
+  renderOverview();
+}
+
+/* ============================================================
+   STORAGE ADAPTER
+   - Ưu tiên window.storage (kho dùng chung, chỉ có khi mở trong
+     khung xem/artifact của Claude): mọi người mở cùng file sẽ
+     thấy chung một dữ liệu.
+   - Nếu không có window.storage (mở file .html tải về trực tiếp
+     bằng trình duyệt): tự động chuyển sang localStorage — dữ liệu
+     vẫn được lưu, nhưng CHỈ nằm trên trình duyệt/máy tính đó, KHÔNG
+     tự đồng bộ sang máy khác.
+============================================================ */
+const HAS_SHARED_STORAGE = true;
+const storage = window.storage;
+
+function escapeHtml(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+let statusTimer = null;
+function setStatus(msg, isError){
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.style.color = isError ? '#9C0006' : '#375623';
+  clearTimeout(statusTimer);
+  statusTimer = setTimeout(()=>{ el.textContent=''; }, 4000);
+}
+
+/* ============================================================
+   PERSISTENT SAVE INDICATOR (Biểu mẫu khắc phục)
+============================================================ */
+let isFormDirty = false;
+function setSaveIndicator(state, text){
+  const el = document.getElementById('saveIndicator');
+  const txt = document.getElementById('saveIndicatorText');
+  if(!el || !txt) return;
+  el.className = 'save-indicator ' + state;
+  txt.textContent = text;
+  isFormDirty = (state === 'dirty');
+}
+function markFormDirty(){
+  if(isFormDirty) return;
+  setSaveIndicator('dirty', 'Có thay đổi chưa lưu — bấm "💾 Lưu hồ sơ"');
+}
+window.addEventListener('beforeunload', function(e){
+  if(isFormDirty){
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+const VIEW_META = {
+  overview:{title:'Tổng quan', sub:'Thống kê nhanh theo mức nguy cơ, xét nghiệm, thiết bị'},
+  config:{title:'Cấu hình danh mục', sub:'Ca làm việc · Thiết bị · Xét nghiệm · Quy tắc vi phạm · Mức IQC theo XN · Nhân sự · Ngưỡng TEa'},
+  form:{title:'Biểu mẫu khắc phục', sub:'Thực hiện theo 6 bước của quy trình xử lý khi IQC không đạt và rà soát kết quả bệnh nhân'},
+  records:{title:'Lưu hồ sơ', sub:'Tìm kiếm · Xem/Sửa · Thống kê nhanh'}
+};
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.view===name));
+  document.getElementById('pageTitle').textContent = VIEW_META[name].title;
+  document.getElementById('pageSub').textContent = VIEW_META[name].sub;
+  if(name==='overview') renderOverview();
+  if(name==='records') renderRecords();
+  closeSidebar();
+  window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
+}
+function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('backdrop').classList.add('show'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('backdrop').classList.remove('show'); }
+function goNewRecord(){ showView('form'); newRecord(); }
+
+/* ============================================================
+   CONFIG: load / save
+============================================================ */
+async function loadConfig(){
+  console.groupCollapsed('[CONFIG] loadConfig master-config');
+  configDebug.status = 'loading';
+  configDebug.source = 'DEFAULT_CONFIG';
+  configDebug.documentExists = false;
+  configDebug.hasValue = false;
+  configDebug.errorCode = '';
+  configDebug.errorMessage = '';
+  renderConfigDebug();
+
+  try{
+    console.log('[CONFIG] requesting Firestore dashboardData/master-config');
+    const res = await storage.get('master-config', true);
+    console.log('[CONFIG] storage response metadata:', res ? {key:res.key, shared:res.shared, hasValue:!!res.value} : null);
+
+    if(!res){
+      config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+      configDebug.status = 'document-missing';
+      console.warn('[CONFIG] master-config document does not exist; using DEFAULT_CONFIG');
+    } else {
+      configDebug.documentExists = true;
+      if(!res.value){
+        config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+        configDebug.status = 'value-missing';
+        console.warn('[CONFIG] master-config exists but has no value field; using DEFAULT_CONFIG');
+      } else {
+        configDebug.hasValue = true;
+        const loaded = JSON.parse(res.value);
+        config = Object.assign(JSON.parse(JSON.stringify(DEFAULT_CONFIG)), loaded);
+        if(!Array.isArray(config.teaList)) config.teaList = [];
+        configDebug.source = 'FIRESTORE';
+        configDebug.status = 'loaded';
+        configDebug.loadedAt = new Date().toLocaleTimeString('vi-VN');
+        console.log('[CONFIG] Firestore config loaded successfully');
+        console.table(configSummary());
+        console.log('[CONFIG] TEa rows:', config.teaList);
+      }
+    }
+  }catch(e){
+    config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+    configDebug.status = 'error';
+    configDebug.source = 'DEFAULT_CONFIG';
+    configDebug.errorCode = e && e.code ? String(e.code) : '';
+    configDebug.errorMessage = e && e.message ? String(e.message) : String(e);
+    console.error('[CONFIG] Firestore master-config load FAILED; falling back to DEFAULT_CONFIG', e);
+    setStatus('Lỗi tải cấu hình: ' + (configDebug.errorCode || configDebug.errorMessage || 'unknown'), true);
+  }finally{
+    console.log('[CONFIG] final source:', configDebug.source, 'summary:', configSummary());
+    console.groupEnd();
+  }
+
+  renderAllConfigUI();
+  refreshFormDatalists();
+  updateNguongBias(false);
+  updateB5Calc();
+  renderConfigDebug();
+}
+async function saveConfig(){
+  try{
+    console.debug('[CONFIG] saving master-config', configSummary());
+    await storage.set('master-config', JSON.stringify(config), true);
+    configDebug.source = 'FIRESTORE';
+    configDebug.status = 'saved';
+    configDebug.documentExists = true;
+    configDebug.hasValue = true;
+    configDebug.loadedAt = new Date().toLocaleTimeString('vi-VN');
+    configDebug.errorCode = '';
+    configDebug.errorMessage = '';
+    renderConfigDebug();
+  }catch(e){
+    console.error('[CONFIG] save master-config FAILED', e);
+    configDebug.status = 'save-error';
+    configDebug.errorCode = e && e.code ? String(e.code) : '';
+    configDebug.errorMessage = e && e.message ? String(e.message) : String(e);
+    renderConfigDebug();
+    setStatus('Lỗi lưu danh mục: ' + (configDebug.errorCode || configDebug.errorMessage || 'unknown'), true);
+  }
+}
+
+function renderTags(containerId, arr, category){
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  if(!arr || arr.length===0){
+    el.innerHTML = '<span class="empty-hint">Chưa có mục nào — thêm bên dưới.</span>';
+    return;
+  }
+  arr.forEach((item, idx)=>{
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.innerHTML = escapeHtml(item) + ' ';
+    const btn = document.createElement('button');
+    btn.textContent = '✕';
+    btn.onclick = ()=> removeTag(category, idx);
+    tag.appendChild(btn);
+    el.appendChild(tag);
+  });
+}
+
+async function addTag(category, inputId){
+  const input = document.getElementById(inputId);
+  const val = input.value.trim();
+  if(!val) return;
+  if(!config[category]) config[category] = [];
+  if(config[category].includes(val)){ input.value=''; return; }
+  config[category].push(val);
+  input.value = '';
+  renderAllConfigUI();
+  refreshFormDatalists();
+  await saveConfig();
+  setStatus('✔ Đã lưu');
+}
+async function removeTag(category, idx){
+  const removed = config[category][idx];
+  config[category].splice(idx,1);
+  if(category === 'xetNghiem' && removed){
+    delete config.mucIQCByXN[removed];
+  }
+  renderAllConfigUI();
+  refreshFormDatalists();
+  await saveConfig();
+  setStatus('✔ Đã lưu');
+}
+
+function renderMucXNSelect(){
+  const sel = document.getElementById('mucXNSelect');
+  const prev = sel.value;
+  sel.innerHTML = '';
+  if(!config.xetNghiem.length){
+    sel.innerHTML = '<option value="">— Chưa có xét nghiệm nào, thêm ở ô bên trên —</option>';
+    document.getElementById('tags-muc').innerHTML = '';
+    document.getElementById('mucHint').textContent = '';
+    return;
+  }
+  config.xetNghiem.forEach(xn=>{
+    const opt = document.createElement('option');
+    opt.value = xn; opt.textContent = xn;
+    sel.appendChild(opt);
+  });
+  if(config.xetNghiem.includes(prev)) sel.value = prev;
+  renderMucForXN();
+}
+function renderMucForXN(){
+  const sel = document.getElementById('mucXNSelect');
+  const xn = sel.value;
+  const arr = config.mucIQCByXN[xn] || [];
+  renderTags('tags-muc', arr, null);
+  document.getElementById('tags-muc').querySelectorAll('button').forEach((btn,idx)=>{
+    btn.onclick = ()=> removeMucForXN(xn, idx);
+  });
+  document.getElementById('mucHint').textContent = xn ? ('Đang chỉnh mức IQC cho: ' + xn) : '';
+}
+async function addMucForXN(){
+  const sel = document.getElementById('mucXNSelect');
+  const xn = sel.value;
+  if(!xn){ setStatus('Chưa chọn xét nghiệm', true); return; }
+  const input = document.getElementById('new-muc');
+  const val = input.value.trim();
+  if(!val) return;
+  if(!config.mucIQCByXN[xn]) config.mucIQCByXN[xn] = [];
+  if(!config.mucIQCByXN[xn].includes(val)) config.mucIQCByXN[xn].push(val);
+  input.value = '';
+  renderMucForXN();
+  await saveConfig();
+  setStatus('✔ Đã lưu');
+}
+async function addQuickMuc(levels){
+  const sel = document.getElementById('mucXNSelect');
+  const xn = sel.value;
+  if(!xn){ setStatus('Chưa chọn xét nghiệm', true); return; }
+  if(!config.mucIQCByXN[xn]) config.mucIQCByXN[xn] = [];
+  let added = false;
+  levels.forEach(lv=>{
+    if(!config.mucIQCByXN[xn].includes(lv)){ config.mucIQCByXN[xn].push(lv); added = true; }
+  });
+  renderMucForXN();
+  if(added){
+    await saveConfig();
+    setStatus('✔ Đã lưu');
+  } else {
+    setStatus('Mức này đã có sẵn');
+  }
+}
+async function removeMucForXN(xn, idx){
+  config.mucIQCByXN[xn].splice(idx,1);
+  renderMucForXN();
+  await saveConfig();
+  setStatus('✔ Đã lưu');
+}
+
+/* TEa table */
+function computeCrit(tea, biasPP, sd){
+  if(isNaN(tea) || isNaN(biasPP) || isNaN(sd) || sd === 0){
+    return { dSEcrit: null, dREcrit: null };
+  }
+  const dSEcrit = ((tea - biasPP) / sd) - 1.65;
+  const dREcrit = (tea - biasPP) / (1.65 * sd);
+  return { dSEcrit: fmtNum(dSEcrit), dREcrit: fmtNum(dREcrit) };
+}
+function renderTeaTable(){
+  const body = document.getElementById('teaTableBody');
+  body.innerHTML = '';
+  if(!config.teaList.length){
+    body.innerHTML = '<tr><td colspan="9" class="empty-hint" style="padding:10px;">Chưa có ngưỡng TEa nào — bấm "+ Thêm dòng" bên dưới.</td></tr>';
+    return;
+  }
+  config.teaList.forEach((row, idx)=>{
+    const crit = computeCrit(parseNum(row.tea), parseNum(row.biasPP), parseNum(row.sdcv));
+    const tr = document.createElement('tr');
+    const knownTests = Array.isArray(config.xetNghiem) ? config.xetNghiem : [];
+    const currentName = String(row.xn || '').trim();
+    const hasExactName = knownTests.includes(currentName);
+    const testOptions = [
+      '<option value="">-- Chọn xét nghiệm --</option>',
+      ...(!hasExactName && currentName ? [`<option value="${escapeHtml(currentName)}" selected>⚠ ${escapeHtml(currentName)} (tên cũ)</option>`] : []),
+      ...knownTests.map(name => `<option value="${escapeHtml(name)}" ${name===currentName?'selected':''}>${escapeHtml(name)}</option>`)
+    ].join('');
+    tr.innerHTML = `
+      <td><select onchange="updateTeaRow(${idx},'xn',this.value)" style="width:100%;${!hasExactName && currentName ? 'border-color:#C99A00;background:#FFF8E1;' : ''}">${testOptions}</select></td>
+      <td><input value="${escapeHtml(row.tea)}" onchange="updateTeaRow(${idx},'tea',this.value)" placeholder="%"></td>
+      <td><input value="${escapeHtml(row.biasPP||'')}" onchange="updateTeaRow(${idx},'biasPP',this.value)" placeholder="%"></td>
+      <td><input value="${escapeHtml(row.sdcv||'')}" onchange="updateTeaRow(${idx},'sdcv',this.value)" placeholder="%"></td>
+      <td style="font-weight:700; color:var(--navy); text-align:center;">${crit.dSEcrit ?? '—'}</td>
+      <td style="font-weight:700; color:var(--navy); text-align:center;">${crit.dREcrit ?? '—'}</td>
+      <td>
+        <select onchange="updateTeaRow(${idx},'nguon',this.value)">
+          ${['CLSI','EFLM','RCPA/RCPAQAP','Biến thiên sinh học','Khác'].map(o=>`<option value="${o}" ${row.nguon===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </td>
+      <td><input value="${escapeHtml(row.ghiChu)}" onchange="updateTeaRow(${idx},'ghiChu',this.value)" placeholder="Nguồn cụ thể / năm..."></td>
+      <td class="tea-actions"><button title="Xoá" onclick="removeTeaRow(${idx})">🗑️</button></td>
+    `;
+    body.appendChild(tr);
+  });
+}
+async function addTeaRow(){
+  config.teaList.push({xn:'', tea:'', biasPP:'', sdcv:'', nguon:'CLSI', ghiChu:''});
+  renderTeaTable();
+  await saveConfig();
+}
+async function updateTeaRow(idx, field, value){
+  config.teaList[idx][field] = value;
+  renderTeaTable();
+  await saveConfig();
+  setStatus('✔ Đã lưu');
+  updateNguongBias(false);
+  updateB5Calc();
+}
+async function removeTeaRow(idx){
+  config.teaList.splice(idx,1);
+  renderTeaTable();
+  await saveConfig();
+  setStatus('✔ Đã lưu');
+}
+
+function renderAllConfigUI(){
+  renderTags('tags-caLamViec', config.caLamViec, 'caLamViec');
+  renderTags('tags-thietBi', config.thietBi, 'thietBi');
+  renderTags('tags-xetNghiem', config.xetNghiem, 'xetNghiem');
+  renderTags('tags-quyTac', config.quyTac, 'quyTac');
+  renderTags('tags-nhanVien', config.nhanVien, 'nhanVien');
+  renderTags('tags-phuTrachQC', config.phuTrachQC, 'phuTrachQC');
+  renderTags('tags-nguoiPheDuyet', config.nguoiPheDuyet, 'nguoiPheDuyet');
+  renderMucXNSelect();
+  renderTeaTable();
+}
+
+/* ============================================================
+   FORM: datalists driven by config
+============================================================ */
+function fillDatalist(id, arr){
+  const dl = document.getElementById(id);
+  if(!dl) return;
+  dl.innerHTML = '';
+  (arr||[]).forEach(v=>{
+    const opt = document.createElement('option');
+    opt.value = v;
+    dl.appendChild(opt);
+  });
+}
+function refreshFormDatalists(){
+  fillDatalist('dl-caLamViec', config.caLamViec);
+  fillDatalist('dl-xetNghiem', config.xetNghiem);
+  fillDatalist('dl-thietBi', config.thietBi);
+  fillDatalist('dl-quyTac', config.quyTac);
+  fillDatalist('dl-nhanVien', config.nhanVien);
+  fillDatalist('dl-phuTrachQC', config.phuTrachQC);
+  fillDatalist('dl-nguoiPheDuyet', config.nguoiPheDuyet);
+  updateMucQCOptions();
+}
+function updateMucQCOptions(){
+  const xnEl = document.getElementById('xetNghiemInput');
+  if(!xnEl) return;
+  const xn = xnEl.value.trim();
+  const arr = config.mucIQCByXN[xn] && config.mucIQCByXN[xn].length ? config.mucIQCByXN[xn] : [].concat(...Object.values(config.mucIQCByXN));
+  fillDatalist('dl-mucQC', arr);
+}
+
+/* Chuẩn hoá tên xét nghiệm để tránh lỗi tra TEa do tên cũ/biến thể. */
+function normalizeTestName(name){
+  return String(name || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+    .replace(/\s+/g, ' ');
+}
+
+function findTeaRowForXN(xn){
+  if(!xn || !Array.isArray(config.teaList)) return null;
+  const target = normalizeTestName(xn);
+  let row = config.teaList.find(r => normalizeTestName(r.xn) === target);
+  if(row) return row;
+
+  // Legacy alias kept intentionally narrow to avoid matching unrelated tests.
+  const aliasGroups = [
+    ['ure', 'urea']
+  ];
+  const aliases = aliasGroups.find(group => group.includes(target));
+  if(aliases){
+    row = config.teaList.find(r => aliases.includes(normalizeTestName(r.xn)));
+    if(row){
+      console.warn('[CONFIG MATCH] Used legacy test-name alias', {requested:xn, matched:row.xn});
+      return row;
+    }
+  }
+
+  console.warn('[CONFIG MATCH] No TEa row for test', {
+    requested:xn,
+    normalized:target,
+    available:(config.teaList || []).map(r => r.xn)
+  });
+  return null;
+}
+
+/* Ngưỡng Bias cho phép (Bước 4.2) = 1/4 TEa, tự động tra theo bảng TEa trong Cấu hình danh mục */
+function findTeaForXN(xn){
+  const row = findTeaRowForXN(xn);
+  if(!row) return null;
+  const val = parseFloat(String(row.tea).replace(',', '.').replace('%',''));
+  if(isNaN(val)) return null;
+  let sdcvVal = null;
+  if(row.sdcv !== undefined && row.sdcv !== null && String(row.sdcv).trim() !== ''){
+    const s = parseFloat(String(row.sdcv).replace(',', '.').replace('%',''));
+    if(!isNaN(s)) sdcvVal = s;
+  }
+  return { teaValue: val, raw: row.tea, sdcvValue: sdcvVal, sdcvRaw: row.sdcv, nguon: row.nguon, ghiChu: row.ghiChu, matchedXn: row.xn };
+}
+function fmtNum(n){
+  return (Math.round(n*1000)/1000).toString();
+}
+
+/* Bước 5: TEa, Bias hiệu năng PP, SD/CV, ΔSEcrit, ΔREcrit — tra theo xét nghiệm trong Cấu hình danh mục */
+function findValidationForXN(xn){
+  const row = findTeaRowForXN(xn);
+  if(!row) return null;
+  const teaNum = parseNum(row.tea);
+  const biasPPNum = parseNum(row.biasPP);
+  const sdNum = parseNum(row.sdcv);
+  const crit = computeCrit(teaNum, biasPPNum, sdNum);
+  return {
+    tea: row.tea, sdcv: row.sdcv, biasPP: row.biasPP,
+    nguon: row.nguon, ghiChu: row.ghiChu, matchedXn: row.xn,
+    dSEcrit: crit.dSEcrit, dREcrit: crit.dREcrit
+  };
+}
+function onTea5ManualEdit(){ const el = document.getElementById('tea5Input'); if(el) el.dataset.auto = '0'; }
+function onBias5ManualEdit(){ const el = document.getElementById('bias5Input'); if(el) el.dataset.auto = '0'; }
+function onSd5ManualEdit(){ const el = document.getElementById('sd5Input'); if(el) el.dataset.auto = '0'; }
+function updateB5Calc(){
+  const xnEl = document.getElementById('xetNghiemInput');
+  const tea5El = document.getElementById('tea5Input');
+  const bias5El = document.getElementById('bias5Input');
+  const sd5El = document.getElementById('sd5Input');
+  const dSEEl = document.getElementById('dSEcritInput');
+  const dREEl = document.getElementById('dREcritInput');
+  const sourceHint = document.getElementById('b5SourceHint');
+  const calcHint = document.getElementById('b5CalcHint');
+  if(!xnEl || !tea5El || !bias5El || !sd5El || !dSEEl || !dREEl) return;
+
+  const xn = xnEl.value.trim();
+  const v = findValidationForXN(xn);
+
+  if(v && v.tea !== '' && v.tea !== undefined && (!tea5El.value || tea5El.dataset.auto !== '0')){
+    tea5El.value = v.tea; tea5El.dataset.auto = '1';
+  }
+  if(v && v.sdcv !== '' && v.sdcv !== undefined && (!sd5El.value || sd5El.dataset.auto !== '0')){
+    sd5El.value = v.sdcv; sd5El.dataset.auto = '1';
+  }
+
+  const biasTruocEl = document.getElementById('biasTruocInput');
+  if(biasTruocEl && biasTruocEl.value !== '' && (!bias5El.value || bias5El.dataset.auto !== '0')){
+    bias5El.value = biasTruocEl.value; bias5El.dataset.auto = '1';
+  }
+
+  if(v && v.dSEcrit !== null && v.dSEcrit !== undefined){
+    dSEEl.value = v.dSEcrit;
+    dREEl.value = v.dREcrit;
+  } else {
+    dSEEl.value = '';
+    dREEl.value = '';
+  }
+
+  if(sourceHint){
+    if(xn && v){
+      sourceHint.innerHTML = '🤖 TEa và SD/CV lấy tự động từ Cấu hình danh mục (xét nghiệm "' + escapeHtml(xn) + '"). "Bias quan sát trong sự cố" lấy từ ô "Bias trước khắc phục" đã nhập ở Bước 4 — bạn có thể sửa tay nếu cần.';
+    } else if(xn){
+      sourceHint.innerHTML = 'Chưa có TEa/SD/CV cho xét nghiệm "' + escapeHtml(xn) + '" trong Cấu hình danh mục → nhập thủ công, hoặc bổ sung ở tab Cấu hình.';
+    } else {
+      sourceHint.innerHTML = 'Nhập/chọn xét nghiệm ở phần thông tin chung phía trên để tự động lấy TEa/SD/CV.';
+    }
+  }
+  if(calcHint){
+    if(v && v.dSEcrit !== null && v.dSEcrit !== undefined){
+      calcHint.innerHTML = 'ΔSEcrit/ΔREcrit lấy nguyên giá trị đã tính sẵn trong hồ sơ thẩm định phương pháp (Cấu hình danh mục), dùng Bias hiệu năng PP = ' + escapeHtml(String(v.biasPP||'0')) + '% — không tính lại theo Bias quan sát của riêng sự cố này.';
+    } else if(xn){
+      calcHint.innerHTML = 'Chưa đủ TEa / Bias hiệu năng PP / SD/CV cho xét nghiệm này trong Cấu hình danh mục nên chưa tính được ΔSEcrit/ΔREcrit — vào tab Cấu hình để bổ sung.';
+    } else {
+      calcHint.innerHTML = '';
+    }
+  }
+  updateB5Risk();
+}
+
+/* Bước 5: tự động kết luận Nguy cơ THẤP/CAO bằng cách so sánh "Độ lệch quan sát"
+   (Bias quan sát / SD, tính theo lần SD) với ΔSEcrit/ΔREcrit, và ẩn lựa chọn còn lại. */
+let b5ManualOverride = false;
+function onB5ManualPick(){
+  b5ManualOverride = true;
+  const thapLabel = document.getElementById('b5-thap-label');
+  const caoLabel = document.getElementById('b5-cao-label');
+  if(thapLabel) thapLabel.classList.remove('auto-hidden','auto-picked');
+  if(caoLabel) caoLabel.classList.remove('auto-hidden','auto-picked');
+  const hint = document.getElementById('b5AutoHint');
+  if(hint) hint.innerHTML = '📌 Đang ở chế độ chọn thủ công. <a href="javascript:void(0)" onclick="resetB5Auto()" style="color:var(--blue); text-decoration:underline;">🤖 Bật lại tự động kết luận theo số liệu</a>';
+}
+function resetB5Auto(){
+  b5ManualOverride = false;
+  updateB5Risk();
+}
+function updateB5Risk(){
+  const thapLabel = document.getElementById('b5-thap-label');
+  const caoLabel = document.getElementById('b5-cao-label');
+  const box = document.getElementById('b5DegBox');
+  const hint = document.getElementById('b5AutoHint');
+  if(!thapLabel || !caoLabel) return;
+
+  const bias5El = document.getElementById('bias5Input');
+  const sd5El = document.getElementById('sd5Input');
+  const dSEEl = document.getElementById('dSEcritInput');
+  const dREEl = document.getElementById('dREcritInput');
+  const bias5 = parseNum(bias5El ? bias5El.value : '');
+  const sd5 = parseNum(sd5El ? sd5El.value : '');
+  const dSE = parseNum(dSEEl ? dSEEl.value : '');
+  const dRE = parseNum(dREEl ? dREEl.value : '');
+
+  if(isNaN(bias5) || isNaN(sd5) || sd5 === 0 || isNaN(dSE) || isNaN(dRE)){
+    if(box) box.style.display = 'none';
+    if(!b5ManualOverride){
+      thapLabel.classList.remove('auto-hidden','auto-picked');
+      caoLabel.classList.remove('auto-hidden','auto-picked');
+      if(hint) hint.innerHTML = 'Nhập đủ "Bias quan sát trong sự cố" và "SD/CV nội bộ" (cần có sẵn ΔSEcrit/ΔREcrit) để hệ thống tự đánh giá và ẩn lựa chọn không phù hợp.';
+    }
+    return;
+  }
+
+  const degObs = Math.abs(bias5) / sd5;
+  const cao = (degObs >= dSE) || (degObs >= dRE);
+  if(box){
+    box.style.display = '';
+    box.innerHTML = 'Độ lệch quan sát = |Bias quan sát| / SD = ' + fmtNum(degObs) + ' lần SD &nbsp;&nbsp;so với&nbsp;&nbsp; ΔSEcrit = ' + fmtNum(dSE) + ' &nbsp;/&nbsp; ΔREcrit = ' + fmtNum(dRE);
+  }
+
+  if(b5ManualOverride){
+    const thapRadioChecked = document.querySelector('input[name="b5"][value="thap"]').checked;
+    const caoRadioChecked = document.querySelector('input[name="b5"][value="cao"]').checked;
+    const mismatch = (cao && thapRadioChecked) || (!cao && caoRadioChecked);
+    if(hint && (thapRadioChecked || caoRadioChecked)){
+      hint.innerHTML = (mismatch
+        ? '⚠️ Bạn đang chọn <b>' + (thapRadioChecked ? 'Nguy cơ THẤP' : 'Nguy cơ CAO') + '</b> nhưng theo số liệu hiện tại (' + fmtNum(degObs) + ' lần SD so với ΔSEcrit ' + fmtNum(dSE) + ' / ΔREcrit ' + fmtNum(dRE) + '), kết luận đúng phải là <b>' + (cao ? 'Nguy cơ CAO' : 'Nguy cơ THẤP') + '</b>. '
+        : '✔ Lựa chọn thủ công đang khớp với số liệu. ') +
+        '<a href="javascript:void(0)" onclick="resetB5Auto()" style="color:var(--blue); text-decoration:underline;">🤖 Bật lại tự động kết luận</a>';
+    }
+    return;
+  }
+
+  const thapRadio = document.querySelector('input[name="b5"][value="thap"]');
+  const caoRadio = document.querySelector('input[name="b5"][value="cao"]');
+  if(cao){
+    caoRadio.checked = true; thapRadio.checked = false;
+    caoLabel.classList.remove('auto-hidden'); caoLabel.classList.add('auto-picked');
+    thapLabel.classList.add('auto-hidden'); thapLabel.classList.remove('auto-picked');
+  } else {
+    thapRadio.checked = true; caoRadio.checked = false;
+    thapLabel.classList.remove('auto-hidden'); thapLabel.classList.add('auto-picked');
+    caoLabel.classList.add('auto-hidden'); caoLabel.classList.remove('auto-picked');
+  }
+
+  const suspicious = (dSE > 30 || dRE > 30);
+  if(hint){
+    hint.innerHTML = '🤖 Tự động kết luận: Độ lệch quan sát (' + fmtNum(degObs) + ' lần SD) ' + (cao ? '≥' : '<') + ' ΔSEcrit/ΔREcrit → <b>' + (cao ? 'Nguy cơ CAO' : 'Nguy cơ THẤP') + '</b>.' +
+      (suspicious ? '<br>⚠️ ΔSEcrit/ΔREcrit đang rất lớn (' + fmtNum(dSE) + ' / ' + fmtNum(dRE) + ') — về mặt lâm sàng hiếm khi hợp lý, thường do <b>SD/CV nội bộ</b> khai báo trong Cấu hình danh mục quá nhỏ so với thực tế. Nên kiểm tra lại giá trị này trước khi dùng kết luận tự động. ' : ' ') +
+      '<a href="javascript:void(0)" onclick="onB5ManualPick()" style="color:var(--blue); text-decoration:underline;">Chọn lại thủ công</a>';
+  }
+}
+
+function onNguongBiasManualEdit(){
+  const el = document.getElementById('nguongBiasInput');
+  if(el) el.dataset.auto = '0';
+}
+function updateNguongBias(force){
+  const xnEl = document.getElementById('xetNghiemInput');
+  const el = document.getElementById('nguongBiasInput');
+  const hint = document.getElementById('nguongBiasHint');
+  if(!xnEl || !el) return;
+  const xn = xnEl.value.trim();
+  const match = findTeaForXN(xn);
+  if(match){
+    const nguong = fmtNum(match.teaValue / 4);
+    if(force || !el.value || el.dataset.auto !== '0'){
+      el.value = nguong;
+      el.dataset.auto = '1';
+    }
+    if(hint) hint.innerHTML = 'Tự động: TEa "' + escapeHtml(xn) + '" = ' + escapeHtml(String(match.raw)) + '% (nguồn: ' + escapeHtml(match.nguon||'') + ') → Ngưỡng = TEa/4 = <b>' + nguong + '%</b>. Đã tự sửa tay? Bấm 🔄 để tính lại.';
+  } else {
+    if(hint){
+      hint.innerHTML = xn
+        ? 'Chưa có ngưỡng TEa cho xét nghiệm "' + escapeHtml(xn) + '" trong Cấu hình danh mục → nhập ngưỡng thủ công, hoặc bổ sung TEa ở tab Cấu hình rồi bấm 🔄.'
+        : 'Nhập/chọn xét nghiệm ở phần thông tin chung phía trên để tự động tính ngưỡng theo TEa.';
+    }
+  }
+  if(typeof updateBiasConclusion === 'function') updateBiasConclusion();
+}
+
+/* Bước 4.2: tự động kết luận Bias đạt/không đạt ngưỡng dựa trên số liệu, và ẩn lựa chọn còn lại.
+   Người dùng vẫn có thể bấm "Chọn lại thủ công" để hiện lại cả 2 lựa chọn nếu cần override. */
+let b4biasManualOverride = false;
+function parseNum(v){
+  if(v === null || v === undefined) return NaN;
+  const n = parseFloat(String(v).replace(',', '.').replace('%',''));
+  return n;
+}
+function onB4BiasManualPick(){
+  // Người dùng tự tay bấm chọn — tôn trọng lựa chọn thủ công, không tự ý ẩn nữa cho lần này
+  b4biasManualOverride = true;
+  document.getElementById('b4bias-ok-label').classList.remove('auto-hidden','auto-picked');
+  document.getElementById('b4bias-notok-label').classList.remove('auto-hidden','auto-picked');
+  const hint = document.getElementById('b4biasAutoHint');
+  if(hint) hint.innerHTML = '📌 Đang ở chế độ chọn thủ công. <a href="javascript:void(0)" onclick="resetB4BiasAuto()" style="color:var(--blue); text-decoration:underline;">🤖 Bật lại tự động kết luận theo số liệu</a>';
+}
+function resetB4BiasAuto(){
+  b4biasManualOverride = false;
+  updateBiasConclusion();
+}
+function updateBiasConclusion(){
+  const okLabel = document.getElementById('b4bias-ok-label');
+  const notokLabel = document.getElementById('b4bias-notok-label');
+  const hint = document.getElementById('b4biasAutoHint');
+  if(!okLabel || !notokLabel) return;
+
+  if(b4biasManualOverride){
+    return; // đang ở chế độ chọn thủ công, không tự động can thiệp
+  }
+
+  const biasSau = parseNum(document.getElementById('biasSauInput') ? document.getElementById('biasSauInput').value : '');
+  const nguong = parseNum(document.getElementById('nguongBiasInput') ? document.getElementById('nguongBiasInput').value : '');
+  const okRadio = document.querySelector('input[name="b4bias"][value="ok"]');
+  const notokRadio = document.querySelector('input[name="b4bias"][value="notok"]');
+
+  if(isNaN(biasSau) || isNaN(nguong)){
+    // Chưa đủ số liệu — hiện lại cả 2 lựa chọn, không tự chọn
+    okLabel.classList.remove('auto-hidden','auto-picked');
+    notokLabel.classList.remove('auto-hidden','auto-picked');
+    if(hint) hint.innerHTML = 'Nhập đủ "Bias sau khắc phục" và "Ngưỡng Bias cho phép" để hệ thống tự kết luận.';
+    return;
+  }
+
+  const dat = Math.abs(biasSau) <= Math.abs(nguong);
+  if(dat){
+    okRadio.checked = true;
+    notokRadio.checked = false;
+    okLabel.classList.remove('auto-hidden'); okLabel.classList.add('auto-picked');
+    notokLabel.classList.add('auto-hidden'); notokLabel.classList.remove('auto-picked');
+  } else {
+    notokRadio.checked = true;
+    okRadio.checked = false;
+    notokLabel.classList.remove('auto-hidden'); notokLabel.classList.add('auto-picked');
+    okLabel.classList.add('auto-hidden'); okLabel.classList.remove('auto-picked');
+  }
+  if(hint){
+    hint.innerHTML = '🤖 Tự động kết luận theo số liệu: |Bias sau| = ' + Math.abs(biasSau) + '% so với ngưỡng ' + Math.abs(nguong) + '% → <b>' +
+      (dat ? 'ĐÃ đạt ngưỡng' : 'VẪN vượt ngưỡng') + '</b>. ' +
+      '<a href="javascript:void(0)" onclick="onB4BiasManualPick()" style="color:var(--blue); text-decoration:underline;">Chọn lại thủ công</a>';
+  }
+}
+
+/* Mục 4.3 (set mean mới) chỉ hiện khi Quy tắc vi phạm thuộc nhóm lỗi hệ thống */const SYSTEMATIC_RULE_PATTERNS = ['2:2s','4:1s','8x','10x','7t'];
+function isSystematicRule(val){
+  if(!val) return false;
+  const v = val.toLowerCase();
+  return SYSTEMATIC_RULE_PATTERNS.some(p=>v.includes(p));
+}
+function updateSection43(){
+  const quyTacEl = document.getElementById('quyTacInput');
+  const sec = document.getElementById('section43');
+  const hint = document.getElementById('section43Hint');
+  if(!quyTacEl || !sec) return;
+  const show = isSystematicRule(quyTacEl.value);
+  sec.style.display = show ? '' : 'none';
+  if(hint) hint.style.display = show ? 'none' : '';
+}
+
+
+/* ============================================================
+   STEP COLLAPSE
+============================================================ */
+function toggleStep(headEl){ headEl.parentElement.classList.toggle('collapsed'); }
+function expandAllSteps(){ document.querySelectorAll('.step').forEach(s=>s.classList.remove('collapsed')); }
+function collapseAllSteps(){ document.querySelectorAll('.step').forEach(s=>s.classList.add('collapsed')); }
+
+/* ============================================================
+   FORM SERIALIZE / DESERIALIZE
+============================================================ */
+function getFormData(){
+  const data = {};
+  document.querySelectorAll('#view-form [data-key]').forEach(el=>{
+    const key = el.dataset.key;
+    if(el.type === 'checkbox'){ data[key] = el.checked; }
+    else if(el.type === 'radio'){ if(el.checked) data[key] = el.value; else if(!(key in data)) data[key] = data[key]||''; }
+    else { data[key] = el.value; }
+  });
+  return data;
+}
+function setFormData(data){
+  document.querySelectorAll('#view-form [data-key]').forEach(el=>{
+    const key = el.dataset.key;
+    if(!(key in data)) { if(el.type==='checkbox'){el.checked=false;} else if(el.type!=='radio'){el.value='';} return; }
+    if(el.type === 'checkbox'){ el.checked = !!data[key]; }
+    else if(el.type === 'radio'){ el.checked = (el.value === data[key]); }
+    else { el.value = data[key] || ''; }
+  });
+  updateMucQCOptions();
+  updateSection43();
+  const nb = document.getElementById('nguongBiasInput');
+  if(nb) nb.dataset.auto = '0';
+  updateNguongBias(false);
+  b4biasManualOverride = true;
+  const okLabel = document.getElementById('b4bias-ok-label');
+  const notokLabel = document.getElementById('b4bias-notok-label');
+  if(okLabel) okLabel.classList.remove('auto-hidden','auto-picked');
+  if(notokLabel) notokLabel.classList.remove('auto-hidden','auto-picked');
+  const b4hint = document.getElementById('b4biasAutoHint');
+  if(b4hint) b4hint.innerHTML = '<a href="javascript:void(0)" onclick="resetB4BiasAuto()" style="color:var(--blue); text-decoration:underline;">🤖 Tính tự động theo số liệu</a>';
+  ['tea5Input','bias5Input','sd5Input'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.dataset.auto = '0';
+  });
+  b5ManualOverride = true;
+  const b5thap = document.getElementById('b5-thap-label');
+  const b5cao = document.getElementById('b5-cao-label');
+  if(b5thap) b5thap.classList.remove('auto-hidden','auto-picked');
+  if(b5cao) b5cao.classList.remove('auto-hidden','auto-picked');
+  const b5hint = document.getElementById('b5AutoHint');
+  if(b5hint) b5hint.innerHTML = '<a href="javascript:void(0)" onclick="resetB5Auto()" style="color:var(--blue); text-decoration:underline;">🤖 Tính tự động theo số liệu</a>';
+  updateB5Calc();
+}
+function clearFormFields(){
+  document.querySelectorAll('#view-form [data-key]').forEach(el=>{
+    if(el.type==='checkbox' || el.type==='radio'){ el.checked=false; }
+    else { el.value=''; }
+  });
+  const nb = document.getElementById('nguongBiasInput');
+  if(nb) delete nb.dataset.auto;
+  b4biasManualOverride = false;
+  const okLabel = document.getElementById('b4bias-ok-label');
+  const notokLabel = document.getElementById('b4bias-notok-label');
+  if(okLabel) okLabel.classList.remove('auto-hidden','auto-picked');
+  if(notokLabel) notokLabel.classList.remove('auto-hidden','auto-picked');
+  const b4hint = document.getElementById('b4biasAutoHint');
+  if(b4hint) b4hint.innerHTML = '';
+  ['tea5Input','bias5Input','sd5Input'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) delete el.dataset.auto;
+  });
+  const b5s = document.getElementById('b5SourceHint'); if(b5s) b5s.innerHTML = '';
+  const b5c = document.getElementById('b5CalcHint'); if(b5c) b5c.innerHTML = '';
+  b5ManualOverride = false;
+  const b5thap = document.getElementById('b5-thap-label');
+  const b5cao = document.getElementById('b5-cao-label');
+  if(b5thap) b5thap.classList.remove('auto-hidden','auto-picked');
+  if(b5cao) b5cao.classList.remove('auto-hidden','auto-picked');
+  const b5hint2 = document.getElementById('b5AutoHint');
+  if(b5hint2) b5hint2.innerHTML = '';
+  const b5box = document.getElementById('b5DegBox');
+  if(b5box) b5box.style.display = 'none';
+  updateSection43();
+}
+
+/* ============================================================
+   INCIDENT RECORDS
+============================================================ */
+async function loadIndex(){
+  try{
+    const res = await storage.get('incident-index', true);
+    recordIndex = res && res.value ? JSON.parse(res.value) : [];
+  }catch(e){
+    recordIndex = [];
+  }
+  document.getElementById('navBadgeRecords').textContent = recordIndex.length;
+  renderOverview();
+}
+async function saveIndex(){
+  try{
+    await storage.set('incident-index', JSON.stringify(recordIndex), true);
+    document.getElementById('navBadgeRecords').textContent = recordIndex.length;
+  }catch(e){
+    setStatus('Lỗi lưu danh mục hồ sơ', true);
+  }
+}
+
+function genId(){
+  return 'INC' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2,5).toUpperCase();
+}
+
+/* ============================================================
+   XUẤT / NHẬP DỮ LIỆU (sao lưu thủ công để chuyển giữa các thiết bị
+   khi mở file ngoài Claude — mỗi trình duyệt lưu localStorage riêng)
+============================================================ */
+async function exportAllData(){
+  try{
+    setStatus('Đang chuẩn bị file xuất...');
+    const records = {};
+    for(const r of recordIndex){
+      const res = await storage.get('incident:' + r.id, true);
+      if(res && res.value) records[r.id] = JSON.parse(res.value);
+    }
+    const payload = {
+      app: 'iqc-dashboard',
+      exportedAt: new Date().toISOString(),
+      config: config,
+      recordIndex: recordIndex,
+      records: records
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+    a.href = url;
+    a.download = 'iqc-dashboard-backup-' + stamp + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    setStatus('✔ Đã xuất file sao lưu (' + recordIndex.length + ' hồ sơ)');
+  }catch(e){
+    setStatus('Lỗi khi xuất dữ liệu', true);
+  }
+}
+
+function triggerImport(){
+  document.getElementById('importFileInput').click();
+}
+
+async function handleImportFile(evt){
+  const file = evt.target.files[0];
+  evt.target.value = '';
+  if(!file) return;
+  try{
+    const text = await file.text();
+    const payload = JSON.parse(text);
+    if(!payload || typeof payload !== 'object') throw new Error('invalid file');
+
+    const whenText = payload.exportedAt ? new Date(payload.exportedAt).toLocaleString('vi-VN') : 'không rõ';
+    const ok = confirm(
+      'Nhập dữ liệu từ file sao lưu (xuất lúc ' + whenText + ')?\n\n' +
+      'Dữ liệu trong file sẽ được GỘP vào dữ liệu hiện có trên thiết bị này:\n' +
+      '- Danh mục cấu hình: gộp thêm mục mới, không xoá mục đang có.\n' +
+      '- Hồ sơ: hồ sơ chưa có sẽ được thêm; hồ sơ trùng mã sẽ giữ bản có thời điểm lưu MỚI HƠN.\n\n' +
+      'Bấm OK để tiếp tục.'
+    );
+    if(!ok) return;
+
+    const pc = payload.config || {};
+    ['caLamViec','xetNghiem','thietBi','quyTac','nhanVien','phuTrachQC','nguoiPheDuyet'].forEach(k=>{
+      if(Array.isArray(pc[k])){
+        if(!Array.isArray(config[k])) config[k] = [];
+        pc[k].forEach(v=>{ if(v && !config[k].includes(v)) config[k].push(v); });
+      }
+    });
+    if(pc.mucIQCByXN && typeof pc.mucIQCByXN === 'object'){
+      Object.keys(pc.mucIQCByXN).forEach(xn=>{
+        if(!config.mucIQCByXN[xn]) config.mucIQCByXN[xn] = [];
+        (pc.mucIQCByXN[xn]||[]).forEach(v=>{ if(v && !config.mucIQCByXN[xn].includes(v)) config.mucIQCByXN[xn].push(v); });
+      });
+    }
+    if(Array.isArray(pc.teaList)){
+      pc.teaList.forEach(row=>{
+        const exists = config.teaList.some(r => r.xn===row.xn && r.tea===row.tea && r.nguon===row.nguon && r.ghiChu===row.ghiChu);
+        if(!exists) config.teaList.push(row);
+      });
+    }
+    await saveConfig();
+
+    let added = 0, updated = 0;
+    const importedIndex = Array.isArray(payload.recordIndex) ? payload.recordIndex : [];
+    for(const rSummary of importedIndex){
+      const importedData = payload.records ? payload.records[rSummary.id] : null;
+      const localIdx = recordIndex.findIndex(x => x.id === rSummary.id);
+      if(localIdx === -1){
+        recordIndex.unshift(rSummary);
+        if(importedData) await storage.set('incident:' + rSummary.id, JSON.stringify(importedData), true);
+        added++;
+      } else {
+        const localTime = recordIndex[localIdx].savedAt ? new Date(recordIndex[localIdx].savedAt).getTime() : 0;
+        const importedTime = rSummary.savedAt ? new Date(rSummary.savedAt).getTime() : 0;
+        if(importedTime > localTime){
+          recordIndex[localIdx] = rSummary;
+          if(importedData) await storage.set('incident:' + rSummary.id, JSON.stringify(importedData), true);
+          updated++;
+        }
+      }
+    }
+    await saveIndex();
+    renderAllConfigUI();
+    refreshFormDatalists();
+    renderOverview();
+    renderRecords();
+    setStatus('✔ Đã nhập dữ liệu — thêm ' + added + ', cập nhật ' + updated + ' hồ sơ');
+  }catch(e){
+    setStatus('Lỗi: file không hợp lệ hoặc bị hỏng', true);
+  }
+}
+
+function newRecord(){
+  currentId = null;
+  clearFormFields();
+  document.getElementById('maSuCoInput').value = '';
+  updateMucQCOptions();
+  setSaveIndicator('clean', 'Chưa có thay đổi');
+  setStatus('Đã tạo hồ sơ mới — chưa lưu');
+}
+
+async function saveRecord(){
+  const data = getFormData();
+  let id = currentId;
+  if(!id){
+    id = genId();
+    currentId = id;
+  }
+  if(!data.maSuCo){
+    data.maSuCo = id;
+    document.getElementById('maSuCoInput').value = id;
+  }
+  try{
+    await storage.set('incident:' + id, JSON.stringify(data), true);
+    const summary = {
+      id: id,
+      maSuCo: data.maSuCo || id,
+      ngay: data.ngay || '',
+      caLamViec: data.caLamViec || '',
+      xetNghiem: data.xetNghiem || '',
+      thietBi: data.thietBi || '',
+      mucQC: data.mucQC || '',
+      quyTac: data.quyTac || '',
+      nguoiPhatHien: data.nguoiPhatHien || '',
+      phuTrachQC: data.phuTrachQC || '',
+      nguoiPheDuyet: data.nguoiPheDuyet || '',
+      b5: data.b5 || '',
+      savedAt: new Date().toISOString()
+    };
+    const existingIdx = recordIndex.findIndex(r => r.id === id);
+    if(existingIdx >= 0) recordIndex[existingIdx] = summary;
+    else recordIndex.unshift(summary);
+    await saveIndex();
+    renderOverview();
+    const now = new Date();
+    setSaveIndicator('saved', 'Đã lưu lúc ' + now.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit', second:'2-digit'}));
+    setStatus('✔ Đã lưu hồ sơ ' + summary.maSuCo);
+  }catch(e){
+    setSaveIndicator('dirty', 'Lỗi khi lưu — dữ liệu CHƯA được lưu, thử lại');
+    setStatus('Lỗi khi lưu hồ sơ', true);
+  }
+}
+
+async function loadRecord(id){
+  try{
+    const res = await storage.get('incident:' + id, true);
+    if(res && res.value){
+      const data = JSON.parse(res.value);
+      currentId = id;
+      setFormData(data);
+      expandAllSteps();
+      showView('form');
+      setSaveIndicator('saved', 'Đã tải hồ sơ đã lưu');
+      setStatus('Đã tải hồ sơ ' + (data.maSuCo || id));
+    }
+  }catch(e){
+    setStatus('Không tìm thấy hồ sơ (có thể đã bị xoá)', true);
+  }
+}
+
+async function deleteRecord(id){
+  if(!confirm('Xoá vĩnh viễn hồ sơ này khỏi danh mục dùng chung?')) return;
+  try{
+    await storage.delete('incident:' + id, true);
+  }catch(e){ /* already gone */ }
+  recordIndex = recordIndex.filter(r => r.id !== id);
+  await saveIndex();
+  renderRecords();
+  renderOverview();
+  setStatus('Đã xoá hồ sơ');
+}
+
+function riskPill(b5){
+  if(b5 === 'thap') return '<span class="pill thap">Nguy cơ thấp</span>';
+  if(b5 === 'cao') return '<span class="pill cao">Nguy cơ cao</span>';
+  return '<span class="pill na">Chưa xác định</span>';
+}
+
+function renderRecords(){
+  const searchEl = document.getElementById('searchInput');
+  const riskEl = document.getElementById('filterRisk');
+  if(!searchEl || !riskEl) return;
+  const q = (searchEl.value || '').toLowerCase().trim();
+  const riskFilter = riskEl.value;
+  const wrap = document.getElementById('recTableWrap');
+  let list = recordIndex;
+  if(q){
+    list = list.filter(r => Object.values(r).some(v => String(v||'').toLowerCase().includes(q)));
+  }
+  if(riskFilter){
+    list = list.filter(r => (r.b5 || 'na') === riskFilter);
+  }
+  if(!list.length){
+    wrap.innerHTML = '<div class="rec-empty">Chưa có hồ sơ nào khớp tìm kiếm. Mở "Biểu mẫu khắc phục", điền form rồi bấm "💾 Lưu hồ sơ" để bắt đầu lưu trữ.</div>';
+    return;
+  }
+  let html = '<table class="rec-table"><tr>' +
+    '<th>Mã sự cố</th><th>Ngày</th><th>Ca</th><th>Xét nghiệm</th><th>Thiết bị</th><th>Mức QC</th><th>Quy tắc</th><th>Trạng thái</th><th></th></tr>';
+  list.forEach(r=>{
+    html += '<tr>' +
+      '<td>'+escapeHtml(r.maSuCo)+'</td>' +
+      '<td>'+escapeHtml(r.ngay)+'</td>' +
+      '<td>'+escapeHtml(r.caLamViec)+'</td>' +
+      '<td>'+escapeHtml(r.xetNghiem)+'</td>' +
+      '<td>'+escapeHtml(r.thietBi)+'</td>' +
+      '<td>'+escapeHtml(r.mucQC)+'</td>' +
+      '<td>'+escapeHtml(r.quyTac)+'</td>' +
+      '<td>'+riskPill(r.b5)+'</td>' +
+      '<td class="rec-actions"><a title="Xem/Sửa" href="javascript:void(0)" onclick="loadRecord(\''+r.id+'\')">👁️</a>' +
+      '<button title="Xoá" onclick="deleteRecord(\''+r.id+'\')">🗑️</button></td>' +
+      '</tr>';
+  });
+  html += '</table>';
+  wrap.innerHTML = html;
+}
+
+/* ============================================================
+   OVERVIEW: KPIs + charts
+============================================================ */
+function renderOverview(){
+  const sum = configSummary();
+  console.groupCollapsed('[OVERVIEW] renderOverview');
+  console.log('[OVERVIEW] config source:', configDebug.source);
+  console.log('[OVERVIEW] config status:', configDebug.status);
+  console.log('[OVERVIEW] config summary:', sum);
+  console.log('[OVERVIEW] recordIndex count:', recordIndex.length);
+  if(configDebug.source !== 'FIRESTORE'){
+    console.warn('[OVERVIEW] master-config is NOT loaded from Firestore. Calculations that depend on config.teaList may be unavailable.');
+  }
+  if(!sum.teaList){
+    console.warn('[OVERVIEW] config.teaList is empty. ΔSEcrit/ΔREcrit cannot be sourced from master-config.');
+  }
+  console.groupEnd();
+  renderConfigDebug();
+
+  const total = recordIndex.length;
+  const cao = recordIndex.filter(r=>r.b5==='cao').length;
+  const thap = recordIndex.filter(r=>r.b5==='thap').length;
+  const na = total - cao - thap;
+  const now = new Date();
+  const thisMonth = recordIndex.filter(r=>{
+    if(!r.ngay) return false;
+    const d = new Date(r.ngay);
+    return !isNaN(d) && d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
+  }).length;
+
+  document.getElementById('kpiTotal').textContent = total;
+  document.getElementById('kpiCao').textContent = cao;
+  document.getElementById('kpiThap').textContent = thap;
+  document.getElementById('kpiThang').textContent = thisMonth;
+
+  renderDonut('riskDonutWrap', [
+    {label:'Nguy cơ cao', value:cao, color:'#9C0006'},
+    {label:'Nguy cơ thấp', value:thap, color:'#2F5D3A'},
+    {label:'Chưa xác định', value:na, color:'#B9C2D0'}
+  ]);
+
+  renderTrend('trendWrap', recordIndex);
+
+  renderBarList('byXNWrap', countBy(recordIndex, 'xetNghiem'), '#2E5395');
+  renderBarList('byTBWrap', countBy(recordIndex, 'thietBi'), '#0E7C86');
+
+  renderRecent('recentWrap', recordIndex.slice(0,6));
+}
+
+function countBy(list, field){
+  const map = {};
+  list.forEach(r=>{
+    const v = (r[field]||'').trim();
+    if(!v) return;
+    map[v] = (map[v]||0) + 1;
+  });
+  return Object.entries(map).map(([label,value])=>({label,value})).sort((a,b)=>b.value-a.value).slice(0,6);
+}
+
+function renderDonut(containerId, segments){
+  const el = document.getElementById(containerId);
+  const total = segments.reduce((s,x)=>s+x.value,0);
+  if(!total){
+    el.innerHTML = '<div class="empty-note">Chưa có dữ liệu — lưu hồ sơ ở Bước 5 để hiển thị biểu đồ.</div>';
+    return;
+  }
+  const r = 52, cx = 60, cy = 60, circ = 2*Math.PI*r;
+  let offset = 0;
+  let circles = '';
+  segments.forEach(seg=>{
+    if(!seg.value) return;
+    const frac = seg.value/total;
+    const len = frac*circ;
+    circles += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="16"
+      stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${cx} ${cy})"/>`;
+    offset += len;
+  });
+  const legend = segments.map(seg=>`
+    <li><span class="sw" style="background:${seg.color}"></span>${escapeHtml(seg.label)}<span class="lv">${seg.value}</span></li>
+  `).join('');
+  el.innerHTML = `
+    <div class="donut-wrap">
+      <svg width="120" height="120" viewBox="0 0 120 120">
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#EEF1F6" stroke-width="16"/>
+        ${circles}
+        <text x="60" y="64" text-anchor="middle" font-size="20" font-weight="800" fill="#1F3864">${total}</text>
+      </svg>
+      <ul class="legend">${legend}</ul>
+    </div>
+  `;
+}
+
+function renderBarList(containerId, items, color){
+  const el = document.getElementById(containerId);
+  if(!items.length){
+    el.innerHTML = '<div class="empty-note">Chưa có dữ liệu.</div>';
+    return;
+  }
+  const max = Math.max(...items.map(i=>i.value));
+  el.innerHTML = '<div class="barlist">' + items.map(i=>`
+    <div class="row">
+      <div class="name" title="${escapeHtml(i.label)}">${escapeHtml(i.label)}</div>
+      <div class="track"><div class="fill" style="width:${Math.round(i.value/max*100)}%; background:${color};"></div></div>
+      <div class="val">${i.value}</div>
+    </div>
+  `).join('') + '</div>';
+}
+
+function renderTrend(containerId, list){
+  const el = document.getElementById(containerId);
+  const now = new Date();
+  const months = [];
+  for(let i=5;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    months.push({y:d.getFullYear(), m:d.getMonth(), label:'T'+(d.getMonth()+1), count:0});
+  }
+  list.forEach(r=>{
+    if(!r.ngay) return;
+    const d = new Date(r.ngay);
+    if(isNaN(d)) return;
+    const hit = months.find(mo=>mo.y===d.getFullYear() && mo.m===d.getMonth());
+    if(hit) hit.count++;
+  });
+  const max = Math.max(1, ...months.map(m=>m.count));
+  if(!list.length){
+    el.innerHTML = '<div class="empty-note">Chưa có dữ liệu — biểu đồ sẽ hiển thị khi có hồ sơ được lưu.</div>';
+    return;
+  }
+  el.innerHTML = '<div class="trend">' + months.map(mo=>`
+    <div class="col">
+      <div class="v">${mo.count||''}</div>
+      <div class="stick" style="height:${mo.count ? Math.max(6, Math.round(mo.count/max*100)) : 2}%;"></div>
+      <div class="m">${mo.label}</div>
+    </div>
+  `).join('') + '</div>';
+}
+
+function renderRecent(containerId, list){
+  const el = document.getElementById(containerId);
+  if(!list.length){
+    el.innerHTML = '<div class="empty-note">Chưa có hồ sơ nào — tạo hồ sơ mới để bắt đầu.</div>';
+    return;
+  }
+  let html = '<table class="recent-table"><tr><th>Mã sự cố</th><th>Ngày</th><th>Xét nghiệm</th><th>Thiết bị</th><th>Trạng thái</th></tr>';
+  list.forEach(r=>{
+    html += `<tr onclick="loadRecord('${r.id}')">
+      <td>${escapeHtml(r.maSuCo)}</td><td>${escapeHtml(r.ngay)}</td>
+      <td>${escapeHtml(r.xetNghiem)}</td><td>${escapeHtml(r.thietBi)}</td>
+      <td>${riskPill(r.b5)}</td></tr>`;
+  });
+  html += '</table>';
+  el.innerHTML = html;
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+window.startIQCApp = async function init(){
+  if(!HAS_SHARED_STORAGE){
+    const banner = document.getElementById('storageBanner');
+    if(banner){
+      banner.style.display = 'block';
+      banner.innerHTML = '⚠️ <b>Đang lưu cục bộ trên trình duyệt này (localStorage)</b> — file đang được mở trực tiếp ngoài Claude nên không có kho dữ liệu dùng chung. Dữ liệu cấu hình và hồ sơ chỉ hiển thị trên máy/trình duyệt này, <b>không tự đồng bộ</b> sang máy tính khác. Muốn chuyển dữ liệu sang thiết bị khác: bấm <b>⬇️ Xuất dữ liệu</b> ở cuối sidebar để tải file sao lưu, rồi mở file này trên thiết bị kia và bấm <b>⬆️ Nhập dữ liệu</b> để nạp vào.';
+    }
+    const note = document.getElementById('storageModeNote');
+    if(note) note.textContent = 'Đang lưu cục bộ trên trình duyệt này (không dùng chung).';
+  }
+  const formEl = document.getElementById('view-form');
+  if(formEl){
+    formEl.addEventListener('input', markFormDirty);
+    formEl.addEventListener('change', markFormDirty);
+  }
+  console.debug('[INIT] authenticated user:', firebaseAuth.currentUser ? firebaseAuth.currentUser.email : null);
+  console.debug('[INIT] loading master-config before incident-index');
+  await loadConfig();
+  console.debug('[INIT] master-config load finished:', {source:configDebug.source, status:configDebug.status, summary:configSummary()});
+  await loadIndex();
+  const params = new URLSearchParams(location.search);
+  const openId = params.get('id');
+  if(openId){
+    await loadRecord(openId);
+  } else {
+    showView('overview');
+  }
+};
+</script>
+</body>
+</html>
