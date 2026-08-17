@@ -484,19 +484,20 @@
         </div>
 
         <div class="cfg-group wide">
-          <label>Ngưỡng TEa (Total allowable error) &amp; SD/CV nội bộ của từng xét nghiệm</label>
-          <div class="empty-hint" style="margin-bottom:6px;">TEa, Bias hiệu năng PP và SD/CV khai báo ở đây sẽ được Biểu mẫu khắc phục (Bước 4.2 và Bước 5) tự động lấy về theo tên xét nghiệm. ΔSEcrit/ΔREcrit được tính sẵn tại đây (theo hồ sơ thẩm định phương pháp) và Bước 5 sẽ lấy nguyên giá trị này về, không tính lại theo bias của từng sự cố.</div>
+          <label>Ngưỡng TEa (Total allowable error), Bias PP &amp; SD/CV nội bộ — theo từng xét nghiệm × thiết bị</label>
+          <div class="empty-hint" style="margin-bottom:6px;">Mỗi thiết bị chạy cùng 1 xét nghiệm có thể cho TEa/Bias/SD khác nhau, nên khai báo riêng từng dòng theo cặp <b>Xét nghiệm + Thiết bị</b>. Bỏ trống cột "Thiết bị" nếu muốn dòng đó áp dụng chung cho mọi thiết bị (dùng làm giá trị dự phòng khi chưa có dòng riêng cho thiết bị đang chọn). Biểu mẫu khắc phục (Bước 4.2 và Bước 5) sẽ tự động lấy đúng dòng theo cả xét nghiệm lẫn thiết bị đã chọn. ΔSEcrit/ΔREcrit được tính sẵn tại đây (theo hồ sơ thẩm định phương pháp) và Bước 5 sẽ lấy nguyên giá trị này về, không tính lại theo bias của từng sự cố.</div>
           <div style="overflow-x:auto;">
           <table class="tea">
             <tr>
-              <th style="width:15%">Xét nghiệm</th>
-              <th style="width:9%">TEa (%)</th>
-              <th style="width:12%">Bias hiệu năng PP (%)</th>
-              <th style="width:11%">SD/CV nội bộ (%)</th>
-              <th style="width:10%">ΔSEcrit</th>
-              <th style="width:10%">ΔREcrit</th>
-              <th style="width:13%">Nguồn tham khảo</th>
-              <th style="width:14%">Ghi chú</th>
+              <th style="width:13%">Xét nghiệm</th>
+              <th style="width:13%">Thiết bị</th>
+              <th style="width:8%">TEa (%)</th>
+              <th style="width:11%">Bias hiệu năng PP (%)</th>
+              <th style="width:10%">SD/CV nội bộ (%)</th>
+              <th style="width:9%">ΔSEcrit</th>
+              <th style="width:9%">ΔREcrit</th>
+              <th style="width:11%">Nguồn tham khảo</th>
+              <th style="width:12%">Ghi chú</th>
               <th></th>
             </tr>
             <tbody id="teaTableBody"></tbody>
@@ -525,7 +526,7 @@
         <div class="field"><label>Ca làm việc</label><input type="text" list="dl-caLamViec" data-key="caLamViec"></div>
 
         <div class="field"><label>Danh mục xét nghiệm</label><input type="text" list="dl-xetNghiem" data-key="xetNghiem" id="xetNghiemInput" oninput="updateMucQCOptions(); updateNguongBias(); updateB5Calc();"></div>
-        <div class="field"><label>Thiết bị / Hệ thống</label><input type="text" list="dl-thietBi" data-key="thietBi"></div>
+        <div class="field"><label>Thiết bị / Hệ thống</label><input type="text" list="dl-thietBi" data-key="thietBi" id="thietBiInput" oninput="updateNguongBias(); updateB5Calc();"></div>
         <div class="field"><label>Mức IQC vi phạm</label><input type="text" list="dl-mucQC" data-key="mucQC" placeholder="Chọn xét nghiệm trước"></div>
         <div class="field"><label>Quy tắc vi phạm</label><input type="text" list="dl-quyTac" data-key="quyTac" id="quyTacInput" oninput="updateSection43()"></div>
 
@@ -808,13 +809,12 @@
 <script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore-compat.js"></script>
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyBzyR2j-ixAbc83bcJGFpP7twgrY_ycN90",
-  authDomain: "lam-uyen.firebaseapp.com",
-  projectId: "lam-uyen",
-  storageBucket: "lam-uyen.firebasestorage.app",
-  messagingSenderId: "894698953139",
-  appId: "1:894698953139:web:9ed3c0016bc44d77fd53c6",
-  measurementId: "G-YVWHYMQ4NL"
+  apiKey: "AIzaSyALqPR4AVVdfTXDhWG-HDTkAOiVPL3xS9U",
+  authDomain: "iqc-dashboard-974db.firebaseapp.com",
+  projectId: "iqc-dashboard-974db",
+  storageBucket: "iqc-dashboard-974db.firebasestorage.app",
+  messagingSenderId: "180021822395",
+  appId: "1:180021822395:web:2aefea48c9d24caff7ba9e"
 };
 firebase.initializeApp(firebaseConfig);
 const firebaseAuth = firebase.auth();
@@ -1248,7 +1248,7 @@ function renderTeaTable(){
   const body = document.getElementById('teaTableBody');
   body.innerHTML = '';
   if(!config.teaList.length){
-    body.innerHTML = '<tr><td colspan="9" class="empty-hint" style="padding:10px;">Chưa có ngưỡng TEa nào — bấm "+ Thêm dòng" bên dưới.</td></tr>';
+    body.innerHTML = '<tr><td colspan="10" class="empty-hint" style="padding:10px;">Chưa có ngưỡng TEa nào — bấm "+ Thêm dòng" bên dưới.</td></tr>';
     return;
   }
   config.teaList.forEach((row, idx)=>{
@@ -1262,8 +1262,17 @@ function renderTeaTable(){
       ...(!hasExactName && currentName ? [`<option value="${escapeHtml(currentName)}" selected>⚠ ${escapeHtml(currentName)} (tên cũ)</option>`] : []),
       ...knownTests.map(name => `<option value="${escapeHtml(name)}" ${name===currentName?'selected':''}>${escapeHtml(name)}</option>`)
     ].join('');
+    const knownDevices = Array.isArray(config.thietBi) ? config.thietBi : [];
+    const currentDevice = String(row.thietBi || '').trim();
+    const hasExactDevice = !currentDevice || knownDevices.includes(currentDevice);
+    const deviceOptions = [
+      '<option value="">-- Mọi thiết bị (dự phòng) --</option>',
+      ...(!hasExactDevice && currentDevice ? [`<option value="${escapeHtml(currentDevice)}" selected>⚠ ${escapeHtml(currentDevice)} (tên cũ)</option>`] : []),
+      ...knownDevices.map(name => `<option value="${escapeHtml(name)}" ${name===currentDevice?'selected':''}>${escapeHtml(name)}</option>`)
+    ].join('');
     tr.innerHTML = `
       <td><select onchange="updateTeaRow(${idx},'xn',this.value)" style="width:100%;${!hasExactName && currentName ? 'border-color:#C99A00;background:#FFF8E1;' : ''}">${testOptions}</select></td>
+      <td><select onchange="updateTeaRow(${idx},'thietBi',this.value)" style="width:100%;${!hasExactDevice && currentDevice ? 'border-color:#C99A00;background:#FFF8E1;' : ''}">${deviceOptions}</select></td>
       <td><input value="${escapeHtml(row.tea)}" onchange="updateTeaRow(${idx},'tea',this.value)" placeholder="%"></td>
       <td><input value="${escapeHtml(row.biasPP||'')}" onchange="updateTeaRow(${idx},'biasPP',this.value)" placeholder="%"></td>
       <td><input value="${escapeHtml(row.sdcv||'')}" onchange="updateTeaRow(${idx},'sdcv',this.value)" placeholder="%"></td>
@@ -1281,7 +1290,7 @@ function renderTeaTable(){
   });
 }
 async function addTeaRow(){
-  config.teaList.push({xn:'', tea:'', biasPP:'', sdcv:'', nguon:'CLSI', ghiChu:''});
+  config.teaList.push({xn:'', thietBi:'', tea:'', biasPP:'', sdcv:'', nguon:'CLSI', ghiChu:''});
   renderTeaTable();
   await saveConfig();
 }
@@ -1343,7 +1352,7 @@ function updateMucQCOptions(){
   fillDatalist('dl-mucQC', arr);
 }
 
-/* Chuẩn hoá tên xét nghiệm để tránh lỗi tra TEa do tên cũ/biến thể. */
+/* Chuẩn hoá tên xét nghiệm / thiết bị để tránh lỗi tra TEa do tên cũ/biến thể. */
 function normalizeTestName(name){
   return String(name || '')
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -1352,12 +1361,35 @@ function normalizeTestName(name){
     .trim()
     .replace(/\s+/g, ' ');
 }
+const normalizeDeviceName = normalizeTestName;
 
-function findTeaRowForXN(xn){
+function findTeaRowForXN(xn, thietBi){
   if(!xn || !Array.isArray(config.teaList)) return null;
   const target = normalizeTestName(xn);
-  let row = config.teaList.find(r => normalizeTestName(r.xn) === target);
-  if(row) return row;
+  const targetDevice = normalizeDeviceName(thietBi || '');
+  const candidates = config.teaList.filter(r => normalizeTestName(r.xn) === target);
+
+  if(candidates.length){
+    // 1) Ưu tiên khớp đúng cả xét nghiệm + thiết bị
+    if(targetDevice){
+      const exact = candidates.find(r => normalizeDeviceName(r.thietBi) === targetDevice);
+      if(exact) return exact;
+    }
+    // 2) Không có dòng riêng cho thiết bị này → dùng dòng dự phòng (thiết bị bỏ trống = áp dụng chung)
+    const generic = candidates.find(r => !normalizeDeviceName(r.thietBi));
+    if(generic){
+      if(targetDevice){
+        console.warn('[CONFIG MATCH] No device-specific TEa row, falling back to generic row', {requested:xn, device:thietBi, matched:generic.xn});
+      }
+      return generic;
+    }
+    // 3) Có dòng cho xét nghiệm nhưng khác thiết bị và không có dòng dự phòng → vẫn báo thiếu, không đoán bừa
+    console.warn('[CONFIG MATCH] TEa rows exist for test but none match device and no generic fallback row', {
+      requested:xn, device:thietBi,
+      availableDevices:candidates.map(r=>r.thietBi)
+    });
+    return null;
+  }
 
   // Legacy alias kept intentionally narrow to avoid matching unrelated tests.
   const aliasGroups = [
@@ -1365,7 +1397,7 @@ function findTeaRowForXN(xn){
   ];
   const aliases = aliasGroups.find(group => group.includes(target));
   if(aliases){
-    row = config.teaList.find(r => aliases.includes(normalizeTestName(r.xn)));
+    const row = config.teaList.find(r => aliases.includes(normalizeTestName(r.xn)) && (!targetDevice || !normalizeDeviceName(r.thietBi) || normalizeDeviceName(r.thietBi) === targetDevice));
     if(row){
       console.warn('[CONFIG MATCH] Used legacy test-name alias', {requested:xn, matched:row.xn});
       return row;
@@ -1380,9 +1412,9 @@ function findTeaRowForXN(xn){
   return null;
 }
 
-/* Ngưỡng Bias cho phép (Bước 4.2) = 1/4 TEa, tự động tra theo bảng TEa trong Cấu hình danh mục */
-function findTeaForXN(xn){
-  const row = findTeaRowForXN(xn);
+/* Ngưỡng Bias cho phép (Bước 4.2) = 1/4 TEa, tự động tra theo bảng TEa trong Cấu hình danh mục (theo xét nghiệm + thiết bị) */
+function findTeaForXN(xn, thietBi){
+  const row = findTeaRowForXN(xn, thietBi);
   if(!row) return null;
   const val = parseFloat(String(row.tea).replace(',', '.').replace('%',''));
   if(isNaN(val)) return null;
@@ -1391,15 +1423,15 @@ function findTeaForXN(xn){
     const s = parseFloat(String(row.sdcv).replace(',', '.').replace('%',''));
     if(!isNaN(s)) sdcvVal = s;
   }
-  return { teaValue: val, raw: row.tea, sdcvValue: sdcvVal, sdcvRaw: row.sdcv, nguon: row.nguon, ghiChu: row.ghiChu, matchedXn: row.xn };
+  return { teaValue: val, raw: row.tea, sdcvValue: sdcvVal, sdcvRaw: row.sdcv, nguon: row.nguon, ghiChu: row.ghiChu, matchedXn: row.xn, matchedThietBi: row.thietBi };
 }
 function fmtNum(n){
   return (Math.round(n*1000)/1000).toString();
 }
 
-/* Bước 5: TEa, Bias hiệu năng PP, SD/CV, ΔSEcrit, ΔREcrit — tra theo xét nghiệm trong Cấu hình danh mục */
-function findValidationForXN(xn){
-  const row = findTeaRowForXN(xn);
+/* Bước 5: TEa, Bias hiệu năng PP, SD/CV, ΔSEcrit, ΔREcrit — tra theo xét nghiệm + thiết bị trong Cấu hình danh mục */
+function findValidationForXN(xn, thietBi){
+  const row = findTeaRowForXN(xn, thietBi);
   if(!row) return null;
   const teaNum = parseNum(row.tea);
   const biasPPNum = parseNum(row.biasPP);
@@ -1407,7 +1439,7 @@ function findValidationForXN(xn){
   const crit = computeCrit(teaNum, biasPPNum, sdNum);
   return {
     tea: row.tea, sdcv: row.sdcv, biasPP: row.biasPP,
-    nguon: row.nguon, ghiChu: row.ghiChu, matchedXn: row.xn,
+    nguon: row.nguon, ghiChu: row.ghiChu, matchedXn: row.xn, matchedThietBi: row.thietBi,
     dSEcrit: crit.dSEcrit, dREcrit: crit.dREcrit
   };
 }
@@ -1416,6 +1448,7 @@ function onBias5ManualEdit(){ const el = document.getElementById('bias5Input'); 
 function onSd5ManualEdit(){ const el = document.getElementById('sd5Input'); if(el) el.dataset.auto = '0'; }
 function updateB5Calc(){
   const xnEl = document.getElementById('xetNghiemInput');
+  const tbEl = document.getElementById('thietBiInput');
   const tea5El = document.getElementById('tea5Input');
   const bias5El = document.getElementById('bias5Input');
   const sd5El = document.getElementById('sd5Input');
@@ -1426,7 +1459,8 @@ function updateB5Calc(){
   if(!xnEl || !tea5El || !bias5El || !sd5El || !dSEEl || !dREEl) return;
 
   const xn = xnEl.value.trim();
-  const v = findValidationForXN(xn);
+  const tb = tbEl ? tbEl.value.trim() : '';
+  const v = findValidationForXN(xn, tb);
 
   if(v && v.tea !== '' && v.tea !== undefined && (!tea5El.value || tea5El.dataset.auto !== '0')){
     tea5El.value = v.tea; tea5El.dataset.auto = '1';
@@ -1450,11 +1484,16 @@ function updateB5Calc(){
 
   if(sourceHint){
     if(xn && v){
-      sourceHint.innerHTML = '🤖 TEa và SD/CV lấy tự động từ Cấu hình danh mục (xét nghiệm "' + escapeHtml(xn) + '"). "Bias quan sát trong sự cố" lấy từ ô "Bias trước khắc phục" đã nhập ở Bước 4 — bạn có thể sửa tay nếu cần.';
+      const deviceNote = tb
+        ? (v.matchedThietBi ? ('theo đúng thiết bị "' + escapeHtml(v.matchedThietBi) + '"') : ('⚠ chưa có dòng riêng cho thiết bị "' + escapeHtml(tb) + '", đang dùng giá trị dự phòng chung cho xét nghiệm này'))
+        : 'áp dụng chung (chưa chọn thiết bị)';
+      sourceHint.innerHTML = '🤖 TEa và SD/CV lấy tự động từ Cấu hình danh mục (xét nghiệm "' + escapeHtml(xn) + '", ' + deviceNote + '). "Bias quan sát trong sự cố" lấy từ ô "Bias trước khắc phục" đã nhập ở Bước 4 — bạn có thể sửa tay nếu cần.';
+    } else if(xn && tb){
+      sourceHint.innerHTML = 'Chưa có TEa/SD/CV cho cặp xét nghiệm "' + escapeHtml(xn) + '" + thiết bị "' + escapeHtml(tb) + '" (và cũng chưa có dòng dự phòng chung) trong Cấu hình danh mục → nhập thủ công, hoặc bổ sung ở tab Cấu hình.';
     } else if(xn){
       sourceHint.innerHTML = 'Chưa có TEa/SD/CV cho xét nghiệm "' + escapeHtml(xn) + '" trong Cấu hình danh mục → nhập thủ công, hoặc bổ sung ở tab Cấu hình.';
     } else {
-      sourceHint.innerHTML = 'Nhập/chọn xét nghiệm ở phần thông tin chung phía trên để tự động lấy TEa/SD/CV.';
+      sourceHint.innerHTML = 'Nhập/chọn xét nghiệm (và thiết bị, nếu có nhiều thiết bị) ở phần thông tin chung phía trên để tự động lấy TEa/SD/CV.';
     }
   }
   if(calcHint){
@@ -1561,19 +1600,26 @@ function updateNguongBias(force){
   const hint = document.getElementById('nguongBiasHint');
   if(!xnEl || !el) return;
   const xn = xnEl.value.trim();
-  const match = findTeaForXN(xn);
+  const tbEl2 = document.getElementById('thietBiInput');
+  const tb = tbEl2 ? tbEl2.value.trim() : '';
+  const match = findTeaForXN(xn, tb);
   if(match){
     const nguong = fmtNum(match.teaValue / 4);
     if(force || !el.value || el.dataset.auto !== '0'){
       el.value = nguong;
       el.dataset.auto = '1';
     }
-    if(hint) hint.innerHTML = 'Tự động: TEa "' + escapeHtml(xn) + '" = ' + escapeHtml(String(match.raw)) + '% (nguồn: ' + escapeHtml(match.nguon||'') + ') → Ngưỡng = TEa/4 = <b>' + nguong + '%</b>. Đã tự sửa tay? Bấm 🔄 để tính lại.';
+    const deviceNote = tb
+      ? (match.matchedThietBi ? (' (thiết bị "' + escapeHtml(match.matchedThietBi) + '")') : (' — ⚠ chưa có dòng riêng cho thiết bị "' + escapeHtml(tb) + '", đang dùng giá trị dự phòng chung'))
+      : '';
+    if(hint) hint.innerHTML = 'Tự động: TEa "' + escapeHtml(xn) + '"' + deviceNote + ' = ' + escapeHtml(String(match.raw)) + '% (nguồn: ' + escapeHtml(match.nguon||'') + ') → Ngưỡng = TEa/4 = <b>' + nguong + '%</b>. Đã tự sửa tay? Bấm 🔄 để tính lại.';
   } else {
     if(hint){
       hint.innerHTML = xn
-        ? 'Chưa có ngưỡng TEa cho xét nghiệm "' + escapeHtml(xn) + '" trong Cấu hình danh mục → nhập ngưỡng thủ công, hoặc bổ sung TEa ở tab Cấu hình rồi bấm 🔄.'
-        : 'Nhập/chọn xét nghiệm ở phần thông tin chung phía trên để tự động tính ngưỡng theo TEa.';
+        ? (tb
+            ? 'Chưa có ngưỡng TEa cho cặp xét nghiệm "' + escapeHtml(xn) + '" + thiết bị "' + escapeHtml(tb) + '" (và cũng chưa có dòng dự phòng chung) trong Cấu hình danh mục → nhập ngưỡng thủ công, hoặc bổ sung TEa ở tab Cấu hình rồi bấm 🔄.'
+            : 'Chưa có ngưỡng TEa cho xét nghiệm "' + escapeHtml(xn) + '" trong Cấu hình danh mục → nhập ngưỡng thủ công, hoặc bổ sung TEa ở tab Cấu hình rồi bấm 🔄.')
+        : 'Nhập/chọn xét nghiệm (và thiết bị) ở phần thông tin chung phía trên để tự động tính ngưỡng theo TEa.';
     }
   }
   if(typeof updateBiasConclusion === 'function') updateBiasConclusion();
@@ -1842,7 +1888,7 @@ async function handleImportFile(evt){
     }
     if(Array.isArray(pc.teaList)){
       pc.teaList.forEach(row=>{
-        const exists = config.teaList.some(r => r.xn===row.xn && r.tea===row.tea && r.nguon===row.nguon && r.ghiChu===row.ghiChu);
+        const exists = config.teaList.some(r => r.xn===row.xn && (r.thietBi||'')===(row.thietBi||'') && r.tea===row.tea && r.nguon===row.nguon && r.ghiChu===row.ghiChu);
         if(!exists) config.teaList.push(row);
       });
     }
