@@ -709,21 +709,35 @@
           <div class="formula">ΔSEcrit = [(TEa − Bias) / SD] − 1,65 &nbsp;&nbsp;&nbsp; ΔREcrit = (TEa − Bias) / (1,65 × SD)</div>
           <div class="field-row three">
             <div class="field"><label>TEa (%)</label><input type="text" data-key="tea5" id="tea5Input" oninput="onTea5ManualEdit(); updateB5Calc();"></div>
-            <div class="field"><label>Bias quan sát trong sự cố (%)</label><input type="text" data-key="bias5" id="bias5Input" oninput="onBias5ManualEdit(); updateB5Calc();"></div>
             <div class="field"><label>SD/CV nội bộ (%)</label><input type="text" data-key="sd5" id="sd5Input" oninput="onSd5ManualEdit(); updateB5Calc();"></div>
+            <div class="field"></div>
           </div>
           <div class="empty-hint" id="b5SourceHint" style="margin:-4px 0 10px;"></div>
           <div class="field-row">
             <div class="field"><label>ΔSEcrit (tự động tính)</label><input type="text" data-key="dSEcrit" id="dSEcritInput" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
             <div class="field"><label>ΔREcrit (tự động tính)</label><input type="text" data-key="dREcrit" id="dREcritInput" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
           </div>
+
+          <div class="formula">SEobs = |Bias đo được lúc sự cố − Bias đo được sau khắc phục (baseline)| / SD nội bộ &nbsp;&nbsp;&mdash;&nbsp;&nbsp; so sánh SEobs với ΔSEcrit</div>
+          <div class="field-row three">
+            <div class="field"><label>Bias đo được lúc sự cố (%)</label><input type="text" data-key="bias5" id="bias5Input" oninput="onBias5ManualEdit(); updateB5Calc();"></div>
+            <div class="field"><label>Bias đo được sau khắc phục / baseline (%)</label><input type="text" data-key="biasSau5" id="biasSau5Input" oninput="onBiasSau5ManualEdit(); updateB5Calc();"></div>
+            <div class="field"><label>SEobs (tự động tính)</label><input type="text" data-key="seObs" id="seObsInput" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
+          </div>
+
+          <div class="formula">REobs = Độ phân tán / biên độ dao động QC quan sát được / SD nội bộ &nbsp;&nbsp;&mdash;&nbsp;&nbsp; so sánh REobs với ΔREcrit</div>
+          <div class="field-row three">
+            <div class="field"><label>Độ phân tán/biên độ dao động QC quan sát được (%)</label><input type="text" data-key="bienDoQC5" id="bienDoQC5Input" oninput="onBienDoQC5ManualEdit(); updateB5Calc();"></div>
+            <div class="field"><label>REobs (tự động tính)</label><input type="text" data-key="reObs" id="reObsInput" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
+            <div class="field"></div>
+          </div>
           <div class="empty-hint" id="b5CalcHint" style="margin-top:-6px;"></div>
           <div class="formula" id="b5DegBox" style="background:#EAF1FB; color:var(--navy); display:none;"></div>
 
           <table class="mini">
             <tr><th style="width:30%">So sánh</th><th style="width:35%">Ý nghĩa</th><th>Hướng xử lý</th></tr>
-            <tr><td>Độ lệch quan sát &lt; ΔSEcrit/ΔREcrit</td><td>Sai số nhỏ hơn ngưỡng có ý nghĩa y khoa</td><td>Nguy cơ thấp; rà soát mức thông thường, ưu tiên XN quyết định điều trị cao</td></tr>
-            <tr><td>Độ lệch quan sát ≥ ΔSEcrit/ΔREcrit</td><td>Sai số đã vượt ngưỡng có ý nghĩa y khoa</td><td>Nguy cơ cao; rà soát TOÀN BỘ kết quả trong khoảng ảnh hưởng, ưu tiên thông báo lâm sàng sớm</td></tr>
+            <tr><td>SEobs &lt; ΔSEcrit và REobs &lt; ΔREcrit</td><td>Sai số nhỏ hơn ngưỡng có ý nghĩa y khoa</td><td>Nguy cơ thấp; rà soát mức thông thường, ưu tiên XN quyết định điều trị cao</td></tr>
+            <tr><td>SEobs ≥ ΔSEcrit hoặc REobs ≥ ΔREcrit</td><td>Sai số đã vượt ngưỡng có ý nghĩa y khoa</td><td>Nguy cơ cao; rà soát TOÀN BỘ kết quả trong khoảng ảnh hưởng, ưu tiên thông báo lâm sàng sớm</td></tr>
           </table>
 
           <div class="radio-group" id="b5Group">
@@ -1447,6 +1461,8 @@ function findValidationForXN(xn, thietBi){
 function onTea5ManualEdit(){ const el = document.getElementById('tea5Input'); if(el) el.dataset.auto = '0'; }
 function onBias5ManualEdit(){ const el = document.getElementById('bias5Input'); if(el) el.dataset.auto = '0'; }
 function onSd5ManualEdit(){ const el = document.getElementById('sd5Input'); if(el) el.dataset.auto = '0'; }
+function onBiasSau5ManualEdit(){ const el = document.getElementById('biasSau5Input'); if(el) el.dataset.auto = '0'; }
+function onBienDoQC5ManualEdit(){ const el = document.getElementById('bienDoQC5Input'); if(el) el.dataset.auto = '0'; }
 function updateB5Calc(){
   const xnEl = document.getElementById('xetNghiemInput');
   const tbEl = document.getElementById('thietBiInput');
@@ -1475,6 +1491,12 @@ function updateB5Calc(){
     bias5El.value = biasTruocEl.value; bias5El.dataset.auto = '1';
   }
 
+  const biasSau5El = document.getElementById('biasSau5Input');
+  const biasSauEl = document.getElementById('biasSauInput');
+  if(biasSau5El && biasSauEl && biasSauEl.value !== '' && (!biasSau5El.value || biasSau5El.dataset.auto !== '0')){
+    biasSau5El.value = biasSauEl.value; biasSau5El.dataset.auto = '1';
+  }
+
   if(v && v.dSEcrit !== null && v.dSEcrit !== undefined){
     dSEEl.value = v.dSEcrit;
     dREEl.value = v.dREcrit;
@@ -1488,7 +1510,7 @@ function updateB5Calc(){
       const deviceNote = tb
         ? (v.matchedThietBi ? ('theo đúng thiết bị "' + escapeHtml(v.matchedThietBi) + '"') : ('⚠ chưa có dòng riêng cho thiết bị "' + escapeHtml(tb) + '", đang dùng giá trị dự phòng chung cho xét nghiệm này'))
         : 'áp dụng chung (chưa chọn thiết bị)';
-      sourceHint.innerHTML = '🤖 TEa và SD/CV lấy tự động từ Cấu hình danh mục (xét nghiệm "' + escapeHtml(xn) + '", ' + deviceNote + '). "Bias quan sát trong sự cố" lấy từ ô "Bias trước khắc phục" đã nhập ở Bước 4 — bạn có thể sửa tay nếu cần.';
+      sourceHint.innerHTML = '🤖 TEa và SD/CV lấy tự động từ Cấu hình danh mục (xét nghiệm "' + escapeHtml(xn) + '", ' + deviceNote + '). "Bias đo được lúc sự cố" lấy từ ô "Bias trước khắc phục" và "Bias đo được sau khắc phục" lấy từ ô "Bias sau khắc phục" đã nhập ở Bước 4 — bạn có thể sửa tay nếu cần. "Độ phân tán/biên độ dao động QC quan sát được" cần nhập tay theo số liệu QC thực tế ghi nhận trong sự cố.';
     } else if(xn && tb){
       sourceHint.innerHTML = 'Chưa có TEa/SD/CV cho cặp xét nghiệm "' + escapeHtml(xn) + '" + thiết bị "' + escapeHtml(tb) + '" (và cũng chưa có dòng dự phòng chung) trong Cấu hình danh mục → nhập thủ công, hoặc bổ sung ở tab Cấu hình.';
     } else if(xn){
@@ -1533,29 +1555,46 @@ function updateB5Risk(){
   if(!thapLabel || !caoLabel) return;
 
   const bias5El = document.getElementById('bias5Input');
+  const biasSau5El = document.getElementById('biasSau5Input');
   const sd5El = document.getElementById('sd5Input');
+  const bienDoQC5El = document.getElementById('bienDoQC5Input');
   const dSEEl = document.getElementById('dSEcritInput');
   const dREEl = document.getElementById('dREcritInput');
+  const seObsEl = document.getElementById('seObsInput');
+  const reObsEl = document.getElementById('reObsInput');
   const bias5 = parseNum(bias5El ? bias5El.value : '');
+  const biasSau5 = parseNum(biasSau5El ? biasSau5El.value : '');
   const sd5 = parseNum(sd5El ? sd5El.value : '');
+  const bienDoQC5 = parseNum(bienDoQC5El ? bienDoQC5El.value : '');
   const dSE = parseNum(dSEEl ? dSEEl.value : '');
   const dRE = parseNum(dREEl ? dREEl.value : '');
 
-  if(isNaN(bias5) || isNaN(sd5) || sd5 === 0 || isNaN(dSE) || isNaN(dRE)){
+  // SEobs = |Bias lúc sự cố − Bias sau khắc phục (baseline)| / SD nội bộ
+  const seObsValid = !isNaN(bias5) && !isNaN(biasSau5) && !isNaN(sd5) && sd5 !== 0;
+  const seObs = seObsValid ? Math.abs(bias5 - biasSau5) / sd5 : null;
+  // REobs = độ phân tán/biên độ dao động QC quan sát được / SD nội bộ
+  const reObsValid = !isNaN(bienDoQC5) && !isNaN(sd5) && sd5 !== 0;
+  const reObs = reObsValid ? bienDoQC5 / sd5 : null;
+
+  if(seObsEl) seObsEl.value = seObsValid ? fmtNum(seObs) : '';
+  if(reObsEl) reObsEl.value = reObsValid ? fmtNum(reObs) : '';
+
+  if((!seObsValid && !reObsValid) || isNaN(dSE) || isNaN(dRE)){
     if(box) box.style.display = 'none';
     if(!b5ManualOverride){
       thapLabel.classList.remove('auto-hidden','auto-picked');
       caoLabel.classList.remove('auto-hidden','auto-picked');
-      if(hint) hint.innerHTML = 'Nhập đủ "Bias quan sát trong sự cố" và "SD/CV nội bộ" (cần có sẵn ΔSEcrit/ΔREcrit) để hệ thống tự đánh giá và ẩn lựa chọn không phù hợp.';
+      if(hint) hint.innerHTML = 'Nhập đủ "Bias đo được lúc sự cố", "Bias đo được sau khắc phục" (để tính SEobs) và/hoặc "Độ phân tán/biên độ dao động QC quan sát được" (để tính REobs), cùng "SD/CV nội bộ" (cần có sẵn ΔSEcrit/ΔREcrit) để hệ thống tự đánh giá và ẩn lựa chọn không phù hợp.';
     }
     return;
   }
 
-  const degObs = Math.abs(bias5) / sd5;
-  const cao = (degObs >= dSE) || (degObs >= dRE);
+  const cao = (seObsValid && seObs >= dSE) || (reObsValid && reObs >= dRE);
   if(box){
     box.style.display = '';
-    box.innerHTML = 'Độ lệch quan sát = |Bias quan sát| / SD = ' + fmtNum(degObs) + ' lần SD &nbsp;&nbsp;so với&nbsp;&nbsp; ΔSEcrit = ' + fmtNum(dSE) + ' &nbsp;/&nbsp; ΔREcrit = ' + fmtNum(dRE);
+    box.innerHTML = (seObsValid ? 'SEobs = |Bias lúc sự cố − Bias sau khắc phục| / SD = ' + fmtNum(seObs) + ' lần SD &nbsp;&nbsp;so với&nbsp;&nbsp; ΔSEcrit = ' + fmtNum(dSE) : 'SEobs = — (thiếu dữ liệu Bias)')
+      + '<br>' +
+      (reObsValid ? 'REobs = Biên độ dao động QC / SD = ' + fmtNum(reObs) + ' lần SD &nbsp;&nbsp;so với&nbsp;&nbsp; ΔREcrit = ' + fmtNum(dRE) : 'REobs = — (thiếu dữ liệu biên độ dao động QC)');
   }
 
   if(b5ManualOverride){
@@ -1563,8 +1602,9 @@ function updateB5Risk(){
     const caoRadioChecked = document.querySelector('input[name="b5"][value="cao"]').checked;
     const mismatch = (cao && thapRadioChecked) || (!cao && caoRadioChecked);
     if(hint && (thapRadioChecked || caoRadioChecked)){
+      const dataNote = (seObsValid ? 'SEobs ' + fmtNum(seObs) + ' so với ΔSEcrit ' + fmtNum(dSE) : 'SEobs —') + ' / ' + (reObsValid ? 'REobs ' + fmtNum(reObs) + ' so với ΔREcrit ' + fmtNum(dRE) : 'REobs —');
       hint.innerHTML = (mismatch
-        ? '⚠️ Bạn đang chọn <b>' + (thapRadioChecked ? 'Nguy cơ THẤP' : 'Nguy cơ CAO') + '</b> nhưng theo số liệu hiện tại (' + fmtNum(degObs) + ' lần SD so với ΔSEcrit ' + fmtNum(dSE) + ' / ΔREcrit ' + fmtNum(dRE) + '), kết luận đúng phải là <b>' + (cao ? 'Nguy cơ CAO' : 'Nguy cơ THẤP') + '</b>. '
+        ? '⚠️ Bạn đang chọn <b>' + (thapRadioChecked ? 'Nguy cơ THẤP' : 'Nguy cơ CAO') + '</b> nhưng theo số liệu hiện tại (' + dataNote + '), kết luận đúng phải là <b>' + (cao ? 'Nguy cơ CAO' : 'Nguy cơ THẤP') + '</b>. '
         : '✔ Lựa chọn thủ công đang khớp với số liệu. ') +
         '<a href="javascript:void(0)" onclick="resetB5Auto()" style="color:var(--blue); text-decoration:underline;">🤖 Bật lại tự động kết luận</a>';
     }
@@ -1584,8 +1624,11 @@ function updateB5Risk(){
   }
 
   const suspicious = (dSE > 30 || dRE > 30);
+  const reasonNote = (seObsValid && seObs >= dSE) ? 'SEobs (' + fmtNum(seObs) + ') ≥ ΔSEcrit (' + fmtNum(dSE) + ')'
+    : (reObsValid && reObs >= dRE) ? 'REobs (' + fmtNum(reObs) + ') ≥ ΔREcrit (' + fmtNum(dRE) + ')'
+    : 'SEobs' + (seObsValid ? ' (' + fmtNum(seObs) + ')' : ' (—)') + ' &lt; ΔSEcrit (' + fmtNum(dSE) + ') và REobs' + (reObsValid ? ' (' + fmtNum(reObs) + ')' : ' (—)') + ' &lt; ΔREcrit (' + fmtNum(dRE) + ')';
   if(hint){
-    hint.innerHTML = '🤖 Tự động kết luận: Độ lệch quan sát (' + fmtNum(degObs) + ' lần SD) ' + (cao ? '≥' : '<') + ' ΔSEcrit/ΔREcrit → <b>' + (cao ? 'Nguy cơ CAO' : 'Nguy cơ THẤP') + '</b>.' +
+    hint.innerHTML = '🤖 Tự động kết luận: ' + reasonNote + ' → <b>' + (cao ? 'Nguy cơ CAO' : 'Nguy cơ THẤP') + '</b>.' +
       (suspicious ? '<br>⚠️ ΔSEcrit/ΔREcrit đang rất lớn (' + fmtNum(dSE) + ' / ' + fmtNum(dRE) + ') — về mặt lâm sàng hiếm khi hợp lý, thường do <b>SD/CV nội bộ</b> khai báo trong Cấu hình danh mục quá nhỏ so với thực tế. Nên kiểm tra lại giá trị này trước khi dùng kết luận tự động. ' : ' ') +
       '<a href="javascript:void(0)" onclick="onB5ManualPick()" style="color:var(--blue); text-decoration:underline;">Chọn lại thủ công</a>';
   }
