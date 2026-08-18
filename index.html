@@ -636,9 +636,16 @@
           <div class="field"><label>Mô tả chi tiết hành động đã thực hiện</label><textarea data-key="moTa4"></textarea></div>
 
           <div class="subtitle">4.2. Đo lại Bias (bắt buộc)</div>
+          <div class="formula">Bias trước khắc phục = (IQC lúc sự cố − IQC target)/IQC target × 100 &nbsp;&nbsp;&nbsp; Bias sau khắc phục = (IQC sau khắc phục − IQC target)/IQC target × 100</div>
           <div class="field-row three">
-            <div class="field"><label>Bias trước khắc phục (%)</label><input type="text" data-key="biasTruoc" id="biasTruocInput" oninput="updateBiasConclusion(); updateB5Calc();"></div>
-            <div class="field"><label>Bias sau khắc phục (%)</label><input type="text" data-key="biasSau" id="biasSauInput" oninput="updateBiasConclusion()"></div>
+            <div class="field"><label>Giá trị IQC đo được lúc sự cố</label><input type="text" data-key="iqcTruocKP" id="iqcTruocKPInput" oninput="onIqcTruocKPManualEdit(); updateBias4FromIQC();"></div>
+            <div class="field"><label>Giá trị IQC đo được sau khắc phục</label><input type="text" data-key="iqcSauKP" id="iqcSauKPInput" oninput="onIqcSauKPManualEdit(); updateBias4FromIQC();"></div>
+            <div class="field"><label>Giá trị IQC target/đích (mean)</label><input type="text" data-key="iqcTargetKP" id="iqcTargetKPInput" oninput="onIqcTargetKPManualEdit(); updateBias4FromIQC();"></div>
+          </div>
+          <div class="empty-hint" id="b4IqcHint" style="margin:-4px 0 10px;"></div>
+          <div class="field-row three">
+            <div class="field"><label>Bias trước khắc phục (%) — tự động tính</label><input type="text" data-key="biasTruoc" id="biasTruocInput" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
+            <div class="field"><label>Bias sau khắc phục (%) — tự động tính</label><input type="text" data-key="biasSau" id="biasSauInput" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
             <div class="field">
               <label>Ngưỡng Bias cho phép (≤ 1/4 TEa, %)</label>
               <div style="display:flex; gap:6px;">
@@ -718,28 +725,21 @@
             <div class="field"><label>ΔREcrit (tự động tính)</label><input type="text" data-key="dREcrit" id="dREcritInput" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
           </div>
 
-          <div class="formula">Bias lúc sự cố = (IQC sự cố − IQC target)/IQC target × 100 &nbsp;&nbsp;&nbsp; Bias sau khắc phục = (IQC chạy lại − IQC target)/IQC target × 100</div>
-          <div class="field-row three">
-            <div class="field"><label>Giá trị IQC đo được lúc sự cố</label><input type="text" data-key="iqcSuCo5" id="iqcSuCo5Input" oninput="onIqcSuCo5ManualEdit(); updateB5Calc();"></div>
-            <div class="field"><label>Giá trị IQC chạy lại / sau khắc phục</label><input type="text" data-key="iqcChayLai5" id="iqcChayLai5Input" oninput="onIqcChayLai5ManualEdit(); updateB5Calc();"></div>
-            <div class="field"><label>Giá trị IQC target/đích (mean)</label><input type="text" data-key="iqcTarget5" id="iqcTarget5Input" oninput="onIqcTarget5ManualEdit(); updateB5Calc();"></div>
-          </div>
-          <div class="empty-hint" id="b5IqcHint" style="margin:-4px 0 10px;"></div>
-
           <div class="formula">SEobs = |Bias đo được lúc sự cố − Bias đo được sau khắc phục (baseline)| / SD nội bộ &nbsp;&nbsp;&mdash;&nbsp;&nbsp; so sánh SEobs với ΔSEcrit</div>
+          <div class="empty-hint" style="margin:-4px 0 8px;">Bias lúc sự cố và Bias sau khắc phục lấy nguyên giá trị đã tính ở mục <b>4.2. Đo lại Bias</b> (từ 3 giá trị IQC nhập ở đó) — không nhập/tính lại ở đây, để tránh 2 con số Bias khác nhau cho cùng một sự cố.</div>
           <div class="field-row three">
-            <div class="field"><label>Bias lúc sự cố (%) — tự động tính</label><input type="text" data-key="bias5" id="bias5Input" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
-            <div class="field"><label>Bias sau khắc phục / baseline (%) — tự động tính</label><input type="text" data-key="biasSau5" id="biasSau5Input" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
+            <div class="field"><label>Bias lúc sự cố (%) — lấy từ Bước 4.2</label><input type="text" data-key="bias5" id="bias5Input" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
+            <div class="field"><label>Bias sau khắc phục / baseline (%) — lấy từ Bước 4.2</label><input type="text" data-key="biasSau5" id="biasSau5Input" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
             <div class="field"><label>SEobs (tự động tính)</label><input type="text" data-key="seObs" id="seObsInput" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
           </div>
 
           <div class="formula">REobs = Độ phân tán / biên độ dao động QC quan sát được / SD nội bộ &nbsp;&nbsp;&mdash;&nbsp;&nbsp; so sánh REobs với ΔREcrit</div>
           <div class="field-row three">
-            <div class="field"><label>Biên độ dao động QC quan sát được (%) — tự động tính</label><input type="text" data-key="bienDoQC5" id="bienDoQC5Input" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
+            <div class="field"><label>Biên độ dao động QC quan sát được (%) — tự động tính từ IQC ở Bước 4.2</label><input type="text" data-key="bienDoQC5" id="bienDoQC5Input" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
             <div class="field"><label>REobs (tự động tính)</label><input type="text" data-key="reObs" id="reObsInput" readonly style="background:var(--grey); font-weight:700; color:var(--navy);"></div>
             <div class="field"></div>
           </div>
-          <div class="empty-hint" style="margin:-4px 0 10px; font-style:italic;">Lưu ý: vì chỉ dùng 2 điểm IQC đơn (lúc sự cố và chạy lại) nên về mặt số học, Biên độ dao động QC = |Bias lúc sự cố − Bias sau khắc phục| → <b>REobs sẽ luôn bằng SEobs</b>. Đây là giới hạn có chủ đích của cách nhập đơn giản này, không phải lỗi tính toán.</div>
+          <div class="empty-hint" style="margin:-4px 0 10px; font-style:italic;">Lưu ý: vì chỉ dùng 2 điểm IQC đơn (lúc sự cố và sau khắc phục) nên về mặt số học, Biên độ dao động QC = |Bias lúc sự cố − Bias sau khắc phục| → <b>REobs sẽ luôn bằng SEobs</b>. Đây là giới hạn có chủ đích của cách nhập đơn giản này, không phải lỗi tính toán.</div>
           <div class="empty-hint" id="b5CalcHint" style="margin-top:-6px;"></div>
           <div class="formula" id="b5DegBox" style="background:#EAF1FB; color:var(--navy); display:none;"></div>
 
@@ -1482,60 +1482,70 @@ function syncMucQCChayLai(){
   }
 }
 function onSd5ManualEdit(){ const el = document.getElementById('sd5Input'); if(el) el.dataset.auto = '0'; }
-function onIqcSuCo5ManualEdit(){ const el = document.getElementById('iqcSuCo5Input'); if(el) el.dataset.auto = '0'; }
-function onIqcChayLai5ManualEdit(){ const el = document.getElementById('iqcChayLai5Input'); if(el) el.dataset.auto = '0'; }
-function onIqcTarget5ManualEdit(){ const el = document.getElementById('iqcTarget5Input'); if(el) el.dataset.auto = '0'; }
+function onIqcTruocKPManualEdit(){ const el = document.getElementById('iqcTruocKPInput'); if(el) el.dataset.auto = '0'; }
+function onIqcSauKPManualEdit(){ const el = document.getElementById('iqcSauKPInput'); if(el) el.dataset.auto = '0'; }
+function onIqcTargetKPManualEdit(){ const el = document.getElementById('iqcTargetKPInput'); if(el) el.dataset.auto = '0'; }
 
-/* Tính Bias lúc sự cố / Bias sau khắc phục / Biên độ dao động QC từ 3 giá trị IQC gốc
-   (IQC sự cố, IQC chạy lại, IQC target) — thay cho nhập tay các giá trị Bias/biên độ. */
-function computeB5FromIQC(){
-  const iqcSuCoEl = document.getElementById('iqcSuCo5Input');
-  const iqcChayLaiEl = document.getElementById('iqcChayLai5Input');
-  const iqcTargetEl = document.getElementById('iqcTarget5Input');
-  const bias5El = document.getElementById('bias5Input');
-  const biasSau5El = document.getElementById('biasSau5Input');
-  const bienDoQC5El = document.getElementById('bienDoQC5Input');
-  const iqcHint = document.getElementById('b5IqcHint');
-  if(!iqcSuCoEl || !iqcChayLaiEl || !iqcTargetEl || !bias5El || !biasSau5El || !bienDoQC5El) return;
+/* Bước 4.2: tính Bias trước/sau khắc phục từ 3 giá trị IQC gốc (IQC lúc sự cố, IQC sau khắc phục, IQC target).
+   Đây là NGUỒN DUY NHẤT cho Bias trước/sau khắc phục — Bước 5 chỉ lấy lại kết quả này, không tính lại. */
+function updateBias4FromIQC(){
+  const iqcTruocEl = document.getElementById('iqcTruocKPInput');
+  const iqcSauEl = document.getElementById('iqcSauKPInput');
+  const iqcTargetEl = document.getElementById('iqcTargetKPInput');
+  const biasTruocEl = document.getElementById('biasTruocInput');
+  const biasSauEl = document.getElementById('biasSauInput');
+  const iqcHint = document.getElementById('b4IqcHint');
+  if(!iqcTruocEl || !iqcSauEl || !iqcTargetEl || !biasTruocEl || !biasSauEl) return;
 
-  const iqcSuCo = parseNum(iqcSuCoEl.value);
-  const iqcChayLai = parseNum(iqcChayLaiEl.value);
+  const iqcTruoc = parseNum(iqcTruocEl.value);
+  const iqcSau = parseNum(iqcSauEl.value);
   const iqcTarget = parseNum(iqcTargetEl.value);
 
   if(isNaN(iqcTarget) || iqcTarget === 0){
-    bias5El.value = '';
-    biasSau5El.value = '';
-    bienDoQC5El.value = '';
+    biasTruocEl.value = '';
+    biasSauEl.value = '';
     if(iqcHint){
-      iqcHint.innerHTML = (iqcSuCoEl.value || iqcChayLaiEl.value || iqcTargetEl.value)
-        ? 'Cần nhập đủ "Giá trị IQC target/đích (mean)" (khác 0) để tự tính Bias và biên độ dao động QC.'
-        : 'Nhập giá trị IQC đo được lúc sự cố, khi chạy lại, và giá trị target/đích (mean) → hệ thống sẽ tự tính Bias lúc sự cố, Bias sau khắc phục và biên độ dao động QC quan sát được.';
+      iqcHint.innerHTML = (iqcTruocEl.value || iqcSauEl.value || iqcTargetEl.value)
+        ? 'Cần nhập đủ "Giá trị IQC target/đích (mean)" (khác 0) để tự tính Bias trước/sau khắc phục.'
+        : 'Nhập giá trị IQC đo được lúc sự cố, sau khắc phục, và giá trị target/đích (mean) → hệ thống sẽ tự tính Bias trước/sau khắc phục.';
     }
-    return;
+  } else {
+    biasTruocEl.value = !isNaN(iqcTruoc) ? fmtNum(((iqcTruoc - iqcTarget) / iqcTarget) * 100) : '';
+    biasSauEl.value = !isNaN(iqcSau) ? fmtNum(((iqcSau - iqcTarget) / iqcTarget) * 100) : '';
+    if(iqcHint){
+      iqcHint.innerHTML = (!isNaN(iqcTruoc) && !isNaN(iqcSau))
+        ? '🤖 Đã tự tính Bias trước/sau khắc phục từ 3 giá trị IQC nhập ở trên.'
+        : 'Nhập đủ cả "Giá trị IQC lúc sự cố" và "Giá trị IQC sau khắc phục" để hệ thống tự tính Bias.';
+    }
   }
+  updateBiasConclusion();
+  updateB5Calc();
+}
 
-  if(!isNaN(iqcSuCo)){
-    bias5El.value = fmtNum(((iqcSuCo - iqcTarget) / iqcTarget) * 100);
-  } else {
-    bias5El.value = '';
-  }
-  if(!isNaN(iqcChayLai)){
-    biasSau5El.value = fmtNum(((iqcChayLai - iqcTarget) / iqcTarget) * 100);
-  } else {
-    biasSau5El.value = '';
-  }
-  if(!isNaN(iqcSuCo) && !isNaN(iqcChayLai)){
-    bienDoQC5El.value = fmtNum((Math.abs(iqcSuCo - iqcChayLai) / iqcTarget) * 100);
+/* Bước 5: Bias lúc sự cố / Bias sau khắc phục lấy nguyên giá trị đã tính ở Bước 4.2 (không tính lại).
+   Biên độ dao động QC quan sát được = |IQC lúc sự cố − IQC sau khắc phục| / IQC target × 100,
+   dùng lại 3 giá trị IQC đã nhập ở Bước 4.2. */
+function syncB5FromB4(){
+  const biasTruocEl = document.getElementById('biasTruocInput');
+  const biasSauEl = document.getElementById('biasSauInput');
+  const bias5El = document.getElementById('bias5Input');
+  const biasSau5El = document.getElementById('biasSau5Input');
+  const bienDoQC5El = document.getElementById('bienDoQC5Input');
+  if(!biasTruocEl || !biasSauEl || !bias5El || !biasSau5El || !bienDoQC5El) return;
+
+  bias5El.value = biasTruocEl.value || '';
+  biasSau5El.value = biasSauEl.value || '';
+
+  const iqcTruocEl = document.getElementById('iqcTruocKPInput');
+  const iqcSauEl = document.getElementById('iqcSauKPInput');
+  const iqcTargetEl = document.getElementById('iqcTargetKPInput');
+  const iqcTruoc = parseNum(iqcTruocEl ? iqcTruocEl.value : '');
+  const iqcSau = parseNum(iqcSauEl ? iqcSauEl.value : '');
+  const iqcTarget = parseNum(iqcTargetEl ? iqcTargetEl.value : '');
+  if(!isNaN(iqcTruoc) && !isNaN(iqcSau) && !isNaN(iqcTarget) && iqcTarget !== 0){
+    bienDoQC5El.value = fmtNum((Math.abs(iqcTruoc - iqcSau) / iqcTarget) * 100);
   } else {
     bienDoQC5El.value = '';
-  }
-
-  if(iqcHint){
-    if(!isNaN(iqcSuCo) && !isNaN(iqcChayLai)){
-      iqcHint.innerHTML = '🤖 Đã tự tính Bias lúc sự cố, Bias sau khắc phục và biên độ dao động QC từ 3 giá trị IQC nhập ở trên.';
-    } else {
-      iqcHint.innerHTML = 'Nhập đủ cả "Giá trị IQC đo được lúc sự cố" và "Giá trị IQC chạy lại/sau khắc phục" để hệ thống tự tính Bias và biên độ dao động QC.';
-    }
   }
 }
 
@@ -1561,7 +1571,7 @@ function updateB5Calc(){
     sd5El.value = v.sdcv; sd5El.dataset.auto = '1';
   }
 
-  computeB5FromIQC();
+  syncB5FromB4();
 
   if(v && v.dSEcrit !== null && v.dSEcrit !== undefined){
     dSEEl.value = v.dSEcrit;
@@ -1576,7 +1586,7 @@ function updateB5Calc(){
       const deviceNote = tb
         ? (v.matchedThietBi ? ('theo đúng thiết bị "' + escapeHtml(v.matchedThietBi) + '"') : ('⚠ chưa có dòng riêng cho thiết bị "' + escapeHtml(tb) + '", đang dùng giá trị dự phòng chung cho xét nghiệm này'))
         : 'áp dụng chung (chưa chọn thiết bị)';
-      sourceHint.innerHTML = '🤖 TEa và SD/CV lấy tự động từ Cấu hình danh mục (xét nghiệm "' + escapeHtml(xn) + '", ' + deviceNote + '). Bias lúc sự cố, Bias sau khắc phục và biên độ dao động QC được tự tính từ 3 giá trị IQC nhập ở trên (không cần nhập tay).';
+      sourceHint.innerHTML = '🤖 TEa và SD/CV lấy tự động từ Cấu hình danh mục (xét nghiệm "' + escapeHtml(xn) + '", ' + deviceNote + '). Bias lúc sự cố, Bias sau khắc phục và biên độ dao động QC lấy nguyên giá trị đã tính ở mục 4.2 (từ 3 giá trị IQC nhập ở đó).';
     } else if(xn && tb){
       sourceHint.innerHTML = 'Chưa có TEa/SD/CV cho cặp xét nghiệm "' + escapeHtml(xn) + '" + thiết bị "' + escapeHtml(tb) + '" (và cũng chưa có dòng dự phòng chung) trong Cấu hình danh mục → nhập thủ công, hoặc bổ sung ở tab Cấu hình.';
     } else if(xn){
@@ -1854,7 +1864,7 @@ function setFormData(data){
   if(notokLabel) notokLabel.classList.remove('auto-hidden','auto-picked');
   const b4hint = document.getElementById('b4biasAutoHint');
   if(b4hint) b4hint.innerHTML = '<a href="javascript:void(0)" onclick="resetB4BiasAuto()" style="color:var(--blue); text-decoration:underline;">🤖 Tính tự động theo số liệu</a>';
-  ['tea5Input','sd5Input','iqcSuCo5Input','iqcChayLai5Input','iqcTarget5Input','mucQCChayLaiInput'].forEach(id=>{
+  ['tea5Input','sd5Input','iqcTruocKPInput','iqcSauKPInput','iqcTargetKPInput','mucQCChayLaiInput'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) el.dataset.auto = '0';
   });
@@ -1881,7 +1891,7 @@ function clearFormFields(){
   if(notokLabel) notokLabel.classList.remove('auto-hidden','auto-picked');
   const b4hint = document.getElementById('b4biasAutoHint');
   if(b4hint) b4hint.innerHTML = '';
-  ['tea5Input','sd5Input','iqcSuCo5Input','iqcChayLai5Input','iqcTarget5Input','mucQCChayLaiInput'].forEach(id=>{
+  ['tea5Input','sd5Input','iqcTruocKPInput','iqcSauKPInput','iqcTargetKPInput','mucQCChayLaiInput'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) delete el.dataset.auto;
   });
