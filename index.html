@@ -282,6 +282,64 @@
     .step-head .chevron{display:none;}
     .form-toolbar{display:none;}
   }
+
+  /* ===================== PRINT REPORT (official document) ===================== */
+  #printReportView{display:none;}
+  @media print{
+    body.printing-report > *:not(#printReportView){display:none !important;}
+    body.printing-report{background:#fff;}
+    #printReportView{display:block !important;}
+    @page{ size:A4; margin:14mm 12mm; }
+  }
+  .pr-page{font-family:"Times New Roman",Times,serif; color:#111; font-size:12.3px; line-height:1.42; max-width:800px; margin:0 auto;}
+  .pr-head{display:grid; grid-template-columns:1fr 200px; gap:10px; border-bottom:2px solid #111; padding-bottom:8px; margin-bottom:10px; align-items:start;}
+  .pr-head .org{font-size:12px;}
+  .pr-head .org .name-top{font-weight:700; text-transform:uppercase; font-size:12.5px;}
+  .pr-head .org .name-unit{font-weight:700; text-transform:uppercase; margin-top:2px;}
+  .pr-head .org .dept{font-style:italic; margin-top:1px;}
+  .pr-doccode{border:1px solid #111; font-size:10.8px;}
+  .pr-doccode table{width:100%; border-collapse:collapse;}
+  .pr-doccode td{border:1px solid #111; padding:2.5px 5px;}
+  .pr-doccode .lbl{color:#333; width:62%;}
+  .pr-doccode .val{text-align:center; font-weight:700;}
+  .pr-title{text-align:center; margin:6px 0 2px;}
+  .pr-title h1{font-size:16.5px; margin:0; text-transform:uppercase; letter-spacing:.3px;}
+  .pr-title .ref{font-size:11px; font-style:italic; color:#333; margin-top:2px;}
+  .pr-hr{border:none; border-top:1px solid #111; margin:8px 0;}
+
+  .pr-meta{width:100%; border-collapse:collapse; margin-bottom:10px;}
+  .pr-meta td{padding:3px 4px; vertical-align:bottom; font-size:12px;}
+  .pr-meta .k{color:#333; white-space:nowrap; padding-right:4px;}
+  .pr-meta .v{border-bottom:1px dotted #555; font-weight:700; min-width:60px; padding:0 4px;}
+
+  .pr-step{margin-top:12px; break-inside:avoid;}
+  .pr-step-title{background:#e9edf3; border:1px solid #111; padding:4px 8px; font-weight:700; font-size:12.5px; display:flex; gap:8px; align-items:center;}
+  .pr-step-title .n{display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; background:#111; color:#fff; font-size:11px; flex:none;}
+  .pr-step-body{border:1px solid #111; border-top:none; padding:7px 10px;}
+
+  .pr-field{margin:3px 0; display:flex; gap:6px; flex-wrap:wrap;}
+  .pr-field .k{color:#333; flex:none;}
+  .pr-field .v{border-bottom:1px dotted #555; font-weight:700; flex:1; min-width:40px; padding:0 2px;}
+  .pr-row3{display:grid; grid-template-columns:repeat(3,1fr); gap:4px 14px;}
+  .pr-row2{display:grid; grid-template-columns:repeat(2,1fr); gap:4px 14px;}
+
+  .pr-chk{margin:2.5px 0; display:flex; gap:6px; align-items:flex-start;}
+  .pr-chk .box{flex:none; font-size:13px; line-height:1.3;}
+  .pr-chk .lbl{font-size:11.6px;}
+
+  .pr-mini{width:100%; border-collapse:collapse; margin:5px 0; font-size:11.3px;}
+  .pr-mini th,.pr-mini td{border:1px solid #999; padding:3px 5px; text-align:left;}
+  .pr-mini th{background:#f2f4f7; font-weight:700;}
+
+  .pr-conclusion{margin-top:5px; padding:5px 8px; border:1px solid #111; font-weight:700; font-size:12px; background:#f7f7f4;}
+
+  .pr-sign{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:22px; text-align:center; break-inside:avoid;}
+  .pr-sign .box{border:1px solid #111; padding:8px 6px 10px;}
+  .pr-sign .role{font-weight:700; font-size:12px;}
+  .pr-sign .sub{font-size:10.3px; font-style:italic; color:#333; margin-bottom:44px;}
+  .pr-sign .name{border-top:1px dotted #555; font-weight:700; font-size:12px; padding-top:4px; min-height:14px;}
+
+  .pr-foot{margin-top:14px; font-size:9.8px; color:#555; text-align:center; border-top:1px solid #ccc; padding-top:5px;}
   /* ===================== FIREBASE AUTH ===================== */
   .auth-gate{position:fixed;inset:0;background:rgba(15,37,64,.96);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;}
   .auth-gate.hidden{display:none;}
@@ -516,7 +574,7 @@
         <button class="btn secondary" onclick="collapseAllSteps()">Thu gọn bước</button>
         <button class="btn gold" onclick="newRecord()">🆕 Hồ sơ mới</button>
         <button class="btn" onclick="saveRecord()">💾 Lưu hồ sơ</button>
-        <button class="btn" onclick="window.print()">🖨️ In / Lưu PDF</button>
+        <button class="btn" onclick="printReport()">🖨️ In / Lưu PDF</button>
         <button class="btn secondary" onclick="exportCurrentRecordToExcel()">📊 Xuất Excel</button>
       </div>
 
@@ -831,6 +889,188 @@
   <footer class="pagefoot">
     Bộ hồ sơ khắc phục IQC — BM-QLCL-IQC-02-01 · tham chiếu BMSH-QLCL-IQC-02 và Hướng dẫn quản lý TEa – Bias – Sigma metric (BMSH-QLCL-TEa-01). Dữ liệu cấu hình và hồ sơ đã lưu dùng chung cho mọi người dùng mở dashboard này.
   </footer>
+</div>
+
+<!-- ===================== PRINT REPORT — FORM SẴN SÀNG TRÌNH KÝ ===================== -->
+<div id="printReportView">
+  <div class="pr-page">
+    <div class="pr-head">
+      <div class="org">
+        <div class="name-top">[Tên Bệnh viện / Đơn vị]</div>
+        <div class="name-unit">Khoa Xét nghiệm — Phòng xét nghiệm</div>
+        <div class="dept">Bộ phận Quản lý chất lượng (QLCL)</div>
+      </div>
+      <div class="pr-doccode">
+        <table>
+          <tr><td class="lbl">Mã số</td><td class="val">BM-QLCL-IQC-02-01</td></tr>
+          <tr><td class="lbl">Lần ban hành / Sửa đổi</td><td class="val">01/00</td></tr>
+          <tr><td class="lbl">Ngày hiệu lực</td><td class="val" id="prIssueDate">—</td></tr>
+          <tr><td class="lbl">Số trang</td><td class="val">01/01</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="pr-title">
+      <h1>Báo cáo xử lý sự cố nội kiểm tra (IQC) không đạt</h1>
+      <div class="ref">Tham chiếu BMSH-QLCL-IQC-02 và Hướng dẫn quản lý TEa – Bias – Sigma metric (BMSH-QLCL-TEa-01)</div>
+    </div>
+    <hr class="pr-hr">
+
+    <table class="pr-meta">
+      <tr>
+        <td class="k">Mã sự cố:</td><td class="v" id="pr_maSuCo">&nbsp;</td>
+        <td class="k">Ngày xảy ra:</td><td class="v" id="pr_ngay">&nbsp;</td>
+        <td class="k">Giờ phát hiện:</td><td class="v" id="pr_gio">&nbsp;</td>
+        <td class="k">Ca làm việc:</td><td class="v" id="pr_caLamViec">&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="k">Xét nghiệm:</td><td class="v" id="pr_xetNghiem">&nbsp;</td>
+        <td class="k">Thiết bị / Hệ thống:</td><td class="v" id="pr_thietBi">&nbsp;</td>
+        <td class="k">Mức IQC vi phạm:</td><td class="v" id="pr_mucQC">&nbsp;</td>
+        <td class="k">Quy tắc vi phạm:</td><td class="v" id="pr_quyTac">&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="k">Người phát hiện:</td><td class="v" id="pr_nguoiPhatHien" colspan="3">&nbsp;</td>
+        <td class="k">Phụ trách QC xử lý:</td><td class="v" id="pr_phuTrachQC" colspan="3">&nbsp;</td>
+      </tr>
+    </table>
+
+    <!-- BƯỚC 1 -->
+    <div class="pr-step">
+      <div class="pr-step-title"><span class="n">1</span> Tạm dừng ban hành kết quả và cô lập sự cố</div>
+      <div class="pr-step-body">
+        <div class="pr-chk"><span class="box" id="pr_chk1_1">☐</span><span class="lbl">Đã tạm dừng ban hành mọi kết quả bệnh nhân liên quan đến xét nghiệm/thiết bị đang có QC không đạt</span></div>
+        <div class="pr-chk"><span class="box" id="pr_chk1_2">☐</span><span class="lbl">Đã xác định chính xác phạm vi bị ảnh hưởng (xét nghiệm / thiết bị / ca làm việc)</span></div>
+        <div class="pr-chk"><span class="box" id="pr_chk1_3">☐</span><span class="lbl">Đã thông báo ngay cho phụ trách ca và/hoặc phụ trách chất lượng</span></div>
+        <div class="pr-row3" style="margin-top:5px;">
+          <div class="pr-field"><span class="k">Thời điểm dừng trả KQ:</span><span class="v" id="pr_thoiDiemDung">&nbsp;</span></div>
+          <div class="pr-field"><span class="k">Phạm vi ảnh hưởng:</span><span class="v" id="pr_phamViAH">&nbsp;</span></div>
+          <div class="pr-field"><span class="k">Người được thông báo:</span><span class="v" id="pr_nguoiDuocTB">&nbsp;</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BƯỚC 2 -->
+    <div class="pr-step">
+      <div class="pr-step-title"><span class="n">2</span> Kiểm tra nhanh các yếu tố thường gặp</div>
+      <div class="pr-step-body">
+        <table class="pr-mini">
+          <tr><th style="width:22%">Nhóm yếu tố</th><th style="width:8%">Đã KT</th><th>Ghi chú</th></tr>
+          <tr><td>Vật liệu QC</td><td style="text-align:center" id="pr_chk2_vatlieu">☐</td><td id="pr_note2_vatlieu">&nbsp;</td></tr>
+          <tr><td>Thuốc thử</td><td style="text-align:center" id="pr_chk2_thuocthu">☐</td><td id="pr_note2_thuocthu">&nbsp;</td></tr>
+          <tr><td>Hiệu chuẩn</td><td style="text-align:center" id="pr_chk2_hieuchuan">☐</td><td id="pr_note2_hieuchuan">&nbsp;</td></tr>
+          <tr><td>Bảo trì thiết bị</td><td style="text-align:center" id="pr_chk2_baotri">☐</td><td id="pr_note2_baotri">&nbsp;</td></tr>
+          <tr><td>Điều kiện môi trường</td><td style="text-align:center" id="pr_chk2_moitruong">☐</td><td id="pr_note2_moitruong">&nbsp;</td></tr>
+          <tr><td>Thao tác</td><td style="text-align:center" id="pr_chk2_thaotac">☐</td><td id="pr_note2_thaotac">&nbsp;</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- BƯỚC 3 -->
+    <div class="pr-step">
+      <div class="pr-step-title"><span class="n">3</span> Chạy lại QC</div>
+      <div class="pr-step-body">
+        <div class="pr-row3">
+          <div class="pr-field"><span class="k">Mức QC chạy lại:</span><span class="v" id="pr_mucQCChayLai">&nbsp;</span></div>
+          <div class="pr-field"><span class="k">Giá trị đo được:</span><span class="v" id="pr_giaTriDo">&nbsp;</span></div>
+          <div class="pr-field"><span class="k">Thời điểm chạy lại:</span><span class="v" id="pr_thoiDiemChayLai">&nbsp;</span></div>
+        </div>
+        <div class="pr-conclusion">Kết luận: <span id="pr_b3">—</span></div>
+      </div>
+    </div>
+
+    <!-- BƯỚC 4 -->
+    <div class="pr-step">
+      <div class="pr-step-title"><span class="n">4</span> Xác minh nguyên nhân và đo lại Bias</div>
+      <div class="pr-step-body">
+        <div class="pr-chk"><span class="box" id="pr_chk4_1">☐</span><span class="lbl">Hiệu chuẩn lại thiết bị</span></div>
+        <div class="pr-chk"><span class="box" id="pr_chk4_2">☐</span><span class="lbl">Thay thuốc thử / điện cực / cartridge</span></div>
+        <div class="pr-chk"><span class="box" id="pr_chk4_3">☐</span><span class="lbl">Chạy mẫu kiểm tra độc lập (mẫu lưu / mẫu đối chứng đã biết giá trị)</span></div>
+        <div class="pr-chk"><span class="box" id="pr_chk4_4">☐</span><span class="lbl">Đối chiếu kết quả trên thiết bị khác / phương pháp khác</span></div>
+        <div class="pr-field" style="margin-top:5px;"><span class="k">Mô tả chi tiết hành động đã thực hiện:</span><span class="v" id="pr_moTa4">&nbsp;</span></div>
+
+        <table class="pr-mini" style="margin-top:7px;">
+          <tr><th>IQC lúc sự cố</th><th>IQC sau khắc phục</th><th>IQC target</th><th>Bias trước (%)</th><th>Bias sau (%)</th><th>Ngưỡng Bias (%)</th></tr>
+          <tr>
+            <td id="pr_iqcTruocKP">&nbsp;</td><td id="pr_iqcSauKP">&nbsp;</td><td id="pr_iqcTargetKP">&nbsp;</td>
+            <td id="pr_biasTruoc">&nbsp;</td><td id="pr_biasSau">&nbsp;</td><td id="pr_nguongBias">&nbsp;</td>
+          </tr>
+        </table>
+        <div class="pr-row2">
+          <div class="pr-conclusion">Kết luận Bias: <span id="pr_b4bias">—</span></div>
+          <div class="pr-conclusion">Bản chất sai số: <span id="pr_b4nature">—</span></div>
+        </div>
+
+        <div id="pr_section43" style="margin-top:7px;">
+          <div style="font-weight:700; font-size:11.6px; margin-bottom:2px;">4.3. Xây lại giới hạn kiểm soát (trường hợp 8x trở lên)</div>
+          <div class="pr-chk"><span class="box" id="pr_chk4dk1">☐</span><span class="lbl">Điều kiện 1: Nguyên nhân dịch chuyển là thay đổi hợp lệ, có ghi nhận</span></div>
+          <div class="pr-chk"><span class="box" id="pr_chk4dk2">☐</span><span class="lbl">Điều kiện 2: Bias đo lại vẫn trong ngưỡng cho phép (≤ 1/4 TEa)</span></div>
+          <div class="pr-chk"><span class="box" id="pr_chk4dk3">☐</span><span class="lbl">Điều kiện 3: Đủ số liệu thống kê để tính mean/SD mới (tối thiểu ≈ 20 điểm QC)</span></div>
+          <div class="pr-row3" style="margin-top:4px;">
+            <div class="pr-field"><span class="k">Quyết định:</span><span class="v" id="pr_b4mean">&nbsp;</span></div>
+            <div class="pr-field"><span class="k">Mean mới:</span><span class="v" id="pr_meanMoi">&nbsp;</span></div>
+            <div class="pr-field"><span class="k">SD mới:</span><span class="v" id="pr_sdMoi">&nbsp;</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BƯỚC 5 -->
+    <div class="pr-step">
+      <div class="pr-step-title"><span class="n">5</span> Quyết định xử lý kết quả bệnh nhân</div>
+      <div class="pr-step-body">
+        <div class="pr-row3">
+          <div class="pr-field"><span class="k">Lần QC đạt gần nhất:</span><span class="v" id="pr_lanQCDatGanNhat">&nbsp;</span></div>
+          <div class="pr-field"><span class="k">Thời điểm khắc phục xong:</span><span class="v" id="pr_thoiDiemKhacPhucXong">&nbsp;</span></div>
+          <div class="pr-field"><span class="k">Số KQ BN bị ảnh hưởng:</span><span class="v" id="pr_soKQAnhHuong">&nbsp;</span></div>
+        </div>
+        <table class="pr-mini" style="margin-top:6px;">
+          <tr><th>TEa (%)</th><th>SD/CV nội bộ (%)</th><th>ΔSEcrit</th><th>ΔREcrit</th><th>SEobs</th><th>REobs</th></tr>
+          <tr>
+            <td id="pr_tea5">&nbsp;</td><td id="pr_sd5">&nbsp;</td><td id="pr_dSEcrit">&nbsp;</td>
+            <td id="pr_dREcrit">&nbsp;</td><td id="pr_seObs">&nbsp;</td><td id="pr_reObs">&nbsp;</td>
+          </tr>
+        </table>
+        <div class="pr-conclusion">Kết luận mức nguy cơ: <span id="pr_b5">—</span></div>
+        <div class="pr-field" style="margin-top:5px;"><span class="k">Danh sách/khoảng KQ được rà soát:</span><span class="v" id="pr_danhSachRaSoat">&nbsp;</span></div>
+        <div class="pr-field"><span class="k">Đã thông báo lâm sàng / ban hành lại KQ:</span><span class="v" id="pr_thongBaoLamSang">&nbsp;</span></div>
+      </div>
+    </div>
+
+    <!-- BƯỚC 6 -->
+    <div class="pr-step">
+      <div class="pr-step-title"><span class="n">6</span> Ghi nhận sự cố và hành động khắc phục / phòng ngừa</div>
+      <div class="pr-step-body">
+        <div class="pr-field"><span class="k">Nguyên nhân gốc (root cause):</span><span class="v" id="pr_nguyenNhanGoc">&nbsp;</span></div>
+        <div class="pr-field"><span class="k">Hành động khắc phục đã thực hiện:</span><span class="v" id="pr_hanhDongKP">&nbsp;</span></div>
+        <div class="pr-field"><span class="k">Hành động phòng ngừa đề xuất:</span><span class="v" id="pr_hanhDongPN">&nbsp;</span></div>
+        <div class="pr-chk" style="margin-top:4px;"><span class="box" id="pr_chk6_1">☐</span><span class="lbl">Đã cập nhật quy trình nội bộ (nếu cần)</span></div>
+        <div class="pr-chk"><span class="box" id="pr_chk6_2">☐</span><span class="lbl">Đã đánh giá lại Bias trước khi trả kết quả thường quy (nếu liên quan lô mới/IQC lệch kéo dài)</span></div>
+        <div class="pr-chk"><span class="box" id="pr_chk6_3">☐</span><span class="lbl">Đã đề xuất rà soát lại bảng TEa/ngân sách sai số cho xét nghiệm này</span></div>
+      </div>
+    </div>
+
+    <!-- KÝ DUYỆT -->
+    <div class="pr-sign">
+      <div class="box">
+        <div class="role">NGƯỜI THỰC HIỆN</div>
+        <div class="sub">(Ký, ghi rõ họ tên)</div>
+        <div class="name" id="pr_kyThucHien">&nbsp;</div>
+      </div>
+      <div class="box">
+        <div class="role">PHỤ TRÁCH QC</div>
+        <div class="sub">(Ký, ghi rõ họ tên)</div>
+        <div class="name" id="pr_kyPhuTrachQC">&nbsp;</div>
+      </div>
+      <div class="box">
+        <div class="role">TRƯỞNG KHOA / GIÁM ĐỐC PXN</div>
+        <div class="sub">(Ký, ghi rõ họ tên, đóng dấu nếu có)</div>
+        <div class="name" id="pr_kyPheDuyet">&nbsp;</div>
+      </div>
+    </div>
+
+    <div class="pr-foot">In từ IQC Dashboard lúc <span id="pr_printedAt"></span> — Mã sự cố <span id="pr_footMaSuCo"></span></div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -2197,6 +2437,125 @@ async function exportAllRecordsToExcel(){
     setStatus('Lỗi khi xuất báo cáo Excel', true);
   }
 }
+
+/* ============================================================
+   IN BÁO CÁO — FORM SẴN SÀNG TRÌNH KÝ (không cần chỉnh sửa thêm)
+============================================================ */
+const PR_MAP_B3 = {dat:'QC ĐẠT — tiếp tục trả kết quả', khongdat:'QC VẪN KHÔNG ĐẠT — chuyển Bước 4'};
+const PR_MAP_B4BIAS = {ok:'Đã về trong ngưỡng cho phép', notok:'Vẫn vượt ngưỡng cho phép'};
+const PR_MAP_B4NATURE = {hethong:'Sai số HỆ THỐNG', ngaunhien:'Sai số NGẪU NHIÊN'};
+const PR_MAP_B4MEAN = {reset:'Đủ điều kiện — xây lại giới hạn kiểm soát (mean/SD mới)', noreset:'Chưa đủ điều kiện — không set mean mới', na:'Không áp dụng (không phải trường hợp 8x)'};
+const PR_MAP_B5 = {thap:'NGUY CƠ THẤP — rà soát mức thông thường', cao:'NGUY CƠ CAO — rà soát toàn bộ + thông báo lâm sàng'};
+
+function prSetText(id, val){
+  const el = document.getElementById(id);
+  if(el) el.textContent = (val === undefined || val === null || val === '') ? '' : val;
+}
+function prSetCheck(id, checked){
+  const el = document.getElementById(id);
+  if(el) el.textContent = checked ? '☑' : '☐';
+}
+
+function populatePrintView(data){
+  // Header / meta
+  prSetText('pr_maSuCo', data.maSuCo);
+  prSetText('pr_ngay', data.ngay);
+  prSetText('pr_gio', data.gio);
+  prSetText('pr_caLamViec', data.caLamViec);
+  prSetText('pr_xetNghiem', data.xetNghiem);
+  prSetText('pr_thietBi', data.thietBi);
+  prSetText('pr_mucQC', data.mucQC);
+  prSetText('pr_quyTac', data.quyTac);
+  prSetText('pr_nguoiPhatHien', data.nguoiPhatHien);
+  prSetText('pr_phuTrachQC', data.phuTrachQC);
+
+  // Bước 1
+  prSetCheck('pr_chk1_1', data.chk1_1);
+  prSetCheck('pr_chk1_2', data.chk1_2);
+  prSetCheck('pr_chk1_3', data.chk1_3);
+  prSetText('pr_thoiDiemDung', data.thoiDiemDung);
+  prSetText('pr_phamViAH', data.phamViAH);
+  prSetText('pr_nguoiDuocTB', data.nguoiDuocTB);
+
+  // Bước 2
+  ['vatlieu','thuocthu','hieuchuan','baotri','moitruong','thaotac'].forEach(k=>{
+    prSetCheck('pr_chk2_'+k, data['chk2_'+k]);
+    prSetText('pr_note2_'+k, data['note2_'+k]);
+  });
+
+  // Bước 3
+  prSetText('pr_mucQCChayLai', data.mucQCChayLai);
+  prSetText('pr_giaTriDo', data.giaTriDo);
+  prSetText('pr_thoiDiemChayLai', data.thoiDiemChayLai);
+  prSetText('pr_b3', PR_MAP_B3[data.b3] || '—');
+
+  // Bước 4
+  prSetCheck('pr_chk4_1', data.chk4_1);
+  prSetCheck('pr_chk4_2', data.chk4_2);
+  prSetCheck('pr_chk4_3', data.chk4_3);
+  prSetCheck('pr_chk4_4', data.chk4_4);
+  prSetText('pr_moTa4', data.moTa4);
+  prSetText('pr_iqcTruocKP', data.iqcTruocKP);
+  prSetText('pr_iqcSauKP', data.iqcSauKP);
+  prSetText('pr_iqcTargetKP', data.iqcTargetKP);
+  prSetText('pr_biasTruoc', data.biasTruoc);
+  prSetText('pr_biasSau', data.biasSau);
+  prSetText('pr_nguongBias', data.nguongBias);
+  prSetText('pr_b4bias', PR_MAP_B4BIAS[data.b4bias] || '—');
+  prSetText('pr_b4nature', PR_MAP_B4NATURE[data.b4nature] || '—');
+
+  const isSection43 = !!(data.chk4dk1 || data.chk4dk2 || data.chk4dk3 || (data.b4mean && data.b4mean !== 'na'));
+  const sec43 = document.getElementById('pr_section43');
+  if(sec43) sec43.style.display = isSection43 ? 'block' : 'none';
+  prSetCheck('pr_chk4dk1', data.chk4dk1);
+  prSetCheck('pr_chk4dk2', data.chk4dk2);
+  prSetCheck('pr_chk4dk3', data.chk4dk3);
+  prSetText('pr_b4mean', PR_MAP_B4MEAN[data.b4mean] || '—');
+  prSetText('pr_meanMoi', data.meanMoi);
+  prSetText('pr_sdMoi', data.sdMoi);
+
+  // Bước 5
+  prSetText('pr_lanQCDatGanNhat', data.lanQCDatGanNhat);
+  prSetText('pr_thoiDiemKhacPhucXong', data.thoiDiemKhacPhucXong);
+  prSetText('pr_soKQAnhHuong', data.soKQAnhHuong);
+  prSetText('pr_tea5', data.tea5);
+  prSetText('pr_sd5', data.sd5);
+  prSetText('pr_dSEcrit', data.dSEcrit);
+  prSetText('pr_dREcrit', data.dREcrit);
+  prSetText('pr_seObs', data.seObs);
+  prSetText('pr_reObs', data.reObs);
+  prSetText('pr_b5', PR_MAP_B5[data.b5] || '—');
+  prSetText('pr_danhSachRaSoat', data.danhSachRaSoat);
+  prSetText('pr_thongBaoLamSang', data.thongBaoLamSang);
+
+  // Bước 6
+  prSetText('pr_nguyenNhanGoc', data.nguyenNhanGoc);
+  prSetText('pr_hanhDongKP', data.hanhDongKP);
+  prSetText('pr_hanhDongPN', data.hanhDongPN);
+  prSetCheck('pr_chk6_1', data.chk6_1);
+  prSetCheck('pr_chk6_2', data.chk6_2);
+  prSetCheck('pr_chk6_3', data.chk6_3);
+
+  // Ký duyệt — chỉ hiện tên nếu đã nhập, để trống cho ký tay nếu chưa có
+  prSetText('pr_kyThucHien', data.kyThucHien);
+  prSetText('pr_kyPhuTrachQC', data.kyPhuTrachQC);
+  prSetText('pr_kyPheDuyet', data.nguoiPheDuyet || data.kyPheDuyet);
+
+  prSetText('pr_footMaSuCo', data.maSuCo || currentId || '');
+  prSetText('pr_printedAt', new Date().toLocaleString('vi-VN'));
+  prSetText('prIssueDate', new Date().toLocaleDateString('vi-VN'));
+}
+
+function printReport(){
+  const data = getFormData();
+  if(!data.maSuCo && currentId) data.maSuCo = currentId;
+  populatePrintView(data);
+  document.body.classList.add('printing-report');
+  window.print();
+}
+window.addEventListener('afterprint', function(){
+  document.body.classList.remove('printing-report');
+});
 
 function newRecord(){
   currentId = null;
