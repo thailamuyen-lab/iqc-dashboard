@@ -517,6 +517,7 @@
         <button class="btn gold" onclick="newRecord()">🆕 Hồ sơ mới</button>
         <button class="btn" onclick="saveRecord()">💾 Lưu hồ sơ</button>
         <button class="btn" onclick="window.print()">🖨️ In / Lưu PDF</button>
+        <button class="btn secondary" onclick="exportCurrentRecordToExcel()">📊 Xuất Excel</button>
       </div>
 
       <div class="meta-grid">
@@ -803,7 +804,12 @@
     <!-- ===================== RECORDS VIEW ===================== -->
     <div class="view" id="view-records">
       <div class="panel">
-        <div class="panel-head"><h3>📁 Danh sách hồ sơ — dữ liệu dùng chung</h3></div>
+        <div class="panel-head">
+          <h3>📁 Danh sách hồ sơ — dữ liệu dùng chung</h3>
+          <div class="quick-actions">
+            <button class="btn secondary" onclick="exportAllRecordsToExcel()">📊 Xuất Excel toàn bộ hồ sơ</button>
+          </div>
+        </div>
         <div class="panel-body">
           <div class="search-row">
             <input type="text" id="searchInput" placeholder="Tìm theo mã sự cố, xét nghiệm, thiết bị, ngày, nhân viên..." oninput="renderRecords()">
@@ -827,6 +833,7 @@
   </footer>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore-compat.js"></script>
@@ -2041,6 +2048,153 @@ async function handleImportFile(evt){
     setStatus('✔ Đã nhập dữ liệu — thêm ' + added + ', cập nhật ' + updated + ' hồ sơ');
   }catch(e){
     setStatus('Lỗi: file không hợp lệ hoặc bị hỏng', true);
+  }
+}
+
+/* ============================================================
+   XUẤT BÁO CÁO EXCEL (.xlsx) — theo đúng các trường của Biểu mẫu khắc phục
+============================================================ */
+const EXCEL_COLUMNS = [
+  ['Thông tin chung','Ngày xảy ra sự cố','ngay'],
+  ['Thông tin chung','Giờ phát hiện','gio'],
+  ['Thông tin chung','Mã sự cố','maSuCo'],
+  ['Thông tin chung','Ca làm việc','caLamViec'],
+  ['Thông tin chung','Danh mục xét nghiệm','xetNghiem'],
+  ['Thông tin chung','Thiết bị / Hệ thống','thietBi'],
+  ['Thông tin chung','Mức IQC vi phạm','mucQC'],
+  ['Thông tin chung','Quy tắc vi phạm','quyTac'],
+  ['Thông tin chung','Người phát hiện / trực ca','nguoiPhatHien'],
+  ['Thông tin chung','Phụ trách QC xử lý','phuTrachQC'],
+  ['Thông tin chung','Người phê duyệt','nguoiPheDuyet'],
+
+  ['Bước 1 - Cô lập sự cố','Đã dừng trả KQ','chk1_1', 'bool'],
+  ['Bước 1 - Cô lập sự cố','Đã xác định phạm vi ảnh hưởng','chk1_2', 'bool'],
+  ['Bước 1 - Cô lập sự cố','Đã thông báo phụ trách','chk1_3', 'bool'],
+  ['Bước 1 - Cô lập sự cố','Thời điểm dừng trả KQ','thoiDiemDung'],
+  ['Bước 1 - Cô lập sự cố','Phạm vi ảnh hưởng (XN/TB/ca)','phamViAH'],
+  ['Bước 1 - Cô lập sự cố','Người được thông báo','nguoiDuocTB'],
+
+  ['Bước 2 - Kiểm tra yếu tố thường gặp','Vật liệu QC - ghi chú','note2_vatlieu'],
+  ['Bước 2 - Kiểm tra yếu tố thường gặp','Thuốc thử - ghi chú','note2_thuocthu'],
+  ['Bước 2 - Kiểm tra yếu tố thường gặp','Hiệu chuẩn - ghi chú','note2_hieuchuan'],
+  ['Bước 2 - Kiểm tra yếu tố thường gặp','Bảo trì - ghi chú','note2_baotri'],
+  ['Bước 2 - Kiểm tra yếu tố thường gặp','Môi trường - ghi chú','note2_moitruong'],
+  ['Bước 2 - Kiểm tra yếu tố thường gặp','Thao tác - ghi chú','note2_thaotac'],
+
+  ['Bước 3 - Chạy lại QC','Mức QC chạy lại','mucQCChayLai'],
+  ['Bước 3 - Chạy lại QC','Giá trị đo được','giaTriDo'],
+  ['Bước 3 - Chạy lại QC','Thời điểm chạy lại','thoiDiemChayLai'],
+  ['Bước 3 - Chạy lại QC','Kết quả QC chạy lại','b3', 'map', {dat:'QC đạt', khongdat:'QC không đạt'}],
+
+  ['Bước 4 - Xác minh & Bias','Hiệu chuẩn lại thiết bị','chk4_1','bool'],
+  ['Bước 4 - Xác minh & Bias','Thay thuốc thử/điện cực/cartridge','chk4_2','bool'],
+  ['Bước 4 - Xác minh & Bias','Chạy mẫu kiểm tra độc lập','chk4_3','bool'],
+  ['Bước 4 - Xác minh & Bias','Đối chiếu thiết bị/phương pháp khác','chk4_4','bool'],
+  ['Bước 4 - Xác minh & Bias','Mô tả hành động đã thực hiện','moTa4'],
+  ['Bước 4 - Xác minh & Bias','IQC lúc sự cố','iqcTruocKP'],
+  ['Bước 4 - Xác minh & Bias','IQC sau khắc phục','iqcSauKP'],
+  ['Bước 4 - Xác minh & Bias','IQC target','iqcTargetKP'],
+  ['Bước 4 - Xác minh & Bias','Bias trước (%)','biasTruoc'],
+  ['Bước 4 - Xác minh & Bias','Bias sau (%)','biasSau'],
+  ['Bước 4 - Xác minh & Bias','Ngưỡng Bias cho phép (%)','nguongBias'],
+  ['Bước 4 - Xác minh & Bias','Kết luận Bias','b4bias','map', {ok:'Đã về trong ngưỡng', notok:'Vẫn vượt ngưỡng'}],
+  ['Bước 4 - Xác minh & Bias','Bản chất sai số','b4nature','map', {hethong:'Hệ thống', ngaunhien:'Ngẫu nhiên'}],
+  ['Bước 4 - Xác minh & Bias','Điều kiện 1 (thay đổi hợp lệ)','chk4dk1','bool'],
+  ['Bước 4 - Xác minh & Bias','Điều kiện 2 (Bias trong ngưỡng)','chk4dk2','bool'],
+  ['Bước 4 - Xác minh & Bias','Điều kiện 3 (đủ số liệu)','chk4dk3','bool'],
+  ['Bước 4 - Xác minh & Bias','Set mean mới','b4mean','map', {reset:'Được xây lại (mean/SD mới)', noreset:'Không set mean mới', na:'Không áp dụng'}],
+  ['Bước 4 - Xác minh & Bias','Mean mới','meanMoi'],
+  ['Bước 4 - Xác minh & Bias','SD mới','sdMoi'],
+
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','Lần QC đạt gần nhất','lanQCDatGanNhat'],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','Thời điểm khắc phục xong','thoiDiemKhacPhucXong'],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','Số KQ BN trong khoảng ảnh hưởng','soKQAnhHuong'],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','TEa (%)','tea5'],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','SD/CV nội bộ (%)','sd5'],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','ΔSEcrit','dSEcrit'],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','ΔREcrit','dREcrit'],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','Bias lúc sự cố (%)','bias5'],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','Bias sau khắc phục (%)','biasSau5'],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','SEobs','seObs'],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','Biên độ dao động QC','bienDoQC5'],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','REobs','reObs'],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','Kết luận nguy cơ','b5','map', {thap:'Nguy cơ thấp', cao:'Nguy cơ cao'}],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','Danh sách KQ được rà soát','danhSachRaSoat'],
+  ['Bước 5 - Quyết định xử lý KQ bệnh nhân','Đã thông báo lâm sàng','thongBaoLamSang'],
+
+  ['Bước 6 - Ghi nhận & KPPN','Nguyên nhân gốc','nguyenNhanGoc'],
+  ['Bước 6 - Ghi nhận & KPPN','Hành động khắc phục đã thực hiện','hanhDongKP'],
+  ['Bước 6 - Ghi nhận & KPPN','Hành động phòng ngừa đề xuất','hanhDongPN'],
+  ['Bước 6 - Ghi nhận & KPPN','Cập nhật quy trình nội bộ','chk6_1','bool'],
+  ['Bước 6 - Ghi nhận & KPPN','Đã đánh giá lại Bias trước khi trả KQ thường quy','chk6_2','bool'],
+  ['Bước 6 - Ghi nhận & KPPN','Đề xuất rà soát bảng TEa','chk6_3','bool'],
+
+  ['Ký duyệt','Người thực hiện','kyThucHien'],
+  ['Ký duyệt','Phụ trách QC','kyPhuTrachQC'],
+  ['Ký duyệt','Người phê duyệt','kyPheDuyet'],
+];
+
+function formatCellForExcel(data, col){
+  const [, , key, kind, map] = col;
+  const raw = data ? data[key] : undefined;
+  if(kind === 'bool') return raw ? 'Có' : 'Không';
+  if(kind === 'map') return (raw && map[raw]) ? map[raw] : (raw || '');
+  return raw === undefined || raw === null ? '' : raw;
+}
+
+function buildRecordsWorksheet(dataList){
+  const groupRow = EXCEL_COLUMNS.map(c => c[0]);
+  const headerRow = EXCEL_COLUMNS.map(c => c[1]);
+  const rows = dataList.map(data => EXCEL_COLUMNS.map(col => formatCellForExcel(data, col)));
+  const aoa = [groupRow, headerRow, ...rows];
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+
+  // Merge consecutive equal group-header cells on row 1
+  const merges = [];
+  let start = 0;
+  for(let i = 1; i <= groupRow.length; i++){
+    if(i === groupRow.length || groupRow[i] !== groupRow[start]){
+      if(i - 1 > start) merges.push({s:{r:0,c:start}, e:{r:0,c:i-1}});
+      start = i;
+    }
+  }
+  ws['!merges'] = merges;
+  ws['!cols'] = EXCEL_COLUMNS.map(() => ({wch:18}));
+  ws['!freeze'] = {xSplit:0, ySplit:2};
+  return ws;
+}
+
+function downloadWorkbook(ws, filenamePrefix){
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Bao cao khac phuc IQC');
+  const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  XLSX.writeFile(wb, filenamePrefix + '-' + stamp + '.xlsx');
+}
+
+function exportCurrentRecordToExcel(){
+  if(typeof XLSX === 'undefined'){ setStatus('Không tải được thư viện Excel — kiểm tra kết nối mạng', true); return; }
+  const data = getFormData();
+  if(!data.maSuCo && currentId) data.maSuCo = currentId;
+  const ws = buildRecordsWorksheet([data]);
+  downloadWorkbook(ws, 'ho-so-khac-phuc-' + (data.maSuCo || 'moi'));
+  setStatus('✔ Đã xuất Excel hồ sơ ' + (data.maSuCo || ''));
+}
+
+async function exportAllRecordsToExcel(){
+  if(typeof XLSX === 'undefined'){ setStatus('Không tải được thư viện Excel — kiểm tra kết nối mạng', true); return; }
+  if(!recordIndex.length){ setStatus('Chưa có hồ sơ nào để xuất', true); return; }
+  try{
+    setStatus('Đang chuẩn bị báo cáo Excel...');
+    const dataList = [];
+    for(const r of recordIndex){
+      const res = await storage.get('incident:' + r.id, true);
+      dataList.push(res && res.value ? JSON.parse(res.value) : {maSuCo:r.maSuCo});
+    }
+    const ws = buildRecordsWorksheet(dataList);
+    downloadWorkbook(ws, 'bao-cao-khac-phuc-IQC-tong-hop');
+    setStatus('✔ Đã xuất Excel báo cáo tổng hợp (' + dataList.length + ' hồ sơ)');
+  }catch(e){
+    setStatus('Lỗi khi xuất báo cáo Excel', true);
   }
 }
 
