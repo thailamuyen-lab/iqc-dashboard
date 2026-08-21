@@ -703,10 +703,22 @@
           </div>
           <div class="empty-hint" id="b4IqcHint" style="margin:-4px 0 10px;"></div>
 
-          <div class="empty-hint" style="margin:-4px 0 6px;">⚠️ Chỉ 1 điểm đo trước/sau <b>không đủ</b> để phân biệt sai số hệ thống hay ngẫu nhiên. Nên đo lặp lại thêm 1–2 lần sau khắc phục (không bắt buộc, nhưng khuyến nghị mạnh) để xác nhận kết quả có ổn định quanh target hay không.</div>
+          <div class="empty-hint" style="margin:-4px 0 6px;">⚠️ Chỉ 1 điểm đo trước/sau <b>không đủ</b> để phân biệt sai số hệ thống hay ngẫu nhiên. Ưu tiên dùng dữ liệu <b>đã có sẵn</b> (miễn phí) trước khi nghĩ đến chạy thêm QC (tốn hóa chất).</div>
+
+          <div class="field">
+            <label>Xu hướng QC 3–5 điểm gần nhất TRƯỚC sự cố (nhìn biểu đồ Levey-Jennings — không tốn thêm chi phí)</label>
+            <select data-key="xuHuongQCTruoc" id="xuHuongQCTruocInput" onchange="updateB4NatureSuggestion();">
+              <option value="">-- Chưa xem / chưa xác định --</option>
+              <option value="troi">Trôi dần đều về 1 hướng trước khi vi phạm (dấu hiệu hệ thống)</option>
+              <option value="ngaunhien">Dao động ngẫu nhiên quanh mean, rồi đột ngột lệch (dấu hiệu ngẫu nhiên)</option>
+              <option value="khongro">Không rõ xu hướng / không đủ dữ liệu lịch sử</option>
+            </select>
+          </div>
+
+          <div class="empty-hint" style="margin:6px 0;">Nếu xu hướng lịch sử ở trên chưa đủ rõ, có thể tham khảo thêm <b>2–3 điểm QC của các ca chạy thường quy tiếp theo</b> (không cần chủ động chạy thêm riêng — QC vẫn phải chạy đều theo lịch, chỉ cần quay lại điền vào đây). Chỉ chủ động chạy lặp ngay nếu xét nghiệm có ý nghĩa cấp cứu, cần kết luận gấp.</div>
           <div class="field-row three">
-            <div class="field"><label>Đo lặp lần 2 sau khắc phục (khuyến nghị)</label><input type="text" data-key="iqcSauKP2" id="iqcSauKP2Input" oninput="updateB4NatureSuggestion();"></div>
-            <div class="field"><label>Đo lặp lần 3 sau khắc phục (khuyến nghị)</label><input type="text" data-key="iqcSauKP3" id="iqcSauKP3Input" oninput="updateB4NatureSuggestion();"></div>
+            <div class="field"><label>QC ca tiếp theo — điểm 2 (không cần chạy riêng)</label><input type="text" data-key="iqcSauKP2" id="iqcSauKP2Input" oninput="updateB4NatureSuggestion();"></div>
+            <div class="field"><label>QC ca tiếp theo — điểm 3 (không cần chạy riêng)</label><input type="text" data-key="iqcSauKP3" id="iqcSauKP3Input" oninput="updateB4NatureSuggestion();"></div>
             <div class="field"></div>
           </div>
           <div class="field-row three">
@@ -996,6 +1008,7 @@
         <div class="pr-chk"><span class="box" id="pr_chk4_4">☐</span><span class="lbl">Đối chiếu kết quả trên thiết bị khác / phương pháp khác</span></div>
         <div class="pr-field" style="margin-top:5px;"><span class="k">Mô tả chi tiết hành động đã thực hiện:</span><span class="v" id="pr_moTa4">&nbsp;</span></div>
 
+        <div class="pr-field"><span class="k">Xu hướng QC trước sự cố:</span><span class="v" id="pr_xuHuongQCTruoc">&nbsp;</span></div>
         <table class="pr-mini" style="margin-top:7px;">
           <tr><th>IQC lúc sự cố</th><th>IQC sau KP (lần 1)</th><th>Đo lặp lần 2</th><th>Đo lặp lần 3</th><th>IQC target</th><th>Bias trước (%)</th><th>Bias sau (%)</th><th>Ngưỡng Bias (%)</th></tr>
           <tr>
@@ -2094,6 +2107,15 @@ function classifyRuleNature(quyTacVal){
   return null;
 }
 
+/* Nguồn bằng chứng miễn phí nhất: xu hướng các điểm QC trước sự cố trên biểu đồ Levey-Jennings (người dùng tự đọc và chọn) */
+function classifyTrendNature(){
+  const el = document.getElementById('xuHuongQCTruocInput');
+  const v = el ? el.value : '';
+  if(v === 'troi') return 'hethong';
+  if(v === 'ngaunhien') return 'ngaunhien';
+  return null;
+}
+
 /* Đánh giá độ ổn định của các lần đo lặp sau khắc phục so với target:
    - Cần tối thiểu 2 điểm hợp lệ mới đưa ra gợi ý (đúng như đã giải thích: 1 điểm là không đủ)
    - Nếu TẤT CẢ các điểm đều lệch cùng 1 hướng so với target và biên độ dao động giữa các điểm nhỏ → nghiêng hệ thống (đã khắc phục ổn định quanh 1 mức, có thể mức đó vẫn lệch nếu chưa hết bias)
@@ -2143,32 +2165,41 @@ function updateB4NatureSuggestion(){
 
   const quyTacEl = document.getElementById('quyTacInput');
   const ruleNature = classifyRuleNature(quyTacEl ? quyTacEl.value : '');
+  const trendNature = classifyTrendNature();
   const repeat = classifyRepeatNature();
 
   hethongLabel.classList.remove('auto-picked');
   ngaunhienLabel.classList.remove('auto-picked');
 
-  if(!ruleNature && !repeat.nature){
-    hint.innerHTML = '🤖 Nhập <b>Quy tắc vi phạm</b> ở phần thông tin chung phía trên (và/hoặc thêm các lần đo lặp ở trên) để hệ thống gợi ý bản chất sai số theo dữ liệu — bản chất sai số không nên suy ra chỉ từ 1 điểm Bias.';
+  if(!ruleNature && !trendNature && !repeat.nature){
+    hint.innerHTML = '🤖 Nhập <b>Quy tắc vi phạm</b> ở phần thông tin chung phía trên, và/hoặc <b>xu hướng QC trước sự cố</b> (miễn phí, xem lại biểu đồ đã có) để hệ thống gợi ý bản chất sai số — bản chất sai số không nên suy ra chỉ từ 1 điểm Bias.';
     return;
   }
 
-  // Ưu tiên: nếu 2 nguồn đồng thuận -> gợi ý mạnh; nếu trái ngược -> nêu rõ để người dùng tự cân nhắc; nếu chỉ có 1 nguồn -> dùng nguồn đó
-  let finalNature = null;
+  // Nguồn bằng chứng theo thứ tự ưu tiên: quy tắc vi phạm + xu hướng lịch sử (miễn phí, đã có sẵn) > đo lặp thêm (có chi phí)
   let reasonParts = [];
   if(ruleNature){
     reasonParts.push('Quy tắc vi phạm "<b>' + escapeHtml(quyTacEl.value) + '</b>" thường gặp ở nhóm ' + (ruleNature==='hethong' ? 'lỗi <b>hệ thống</b>' : 'lỗi <b>ngẫu nhiên</b>'));
   }
+  if(trendNature){
+    reasonParts.push('xu hướng QC trước sự cố cho thấy ' + (trendNature==='hethong' ? 'trôi dần 1 hướng → nghiêng <b>hệ thống</b>' : 'dao động không theo hướng → nghiêng <b>ngẫu nhiên</b>'));
+  }
   if(repeat.nature){
-    reasonParts.push('các lần đo lặp sau khắc phục cho thấy ' + repeat.detail + ' → nghiêng về ' + (repeat.nature==='hethong' ? '<b>hệ thống</b>' : '<b>ngẫu nhiên</b>'));
+    reasonParts.push('QC các ca tiếp theo cho thấy ' + repeat.detail + ' → nghiêng về ' + (repeat.nature==='hethong' ? '<b>hệ thống</b>' : '<b>ngẫu nhiên</b>'));
   } else if(repeat.detail){
     reasonParts.push(repeat.detail + ', chưa đủ rõ để kết luận riêng phần này');
   }
 
-  if(ruleNature && repeat.nature){
-    finalNature = (ruleNature === repeat.nature) ? ruleNature : null;
+  // Ưu tiên đồng thuận giữa quy tắc + xu hướng lịch sử (2 nguồn miễn phí) trước, đo lặp chỉ để củng cố/phá vỡ hòa
+  const freeSignals = [ruleNature, trendNature].filter(Boolean);
+  const freeAgree = freeSignals.length >= 1 && freeSignals.every(s => s === freeSignals[0]);
+  let finalNature = null;
+  if(freeSignals.length === 2){
+    finalNature = freeAgree ? freeSignals[0] : (repeat.nature || null);
+  } else if(freeSignals.length === 1){
+    finalNature = repeat.nature && repeat.nature !== freeSignals[0] ? null : freeSignals[0];
   } else {
-    finalNature = ruleNature || repeat.nature;
+    finalNature = repeat.nature || null;
   }
 
   const hethongRadio = document.querySelector('input[name="b4nature"][value="hethong"]');
@@ -2179,9 +2210,10 @@ function updateB4NatureSuggestion(){
     else { ngaunhienRadio.checked = true; ngaunhienLabel.classList.add('auto-picked'); }
   }
 
-  const conflict = ruleNature && repeat.nature && ruleNature !== repeat.nature;
+  const allSignals = [ruleNature, trendNature, repeat.nature].filter(Boolean);
+  const conflict = allSignals.length >= 2 && !allSignals.every(s => s === allSignals[0]);
   hint.innerHTML = '🔎 Gợi ý (dựa trên dữ liệu, <b>bạn vẫn cần xác nhận bằng chuyên môn</b>): ' + reasonParts.join('; ') + '. ' +
-    (conflict ? '⚠️ Hai bằng chứng đang <b>không đồng thuận</b> — hãy tự đánh giá thêm trước khi chọn. ' : '') +
+    (conflict ? '⚠️ Các bằng chứng đang <b>không đồng thuận</b> — hãy tự đánh giá thêm trước khi chọn. ' : '') +
     (b4natureManualOverride ? '' : '<a href="javascript:void(0)" onclick="onB4NatureManualPick()" style="color:var(--blue); text-decoration:underline;">Tôi tự chọn theo chuyên môn</a>');
 }
 
@@ -2461,6 +2493,7 @@ const EXCEL_COLUMNS = [
   ['Bước 4 - Xác minh & Bias','Chạy mẫu kiểm tra độc lập','chk4_3','bool'],
   ['Bước 4 - Xác minh & Bias','Đối chiếu thiết bị/phương pháp khác','chk4_4','bool'],
   ['Bước 4 - Xác minh & Bias','Mô tả hành động đã thực hiện','moTa4'],
+  ['Bước 4 - Xác minh & Bias','Xu hướng QC trước sự cố','xuHuongQCTruoc','map', {troi:'Trôi dần 1 hướng', ngaunhien:'Dao động ngẫu nhiên', khongro:'Không rõ / chưa đủ dữ liệu'}],
   ['Bước 4 - Xác minh & Bias','IQC lúc sự cố','iqcTruocKP'],
   ['Bước 4 - Xác minh & Bias','IQC sau khắc phục (lần 1)','iqcSauKP'],
   ['Bước 4 - Xác minh & Bias','IQC đo lặp lần 2','iqcSauKP2'],
@@ -2578,6 +2611,7 @@ const PR_MAP_B4BIAS = {ok:'Đã về trong ngưỡng cho phép', notok:'Vẫn v�
 const PR_MAP_B4NATURE = {hethong:'Sai số HỆ THỐNG', ngaunhien:'Sai số NGẪU NHIÊN'};
 const PR_MAP_B4MEAN = {reset:'Đủ điều kiện — xây lại giới hạn kiểm soát (mean/SD mới)', noreset:'Chưa đủ điều kiện — không set mean mới', na:'Không áp dụng (không phải trường hợp 8x)'};
 const PR_MAP_B5 = {thap:'NGUY CƠ THẤP — rà soát mức thông thường', cao:'NGUY CƠ CAO — rà soát toàn bộ + thông báo lâm sàng'};
+const PR_MAP_TREND = {troi:'Trôi dần đều về 1 hướng (dấu hiệu hệ thống)', ngaunhien:'Dao động ngẫu nhiên rồi lệch đột ngột (dấu hiệu ngẫu nhiên)', khongro:'Không rõ / chưa đủ dữ liệu lịch sử'};
 
 function prSetText(id, val){
   const el = document.getElementById(id);
@@ -2627,6 +2661,7 @@ function populatePrintView(data){
   prSetCheck('pr_chk4_3', data.chk4_3);
   prSetCheck('pr_chk4_4', data.chk4_4);
   prSetText('pr_moTa4', data.moTa4);
+  prSetText('pr_xuHuongQCTruoc', PR_MAP_TREND[data.xuHuongQCTruoc] || '');
   prSetText('pr_iqcTruocKP', data.iqcTruocKP);
   prSetText('pr_iqcSauKP', data.iqcSauKP);
   prSetText('pr_iqcSauKP2', data.iqcSauKP2);
