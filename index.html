@@ -170,6 +170,107 @@
   .tea-actions button{border:none; background:none; cursor:pointer; font-size:14px;}
   .add-row-btn{background:var(--blue); color:#fff; border:none; border-radius:5px; padding:7px 11px; font-size:12px; cursor:pointer; margin-top:8px;}
 
+  /* ===================== NGƯỠNG TEa · BIAS · SD/CV (2 tab) ===================== */
+  .thr-panel{padding:0; overflow:hidden;}
+  .thr-panel [hidden]{display:none !important;}
+  .thr-head{padding:16px 18px 0;}
+  .thr-title{font-size:14px; font-weight:700; color:var(--navy);}
+  .thr-sub{font-size:12px; color:var(--muted); margin-top:2px; max-width:80ch;}
+  .thr-tabs{display:flex; gap:4px; padding:12px 18px 0; border-bottom:1px solid var(--border);}
+  .thr-tab{appearance:none; border:none; background:none; cursor:pointer; font-size:13px; font-weight:600; color:var(--muted);
+    padding:9px 14px 10px; border-bottom:3px solid transparent; margin-bottom:-1px; display:flex; align-items:center; gap:8px; border-radius:6px 6px 0 0;}
+  .thr-tab:hover{color:var(--navy); background:var(--grey);}
+  .thr-tab[aria-selected="true"]{color:var(--navy); border-bottom-color:var(--blue); background:none;}
+  .thr-count{font-size:11px; font-weight:700; background:var(--light); color:var(--navy); border-radius:10px; padding:1px 8px; font-variant-numeric:tabular-nums;}
+  .thr-tab[aria-selected="true"] .thr-count{background:var(--navy); color:#fff;}
+  .thr-pane{padding:14px 18px 18px;}
+  .thr-pane[hidden]{display:none;}
+  .thr-bar{display:flex; flex-wrap:wrap; gap:10px 12px; align-items:center; margin-bottom:10px;}
+  .thr-search{position:relative; flex:0 1 240px;}
+  .thr-search input{width:100%; border:1px solid var(--border); border-radius:6px; padding:7px 10px 7px 30px; font-size:12.5px; background:#fff;}
+  .thr-search svg{position:absolute; left:9px; top:50%; transform:translateY(-50%); width:14px; height:14px; color:var(--muted); pointer-events:none;}
+  .thr-chips{display:flex; flex-wrap:wrap; gap:6px; flex:1 1 auto; min-width:0;}
+  .thr-fchip{appearance:none; border:1px solid var(--border); background:#fff; color:var(--navy); font-size:12px; font-weight:600; border-radius:16px; padding:4px 11px; cursor:pointer; display:inline-flex; gap:6px; align-items:center;}
+  .thr-fchip small{font-size:11px; color:var(--muted); font-weight:700; font-variant-numeric:tabular-nums;}
+  .thr-fchip:hover{border-color:var(--blue);}
+  .thr-fchip[aria-pressed="true"]{background:var(--navy); border-color:var(--navy); color:#fff;}
+  .thr-fchip[aria-pressed="true"] small{color:#c9d6ee;}
+  .thr-actions{display:flex; gap:8px; margin-left:auto; flex-wrap:wrap;}
+  .thr-btn{appearance:none; display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); background:#fff; color:var(--navy); font-size:12px; font-weight:600; padding:6px 11px; border-radius:6px; cursor:pointer; white-space:nowrap;}
+  .thr-btn svg{width:14px; height:14px;}
+  .thr-btn:hover{border-color:var(--blue); background:var(--grey);}
+  .thr-btn.primary{background:var(--blue); border-color:var(--blue); color:#fff;}
+  .thr-btn.primary:hover{background:var(--navy);}
+  .thr-btn[disabled]{opacity:.45; cursor:not-allowed;}
+  .thr-tip{font-size:11.5px; color:var(--muted); margin:0 0 10px;}
+  .thr-wrap{max-height:min(64vh,640px); overflow:auto; border:1px solid var(--border); border-radius:8px; background:#fff;}
+  table.thr-table{width:100%; border-collapse:separate; border-spacing:0; font-size:12.5px; min-width:640px;}
+  .thr-table thead th{position:sticky; top:0; z-index:2; background:var(--navy); color:#fff; text-align:left; font-size:11.5px; font-weight:600; padding:8px 10px; white-space:nowrap;}
+  .thr-table th.num, .thr-table td.num{text-align:right;}
+  .thr-table td{padding:3px 10px; border-bottom:1px solid var(--border); vertical-align:middle;}
+  .thr-table tbody tr:last-child td{border-bottom:none;}
+  .thr-table tbody tr:hover td{background:#F7F9FD;}
+  .thr-table td.name{font-weight:600; color:var(--navy); white-space:nowrap;}
+  .thr-in, .thr-sel{width:100%; border:1px solid transparent; background:transparent; border-radius:5px; padding:6px 7px; font-size:12.5px; font-family:inherit; color:var(--text);}
+  .thr-sel{-webkit-appearance:none; appearance:none; padding-right:24px; cursor:pointer; text-overflow:ellipsis;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23697488' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5l3 3 3-3'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 7px center; background-size:11px;}
+  .thr-in.num{text-align:right; font-variant-numeric:tabular-nums; width:92px;}
+  .thr-in:hover, .thr-sel:hover{border-color:var(--border); background-color:#fff;}
+  .thr-in:focus, .thr-sel:focus{outline:none; border-color:var(--blue); background-color:#fff; box-shadow:0 0 0 3px rgba(46,83,149,.15);}
+  .thr-in::placeholder{color:#b3bac8;}
+  .thr-in.bad{border-color:#d9534f; background-color:#fff5f5;}
+  .thr-sel.caution{border-color:#C99A00; background-color:#FFF8E1;}
+  .thr-ro{font-variant-numeric:tabular-nums; color:var(--text);}
+  .thr-crit{font-weight:700; font-variant-numeric:tabular-nums; color:var(--navy);}
+  .thr-crit.neg{color:var(--red);}
+  .thr-crit.na{color:#b3bac8; font-weight:400;}
+  .thr-chip{display:inline-block; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:10px; margin-left:6px; vertical-align:middle; border:none; font-family:inherit;}
+  .thr-chip.caution{background:var(--gold); color:var(--goldtxt);}
+  .thr-chip.err{background:var(--redbg); color:var(--red);}
+  .thr-chip.ok{background:var(--greenbg); color:var(--green);}
+  button.thr-chip{cursor:pointer;}
+  .thr-link{background:none; border:none; padding:0; font-size:12px; color:var(--blue); cursor:pointer; text-decoration:underline; text-underline-offset:2px; font-family:inherit;}
+  .thr-link.none{color:#9aa3b5; text-decoration:none; cursor:default;}
+  .thr-del{appearance:none; border:none; background:none; cursor:pointer; color:#8a93a6; padding:5px; border-radius:5px; line-height:0;}
+  .thr-del:hover{color:var(--red); background:var(--redbg);}
+  .thr-del svg{width:15px; height:15px;}
+  .thr-del[hidden]{display:none;}
+  .thr-empty{padding:26px 16px; text-align:center; color:var(--muted); font-size:12.5px;}
+  .thr-hide-dev .c-dev{display:none;}
+  .thr-note{margin-top:10px; font-size:12px; color:var(--muted);}
+  .thr-note summary{cursor:pointer; color:var(--navy); font-weight:600;}
+  .thr-note p{margin:6px 0 0; max-width:95ch;}
+  .thr-note code{background:var(--grey); padding:1px 5px; border-radius:4px;}
+  .thr-tab:focus-visible, .thr-fchip:focus-visible, .thr-btn:focus-visible, .thr-del:focus-visible, .thr-link:focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
+
+  .cfg-group.thr-panel select.thr-sel{border:1px solid transparent; margin-bottom:0; padding:6px 24px 6px 7px;}
+  .cfg-group.thr-panel select.thr-sel:hover{border-color:var(--border);}
+  .cfg-group.thr-panel select.thr-sel:focus{border-color:var(--blue);}
+  .cfg-group.thr-panel select.thr-sel.caution{border-color:#C99A00;}
+
+  .thr-modal{position:fixed; inset:0; background:rgba(15,37,64,.45); z-index:200; display:none; align-items:center; justify-content:center; padding:20px;}
+  .thr-dialog{background:#fff; border-radius:12px; width:min(860px,100%); max-height:88vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(15,37,64,.35);}
+  .thr-dlg-h{padding:16px 20px 10px; border-bottom:1px solid var(--border);}
+  .thr-dlg-h h3{margin:0; font-size:15px; color:var(--navy);}
+  .thr-dlg-h p{margin:3px 0 0; font-size:12px; color:var(--muted);}
+  .thr-dlg-b{padding:14px 20px; overflow:auto; flex:1 1 auto;}
+  .thr-dlg-f{padding:12px 20px; border-top:1px solid var(--border); display:flex; gap:8px; justify-content:flex-end; align-items:center;}
+  .thr-dlg-f .grow{margin-right:auto; font-size:12px; color:var(--muted);}
+  .thr-sum{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;}
+  .thr-sum .thr-chip{margin:0; font-size:12px; padding:3px 10px;}
+  .thr-chip.info{background:var(--light); color:var(--navy);}
+  .thr-opt{display:flex; gap:8px; align-items:flex-start; font-size:12.5px; margin:6px 0; line-height:1.4;}
+  .thr-opt input{margin-top:3px;}
+  .thr-opt select{padding:5px 7px; border:1px solid var(--border); border-radius:5px; font-size:12.5px;}
+  .thr-dlg-b table{width:100%; border-collapse:collapse; font-size:12px; margin-top:8px;}
+  .thr-dlg-b th{background:var(--grey); text-align:left; padding:6px 8px; font-size:11.5px; color:var(--navy); position:sticky; top:0;}
+  .thr-dlg-b td{padding:5px 8px; border-bottom:1px solid var(--border);}
+  .thr-dlg-b td.num, .thr-dlg-b th.num{text-align:right; font-variant-numeric:tabular-nums;}
+  .thr-dlg-b tr.skip td{color:#9aa3b5;}
+  .thr-err{background:var(--redbg); color:var(--red); padding:10px 12px; border-radius:6px; font-size:12.5px;}
+  @media (max-width:760px){ .thr-actions{margin-left:0;} .thr-pane{padding:12px;} }
+
   /* ===================== FORM VIEW ===================== */
   .meta-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px 16px; margin-bottom:18px; background:var(--card); border:1px solid var(--border); padding:16px; border-radius:10px;}
   .meta-grid label{font-size:11.5px; font-weight:700; color:var(--navy); display:block; margin-bottom:3px;}
@@ -541,27 +642,60 @@
           <div class="tag-add"><input id="new-nguoiPheDuyet" placeholder="Họ tên"><button onclick="addTag('nguoiPheDuyet','new-nguoiPheDuyet')">+ Thêm</button></div>
         </div>
 
-        <div class="cfg-group wide">
-          <label>Ngưỡng TEa (Total allowable error), Bias PP &amp; SD/CV nội bộ — theo từng xét nghiệm × thiết bị</label>
-          <div class="empty-hint" style="margin-bottom:6px;">Mỗi thiết bị chạy cùng 1 xét nghiệm có thể cho TEa/Bias/SD khác nhau, nên khai báo riêng từng dòng theo cặp <b>Xét nghiệm + Thiết bị</b>. Bỏ trống cột "Thiết bị" nếu muốn dòng đó áp dụng chung cho mọi thiết bị (dùng làm giá trị dự phòng khi chưa có dòng riêng cho thiết bị đang chọn). Biểu mẫu khắc phục (Bước 4.2 và Bước 5) sẽ tự động lấy đúng dòng theo cả xét nghiệm lẫn thiết bị đã chọn. ΔSEcrit/ΔREcrit được tính sẵn tại đây (theo hồ sơ thẩm định phương pháp) và Bước 5 sẽ lấy nguyên giá trị này về, không tính lại theo bias của từng sự cố.</div>
-          <div style="overflow-x:auto;">
-          <table class="tea">
-            <tr>
-              <th style="width:13%">Xét nghiệm</th>
-              <th style="width:13%">Thiết bị</th>
-              <th style="width:8%">TEa (%)</th>
-              <th style="width:11%">Bias hiệu năng PP (%)</th>
-              <th style="width:10%">SD/CV nội bộ (%)</th>
-              <th style="width:9%">ΔSEcrit</th>
-              <th style="width:9%">ΔREcrit</th>
-              <th style="width:11%">Nguồn tham khảo</th>
-              <th style="width:12%">Ghi chú</th>
-              <th></th>
-            </tr>
-            <tbody id="teaTableBody"></tbody>
-          </table>
+        <div class="cfg-group wide thr-panel" id="thrPanel">
+          <div class="thr-head">
+            <div class="thr-title">Ngưỡng chất lượng theo xét nghiệm</div>
+            <div class="thr-sub">TEa do phòng xét nghiệm chấp nhận, cùng Bias hiệu năng PP và SD/CV nội bộ theo từng thiết bị. Biểu mẫu khắc phục (Bước 4.2 và Bước 5) tự lấy giá trị từ đây.</div>
           </div>
-          <button class="add-row-btn" onclick="addTeaRow()">+ Thêm dòng ngưỡng TEa</button>
+          <div class="thr-tabs" role="tablist" aria-label="Ngưỡng TEa, Bias và SD/CV">
+            <button type="button" class="thr-tab" role="tab" id="thrTabTea" aria-controls="thrPaneTea" aria-selected="true" onclick="thrSwitchTab('tea')">TEa được PXN chấp nhận <span class="thr-count" id="thrCountTea">0</span></button>
+            <button type="button" class="thr-tab" role="tab" id="thrTabBias" aria-controls="thrPaneBias" aria-selected="false" onclick="thrSwitchTab('bias')">Bias &amp; SD/CV theo thiết bị <span class="thr-count" id="thrCountBias">0</span></button>
+          </div>
+
+          <!-- TAB 1: TEa -->
+          <section class="thr-pane" id="thrPaneTea" role="tabpanel" aria-labelledby="thrTabTea">
+            <div class="thr-bar">
+              <label class="thr-search"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4 4"/></svg><input id="thrTeaSearch" type="search" placeholder="Tìm xét nghiệm…" aria-label="Tìm xét nghiệm" oninput="thrSetQuery('tea',this.value)"></label>
+              <div class="thr-chips" id="thrTeaChips"></div>
+              <div class="thr-actions">
+                <button type="button" class="thr-btn" onclick="thrExport('tea')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v10M6 9l4 4 4-4M4 16h12"/></svg>Tải Excel (mẫu / xuất)</button>
+                <button type="button" class="thr-btn primary" onclick="thrOpenImport('tea')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13V3M6 7l4-4 4 4M4 16h12"/></svg>Nhập từ Excel</button>
+              </div>
+            </div>
+            <p class="thr-tip">Mỗi xét nghiệm một giá trị TEa, dùng chung cho mọi thiết bị. Danh sách lấy từ <b>Danh mục xét nghiệm</b> phía trên. Gõ trực tiếp, nhấn Enter để xuống dòng, hoặc dán một cột số từ Excel vào ô TEa.</p>
+            <div class="thr-wrap">
+              <table class="thr-table">
+                <thead><tr><th style="width:24%">Xét nghiệm</th><th class="num" style="width:12%">TEa (%)</th><th style="width:18%">Nguồn tham khảo</th><th>Ghi chú</th><th style="width:14%">Bias &amp; SD/CV</th><th style="width:44px"></th></tr></thead>
+                <tbody id="thrTeaBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- TAB 2: Bias + SD/CV -->
+          <section class="thr-pane" id="thrPaneBias" role="tabpanel" aria-labelledby="thrTabBias" hidden>
+            <div class="thr-bar">
+              <label class="thr-search"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4 4"/></svg><input id="thrBiasSearch" type="search" placeholder="Tìm xét nghiệm…" aria-label="Tìm xét nghiệm" oninput="thrSetQuery('bias',this.value)"></label>
+              <div class="thr-actions">
+                <button type="button" class="thr-btn" id="thrFrameBtn" onclick="thrMakeFrame()" title="Tạo sẵn các dòng cho những xét nghiệm đã có TEa nhưng chưa có dòng của thiết bị này">Tạo khung theo danh mục</button>
+                <button type="button" class="thr-btn" onclick="thrAddBiasRow()"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 4v12M4 10h12"/></svg>Thêm dòng</button>
+                <button type="button" class="thr-btn" onclick="thrExport('bias')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v10M6 9l4 4 4-4M4 16h12"/></svg>Tải Excel (mẫu / xuất)</button>
+                <button type="button" class="thr-btn primary" onclick="thrOpenImport('bias')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13V3M6 7l4-4 4 4M4 16h12"/></svg>Nhập từ Excel</button>
+              </div>
+            </div>
+            <div class="thr-chips" id="thrBiasChips" style="margin-bottom:10px;" role="group" aria-label="Lọc theo thiết bị"></div>
+            <p class="thr-tip" id="thrBiasTip"></p>
+            <div class="thr-wrap">
+              <table class="thr-table" id="thrBiasTable">
+                <thead><tr><th style="width:22%">Xét nghiệm</th><th class="c-dev" style="width:20%">Thiết bị</th><th class="num" style="width:9%">TEa (%)</th><th class="num" style="width:13%">Bias hiệu năng PP (%)</th><th class="num" style="width:13%">SD/CV nội bộ (%)</th><th class="num" style="width:9%">ΔSEcrit</th><th class="num" style="width:9%">ΔREcrit</th><th style="width:44px"></th></tr></thead>
+                <tbody id="thrBiasBody"></tbody>
+              </table>
+            </div>
+            <details class="thr-note">
+              <summary>Cách tra cứu và công thức</summary>
+              <p>Biểu mẫu khắc phục tra theo cặp <b>Xét nghiệm + Thiết bị</b>. Dòng để thiết bị là “Mọi thiết bị (dự phòng)” chỉ được dùng khi thiết bị đang chọn chưa có dòng riêng. Nếu một thiết bị đã có dòng riêng thì dòng đó được ưu tiên, kể cả khi Bias hoặc SD/CV còn trống.</p>
+              <p><code>ΔSEcrit = (TEa − Bias) / SD − 1,65</code> &nbsp; <code>ΔREcrit = (TEa − Bias) / (1,65 × SD)</code>. Hai giá trị này tính sẵn tại đây theo hồ sơ thẩm định phương pháp; Bước 5 lấy nguyên về, không tính lại theo bias của từng sự cố. Giá trị ΔSEcrit âm được tô đỏ.</p>
+            </details>
+          </section>
         </div>
       </div>
     </div>
@@ -1535,70 +1669,667 @@ function computeCrit(tea, biasPP, sd){
   const dREcrit = (tea - biasPP) / (1.65 * sd);
   return { dSEcrit: fmtNum(dSEcrit), dREcrit: fmtNum(dREcrit) };
 }
-function renderTeaTable(){
-  const body = document.getElementById('teaTableBody');
-  body.innerHTML = '';
-  if(!config.teaList.length){
-    body.innerHTML = '<tr><td colspan="10" class="empty-hint" style="padding:10px;">Chưa có ngưỡng TEa nào — bấm "+ Thêm dòng" bên dưới.</td></tr>';
-    return;
-  }
-  config.teaList.forEach((row, idx)=>{
-    const crit = computeCrit(parseNum(row.tea), parseNum(row.biasPP), parseNum(row.sdcv));
-    const tr = document.createElement('tr');
-    const knownTests = Array.isArray(config.xetNghiem) ? config.xetNghiem : [];
-    const currentName = String(row.xn || '').trim();
-    const hasExactName = knownTests.includes(currentName);
-    const testOptions = [
-      '<option value="">-- Chọn xét nghiệm --</option>',
-      ...(!hasExactName && currentName ? [`<option value="${escapeHtml(currentName)}" selected>⚠ ${escapeHtml(currentName)} (tên cũ)</option>`] : []),
-      ...knownTests.map(name => `<option value="${escapeHtml(name)}" ${name===currentName?'selected':''}>${escapeHtml(name)}</option>`)
-    ].join('');
-    const knownDevices = Array.isArray(config.thietBi) ? config.thietBi : [];
-    const currentDevice = String(row.thietBi || '').trim();
-    const hasExactDevice = !currentDevice || knownDevices.includes(currentDevice);
-    const deviceOptions = [
-      '<option value="">-- Mọi thiết bị (dự phòng) --</option>',
-      ...(!hasExactDevice && currentDevice ? [`<option value="${escapeHtml(currentDevice)}" selected>⚠ ${escapeHtml(currentDevice)} (tên cũ)</option>`] : []),
-      ...knownDevices.map(name => `<option value="${escapeHtml(name)}" ${name===currentDevice?'selected':''}>${escapeHtml(name)}</option>`)
-    ].join('');
-    tr.innerHTML = `
-      <td><select onchange="updateTeaRow(${idx},'xn',this.value)" style="width:100%;${!hasExactName && currentName ? 'border-color:#C99A00;background:#FFF8E1;' : ''}">${testOptions}</select></td>
-      <td><select onchange="updateTeaRow(${idx},'thietBi',this.value)" style="width:100%;${!hasExactDevice && currentDevice ? 'border-color:#C99A00;background:#FFF8E1;' : ''}">${deviceOptions}</select></td>
-      <td><input value="${escapeHtml(row.tea)}" onchange="updateTeaRow(${idx},'tea',this.value)" placeholder="%"></td>
-      <td><input value="${escapeHtml(row.biasPP||'')}" onchange="updateTeaRow(${idx},'biasPP',this.value)" placeholder="%"></td>
-      <td><input value="${escapeHtml(row.sdcv||'')}" onchange="updateTeaRow(${idx},'sdcv',this.value)" placeholder="%"></td>
-      <td style="font-weight:700; color:var(--navy); text-align:center;">${crit.dSEcrit ?? '—'}</td>
-      <td style="font-weight:700; color:var(--navy); text-align:center;">${crit.dREcrit ?? '—'}</td>
-      <td>
-        <select onchange="updateTeaRow(${idx},'nguon',this.value)">
-          ${['CLSI','EFLM','RCPA/RCPAQAP','Biến thiên sinh học','Khác'].map(o=>`<option value="${o}" ${row.nguon===o?'selected':''}>${o}</option>`).join('')}
-        </select>
-      </td>
-      <td><input value="${escapeHtml(row.ghiChu)}" onchange="updateTeaRow(${idx},'ghiChu',this.value)" placeholder="Nguồn cụ thể / năm..."></td>
-      <td class="tea-actions"><button title="Xoá" onclick="removeTeaRow(${idx})">🗑️</button></td>
-    `;
-    body.appendChild(tr);
+/* ============================================================
+   NGƯỠNG TEa · BIAS PP · SD/CV — giao diện 2 tab
+   Dữ liệu vẫn nằm trong config.teaList (xn, thietBi, tea, biasPP, sdcv, nguon, ghiChu)
+   nên findTeaRowForXN / findTeaForXN / findValidationForXN và Bước 4.2, Bước 5 không đổi.
+   - Tab TEa: mỗi xét nghiệm một giá trị, ghi vào mọi dòng teaList của xét nghiệm đó.
+   - Tab Bias & SD/CV: mỗi dòng = một cặp Xét nghiệm × Thiết bị.
+============================================================ */
+const THR_NGUON = ['CLSI','EFLM','RCPA/RCPAQAP','Biến thiên sinh học','Khác'];
+const thr = { tab:'tea', teaQ:'', teaF:'all', biasQ:'', biasDev:'__all', bound:false };
+const thrPinned = new WeakSet();   // dòng mới thêm tay, giữ hiển thị dù chưa có dữ liệu (không lưu)
+let thrTeaView = [];               // nhóm xét nghiệm đang hiển thị ở tab TEa
+let thrBiasView = [];              // dòng teaList đang hiển thị ở tab Bias
+let thrImp = null;                 // trạng thái hộp thoại nhập Excel
+
+const thrStr = v => String(v==null?'':v).trim();
+const thrEsc = s => escapeHtml(s);
+const thrKey = r => normalizeTestName(r.xn) + '|' + normalizeDeviceName(r.thietBi);
+const THR_ICON_TRASH = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h12M8 6V4h4v2M6 6l1 10h6l1-10M9 9v4M11 9v4"/></svg>';
+
+/* '' = trống, chuỗi số = hợp lệ, null = không hợp lệ. nonneg: không cho số âm (TEa, SD/CV) */
+function thrNorm(v, nonneg){
+  const s = thrStr(v).replace(/%/g,'').replace(/\s+/g,'').replace(',', '.');
+  if(s === '') return '';
+  const n = Number(s);
+  if(!isFinite(n) || (nonneg && n < 0)) return null;
+  return s;
+}
+function thrBlankRow(xn, dev){ return {xn:xn||'', thietBi:dev||'', tea:'', biasPP:'', sdcv:'', nguon:'', ghiChu:''}; }
+function thrHasData(r){ return thrStr(r.biasPP)!=='' || thrStr(r.sdcv)!=='' || thrStr(r.thietBi)!==''; }
+function thrBiasVisible(r){ return thrHasData(r) || thrPinned.has(r); }
+function thrRemoveRow(r){ const k = config.teaList.indexOf(r); if(k>=0) config.teaList.splice(k,1); }
+function thrDevName(key){
+  const hit = (config.thietBi||[]).find(n => normalizeDeviceName(n) === key);
+  if(hit) return hit;
+  const row = config.teaList.find(r => normalizeDeviceName(r.thietBi) === key);
+  return row ? thrStr(row.thietBi) : '';
+}
+
+/* ---------- Nhóm theo xét nghiệm (tab TEa) ---------- */
+function thrFinishGroup(g){
+  const vals = f => [...new Set(g.rows.map(r => thrStr(r[f])).filter(Boolean))];
+  const t = vals('tea'), n = vals('nguon'), c = vals('ghiChu');
+  g.tea = t.length === 1 ? t[0] : '';   g.teaMixed = t.length > 1;  g.teaFirst = t[0] || '';
+  g.nguon = n.length === 1 ? n[0] : ''; g.nguonMixed = n.length > 1; g.nguonFirst = n[0] || '';
+  g.ghiChu = c[0] || '';
+  g.hasTea = t.length > 0;
+  g.devRows = g.rows.filter(thrHasData).length;
+  return g;
+}
+function thrGroups(){
+  const map = new Map(), order = [];
+  (config.xetNghiem||[]).forEach(n=>{
+    const k = normalizeTestName(n);
+    if(!k || map.has(k)) return;
+    map.set(k, {key:k, name:n, inCatalog:true, rows:[]}); order.push(k);
   });
+  config.teaList.forEach(r=>{
+    const k = normalizeTestName(r.xn);
+    if(!k) return;
+    if(!map.has(k)){ map.set(k, {key:k, name:thrStr(r.xn), inCatalog:false, rows:[]}); order.push(k); }
+    map.get(k).rows.push(r);
+  });
+  return order.map(k => thrFinishGroup(map.get(k)));
 }
-async function addTeaRow(){
-  config.teaList.push({xn:'', thietBi:'', tea:'', biasPP:'', sdcv:'', nguon:'CLSI', ghiChu:''});
-  renderTeaTable();
-  await saveConfig();
+/* Ghi 1 trường (tea / nguon / ghiChu) cho mọi dòng của xét nghiệm. Không lưu — gọi thrPersist sau. */
+function thrApplyTea(g, field, val){
+  let rows = config.teaList.filter(r => normalizeTestName(r.xn) === g.key);
+  if(!rows.length){
+    if(val === '') return;
+    const r = thrBlankRow(g.name, ''); config.teaList.push(r); rows = [r];
+  }
+  rows.forEach(r => { r[field] = val; });
+  // dọn dòng chỉ chứa TEa nhưng đã bị xoá sạch
+  rows.filter(r => !thrHasData(r) && !thrPinned.has(r) && !thrStr(r.tea) && !thrStr(r.nguon) && !thrStr(r.ghiChu)).forEach(thrRemoveRow);
 }
-async function updateTeaRow(idx, field, value){
-  config.teaList[idx][field] = value;
-  renderTeaTable();
+function thrSyncGroup(g){ g.rows = config.teaList.filter(r => normalizeTestName(r.xn) === g.key); return thrFinishGroup(g); }
+
+async function thrPersist(msg){
   await saveConfig();
-  setStatus('✔ Đã lưu');
+  setStatus(msg || '✔ Đã lưu');
   updateNguongBias(false);
   updateB5Calc();
 }
-async function removeTeaRow(idx){
-  config.teaList.splice(idx,1);
-  renderTeaTable();
-  await saveConfig();
-  setStatus('✔ Đã lưu');
+
+/* ---------- Khung chung: tab, chip, bộ đếm ---------- */
+function thrSwitchTab(tab){
+  thr.tab = tab;
+  thrRenderAll();
 }
+function thrSetQuery(which, v){
+  if(which === 'tea') thr.teaQ = v; else thr.biasQ = v;
+  which === 'tea' ? thrRenderTeaBody() : thrRenderBiasBody();
+}
+function thrSetTeaFilter(f){ thr.teaF = f; thrRenderAll(); }
+function thrSetBiasDev(k){ thr.biasDev = k; thrRenderAll(); }
+
+function thrRenderHead(){
+  const groups = thrGroups();
+  const have = groups.filter(g => g.hasTea).length;
+  const biasRows = config.teaList.filter(thrBiasVisible);
+  document.getElementById('thrCountTea').textContent = have + '/' + groups.length;
+  document.getElementById('thrCountBias').textContent = biasRows.length;
+  ['tea','bias'].forEach(t=>{
+    const sel = thr.tab === t;
+    const tab = document.getElementById(t==='tea'?'thrTabTea':'thrTabBias');
+    tab.setAttribute('aria-selected', sel ? 'true' : 'false');
+    document.getElementById(t==='tea'?'thrPaneTea':'thrPaneBias').hidden = !sel;
+  });
+  // chip lọc tab TEa
+  const f = thr.teaF;
+  const chip = (key, label, n) => `<button type="button" class="thr-fchip" aria-pressed="${f===key}" onclick="thrSetTeaFilter('${key}')">${label} <small>${n}</small></button>`;
+  document.getElementById('thrTeaChips').innerHTML =
+    chip('all','Tất cả',groups.length) + chip('have','Đã có TEa',have) + chip('none','Chưa có TEa',groups.length-have);
+  // chip thiết bị tab Bias
+  const devs = [], seen = new Set();
+  (config.thietBi||[]).forEach(n=>{ const k = normalizeDeviceName(n); if(k && !seen.has(k)){ seen.add(k); devs.push({key:k, name:n}); } });
+  biasRows.forEach(r=>{ const k = normalizeDeviceName(r.thietBi); if(k && !seen.has(k)){ seen.add(k); devs.push({key:k, name:thrStr(r.thietBi)+' ⚠'}); } });
+  if(thr.biasDev !== '__all' && thr.biasDev !== '__generic' && !seen.has(thr.biasDev)) thr.biasDev = '__all';
+  const cnt = k => biasRows.filter(r => normalizeDeviceName(r.thietBi) === k).length;
+  const genericN = biasRows.filter(r => !normalizeDeviceName(r.thietBi)).length;
+  const dchip = (key, label, n) => `<button type="button" class="thr-fchip" aria-pressed="${thr.biasDev===key}" data-dev="${thrEsc(key)}">${thrEsc(label)} <small>${n}</small></button>`;
+  document.getElementById('thrBiasChips').innerHTML =
+    dchip('__all','Tất cả thiết bị',biasRows.length) + devs.map(d => dchip(d.key,d.name,cnt(d.key))).join('') +
+    (genericN || thr.biasDev==='__generic' ? dchip('__generic','Mọi thiết bị (dự phòng)',genericN) : '');
+  const specific = thr.biasDev !== '__all' && thr.biasDev !== '__generic';
+  document.getElementById('thrFrameBtn').style.display = specific ? '' : 'none';
+  document.getElementById('thrBiasTable').classList.toggle('thr-hide-dev', specific || thr.biasDev==='__generic');
+  document.getElementById('thrBiasTip').innerHTML = specific
+    ? 'Đang nhập cho thiết bị <b>' + thrEsc(thrDevName(thr.biasDev)) + '</b>. Bấm “Tạo khung theo danh mục” để có sẵn một dòng cho mỗi xét nghiệm đã khai TEa, rồi gõ hoặc dán cột Bias và SD/CV từ Excel (dán vào ô Bias để điền cả hai cột).'
+    : (thr.biasDev==='__generic' ? 'Các dòng dự phòng áp dụng cho mọi thiết bị chưa có dòng riêng.' : 'Chọn một thiết bị ở trên để nhập theo thiết bị, hoặc nhập file Excel có cột Thiết bị.');
+}
+function thrRenderAll(){
+  if(!thr.bound) thrBind();
+  thrRenderHead();
+  if(thr.tab === 'tea') thrRenderTeaBody(); else thrRenderBiasBody();
+}
+
+/* ---------- Tab 1: TEa ---------- */
+function thrRenderTeaBody(){
+  const body = document.getElementById('thrTeaBody');
+  const q = normalizeTestName(thr.teaQ);
+  const all = thrGroups();
+  thrTeaView = all.filter(g => (!q || g.key.includes(q)) && (thr.teaF==='all' || (thr.teaF==='have' ? g.hasTea : !g.hasTea)));
+  if(!thrTeaView.length){
+    body.innerHTML = '<tr><td colspan="6" class="thr-empty">' + (all.length
+      ? 'Không có xét nghiệm nào khớp bộ lọc.'
+      : 'Chưa có xét nghiệm nào. Thêm xét nghiệm ở “Danh mục xét nghiệm” phía trên, hoặc nhập từ file Excel.') + '</td></tr>';
+    return;
+  }
+  body.innerHTML = thrTeaView.map((g,i)=>{
+    const nguonOpts = ['<option value="">—</option>']
+      .concat(THR_NGUON.map(o => `<option value="${thrEsc(o)}" ${g.nguon===o?'selected':''}>${thrEsc(o)}</option>`));
+    if(g.nguon && !THR_NGUON.includes(g.nguon)) nguonOpts.push(`<option value="${thrEsc(g.nguon)}" selected>${thrEsc(g.nguon)}</option>`);
+    const bad = g.tea !== '' && isNaN(parseNum(g.tea));
+    return `<tr data-i="${i}">
+      <td class="name">${thrEsc(g.name)}${g.inCatalog ? '' : '<span class="thr-chip caution" title="Tên này không còn trong Danh mục xét nghiệm">ngoài danh mục</span>'}</td>
+      <td class="num"><input class="thr-in num${bad?' bad':''}" data-col="tea" inputmode="decimal" autocomplete="off" value="${thrEsc(g.tea)}" placeholder="${g.teaMixed?'nhiều giá trị':'%'}" aria-label="TEa của ${thrEsc(g.name)}">${g.teaMixed ? '<span class="thr-chip caution thr-mixed" title="Các dòng thiết bị của xét nghiệm này đang có TEa khác nhau. Gõ một giá trị để đồng bộ tất cả.">lệch giữa thiết bị</span>' : '<span class="thr-chip caution thr-mixed" hidden></span>'}</td>
+      <td><select class="thr-sel" data-col="nguon" aria-label="Nguồn tham khảo của ${thrEsc(g.name)}">${nguonOpts.join('')}</select></td>
+      <td><input class="thr-in" data-col="ghiChu" autocomplete="off" value="${thrEsc(g.ghiChu)}" placeholder="Nguồn cụ thể / năm…" aria-label="Ghi chú của ${thrEsc(g.name)}"></td>
+      <td class="thr-devinfo">${thrDevInfoHtml(g)}</td>
+      <td><button type="button" class="thr-del" data-act="clear" title="Xoá TEa của xét nghiệm này" aria-label="Xoá TEa của ${thrEsc(g.name)}" ${g.hasTea||g.nguonFirst||g.ghiChu?'':'hidden'}>${THR_ICON_TRASH}</button></td>
+    </tr>`;
+  }).join('');
+}
+function thrDevInfoHtml(g){
+  return g.devRows
+    ? `<button type="button" class="thr-link" data-act="gobias">${g.devRows} dòng thiết bị</button>`
+    : '<span class="thr-link none">chưa khai</span>';
+}
+function thrUpdateTeaRowUI(tr, g){
+  const mixed = tr.querySelector('.thr-mixed');
+  if(mixed){
+    mixed.hidden = !g.teaMixed;
+    if(g.teaMixed){ mixed.textContent = 'lệch giữa thiết bị'; mixed.title = 'Các dòng thiết bị của xét nghiệm này đang có TEa khác nhau. Gõ một giá trị để đồng bộ tất cả.'; }
+  }
+  tr.querySelector('.thr-devinfo').innerHTML = thrDevInfoHtml(g);
+  tr.querySelector('[data-act="clear"]').hidden = !(g.hasTea || g.nguonFirst || g.ghiChu);
+  tr.querySelector('[data-col="tea"]').placeholder = g.teaMixed ? 'nhiều giá trị' : '%';
+}
+async function thrOnTeaChange(e){
+  const el = e.target, tr = el.closest('tr');
+  const col = el.dataset && el.dataset.col;
+  if(!tr || !col) return;
+  const g = thrTeaView[+tr.dataset.i]; if(!g) return;
+  let val;
+  if(col === 'tea'){
+    val = thrNorm(el.value, true);
+    if(val === null){ el.classList.add('bad'); setStatus('TEa phải là số không âm (VD: 7.4)', true); el.focus(); return; }
+    el.classList.remove('bad'); el.value = val;
+    if(val === '' && g.teaMixed === false && !g.hasTea) return;
+  } else { val = thrStr(el.value); }
+  thrApplyTea(g, col, val);
+  thrSyncGroup(g);
+  thrUpdateTeaRowUI(tr, g);
+  thrRenderHead();
+  await thrPersist();
+}
+async function thrClearTea(g){
+  const withData = g.rows.filter(thrHasData).length;
+  if(!confirm('Xoá TEa, nguồn và ghi chú của “' + g.name + '”?' + (withData ? '\n' + withData + ' dòng Bias/SD của xét nghiệm này vẫn được giữ, nhưng sẽ chưa có TEa.' : ''))) return;
+  ['tea','nguon','ghiChu'].forEach(f => thrApplyTea(g, f, ''));
+  await thrPersist('✔ Đã xoá TEa');
+  thrRenderAll();
+}
+
+/* ---------- Tab 2: Bias & SD/CV ---------- */
+function thrDevMatch(r){
+  if(thr.biasDev === '__all') return true;
+  const d = normalizeDeviceName(r.thietBi);
+  return thr.biasDev === '__generic' ? d === '' : d === thr.biasDev;
+}
+function thrCritHtml(r){
+  const c = computeCrit(parseNum(r.tea), parseNum(r.biasPP), parseNum(r.sdcv));
+  const cell = v => v == null ? '<span class="thr-crit na">—</span>' : `<span class="thr-crit${parseFloat(v)<0?' neg':''}">${v}</span>`;
+  return [cell(c.dSEcrit), cell(c.dREcrit)];
+}
+function thrRenderBiasBody(){
+  const body = document.getElementById('thrBiasBody');
+  const q = normalizeTestName(thr.biasQ);
+  const dupN = new Map();
+  config.teaList.forEach(r => { if(thrStr(r.xn)) dupN.set(thrKey(r), (dupN.get(thrKey(r))||0)+1); });
+  thrBiasView = config.teaList.filter(r => thrBiasVisible(r) && thrDevMatch(r) &&
+    (!q || (normalizeTestName(r.xn) + ' ' + normalizeDeviceName(r.thietBi)).includes(q)));
+  if(!thrBiasView.length){
+    body.innerHTML = '<tr><td colspan="8" class="thr-empty">' + (config.teaList.some(thrBiasVisible)
+      ? 'Không có dòng nào khớp bộ lọc.'
+      : 'Chưa có dữ liệu Bias và SD/CV. Chọn một thiết bị rồi bấm “Tạo khung theo danh mục”, hoặc bấm “Nhập từ Excel”.') + '</td></tr>';
+    return;
+  }
+  const cat = config.xetNghiem || [], devs = config.thietBi || [];
+  body.innerHTML = thrBiasView.map((r,i)=>{
+    const xn = thrStr(r.xn), dev = thrStr(r.thietBi);
+    const xnOrphan = xn && !cat.includes(xn), devOrphan = dev && !devs.includes(dev);
+    const xnOpts = ['<option value="">— Chọn xét nghiệm —</option>']
+      .concat(xnOrphan ? [`<option value="${thrEsc(xn)}" selected>⚠ ${thrEsc(xn)} (tên cũ)</option>`] : [])
+      .concat(cat.map(n => `<option value="${thrEsc(n)}" ${n===xn?'selected':''}>${thrEsc(n)}</option>`)).join('');
+    const devOpts = ['<option value="">Mọi thiết bị (dự phòng)</option>']
+      .concat(devOrphan ? [`<option value="${thrEsc(dev)}" selected>⚠ ${thrEsc(dev)} (tên cũ)</option>`] : [])
+      .concat(devs.map(n => `<option value="${thrEsc(n)}" ${n===dev?'selected':''}>${thrEsc(n)}</option>`)).join('');
+    const crit = thrCritHtml(r);
+    const dup = xn && dupN.get(thrKey(r)) > 1;
+    return `<tr data-i="${i}">
+      <td><select class="thr-sel${xnOrphan?' caution':''}" data-col="xn" aria-label="Xét nghiệm">${xnOpts}</select>${dup?'<span class="thr-chip err" title="Có hơn một dòng cùng Xét nghiệm + Thiết bị. Biểu mẫu chỉ dùng dòng đầu tiên, hãy xoá dòng thừa.">trùng</span>':''}</td>
+      <td class="c-dev"><select class="thr-sel${devOrphan?' caution':''}" data-col="dev" aria-label="Thiết bị">${devOpts}</select></td>
+      <td class="num thr-tea">${thrTeaCellHtml(r)}</td>
+      <td class="num"><input class="thr-in num" data-col="bias" inputmode="decimal" autocomplete="off" value="${thrEsc(r.biasPP||'')}" placeholder="%" aria-label="Bias hiệu năng PP"></td>
+      <td class="num"><input class="thr-in num" data-col="sd" inputmode="decimal" autocomplete="off" value="${thrEsc(r.sdcv||'')}" placeholder="%" aria-label="SD/CV nội bộ"></td>
+      <td class="num thr-c1">${crit[0]}</td><td class="num thr-c2">${crit[1]}</td>
+      <td><button type="button" class="thr-del" data-act="del" title="Xoá dòng" aria-label="Xoá dòng">${THR_ICON_TRASH}</button></td>
+    </tr>`;
+  }).join('');
+}
+function thrTeaCellHtml(r){
+  const t = thrStr(r.tea);
+  if(t === '') return '<button type="button" class="thr-chip caution" data-act="gotea" title="Xét nghiệm này chưa có TEa. Bấm để khai ở tab TEa.">chưa có TEa</button>';
+  return isNaN(parseNum(t)) ? `<span class="thr-chip err">${thrEsc(t)}</span>` : `<span class="thr-ro">${thrEsc(t)}</span>`;
+}
+function thrUpdateBiasRowUI(tr, r){
+  const c = thrCritHtml(r);
+  tr.querySelector('.thr-c1').innerHTML = c[0];
+  tr.querySelector('.thr-c2').innerHTML = c[1];
+}
+function thrSyncTeaFromGroup(row){
+  const k = normalizeTestName(row.xn);
+  const src = k ? config.teaList.find(o => o !== row && normalizeTestName(o.xn) === k && thrStr(o.tea) !== '') : null;
+  row.tea = src ? src.tea : ''; row.nguon = src ? src.nguon : ''; row.ghiChu = src ? src.ghiChu : '';
+}
+/* Hai dòng cùng cặp Xét nghiệm + Thiết bị: bỏ dòng "giữ chỗ" chỉ chứa TEa (do tab TEa tạo) */
+function thrDedupe(row){
+  if(!thrStr(row.xn)) return;
+  const k = thrKey(row);
+  config.teaList.slice().forEach(o => { if(o !== row && thrKey(o) === k && !thrHasData(o) && !thrPinned.has(o)) thrRemoveRow(o); });
+}
+function thrRerenderKeep(el){
+  const tr = el.closest('tr'), i = tr && tr.dataset.i, col = el.dataset.col;
+  thrRenderAll();
+  const n = document.querySelector(`#thrBiasBody tr[data-i="${i}"] [data-col="${col}"]`);
+  if(n) n.focus();
+}
+async function thrOnBiasChange(e){
+  const el = e.target, tr = el.closest('tr');
+  const col = el.dataset && el.dataset.col;
+  if(!tr || !col) return;
+  const row = thrBiasView[+tr.dataset.i]; if(!row) return;
+  if(col === 'xn' || col === 'dev'){
+    if(col === 'xn'){ row.xn = el.value; thrSyncTeaFromGroup(row); } else { row.thietBi = el.value; }
+    thrDedupe(row);
+    thrRerenderKeep(el);
+    await thrPersist();
+    return;
+  }
+  const isSd = col === 'sd';
+  const val = thrNorm(el.value, isSd);
+  if(val === null){ el.classList.add('bad'); setStatus((isSd ? 'SD/CV phải là số không âm' : 'Bias phải là số') + ' (VD: 1.25)', true); el.focus(); return; }
+  el.classList.remove('bad'); el.value = val;
+  if(isSd) row.sdcv = val; else row.biasPP = val;
+  thrUpdateBiasRowUI(tr, row);
+  thrRenderHead();
+  await thrPersist();
+}
+async function thrDelBias(row){
+  const others = config.teaList.filter(o => o !== row && normalizeTestName(o.xn) === normalizeTestName(row.xn));
+  const loseTea = thrStr(row.tea) !== '' && !others.length;
+  if(thrStr(row.biasPP) || thrStr(row.sdcv) || loseTea){
+    const label = (thrStr(row.xn) || '(chưa chọn XN)') + (thrStr(row.thietBi) ? ' — ' + row.thietBi : '');
+    if(!confirm('Xoá dòng “' + label + '”?' + (loseTea ? '\nĐây là dòng cuối của xét nghiệm này nên TEa của xét nghiệm cũng sẽ mất khỏi tab TEa.' : ''))) return;
+  }
+  thrRemoveRow(row);
+  thrRenderAll();
+  await thrPersist('✔ Đã xoá dòng');
+}
+function thrAddBiasRow(){
+  const specific = thr.biasDev !== '__all' && thr.biasDev !== '__generic';
+  const r = thrBlankRow('', specific ? thrDevName(thr.biasDev) : '');
+  thrPinned.add(r); config.teaList.push(r);
+  thr.biasQ = ''; document.getElementById('thrBiasSearch').value = '';
+  thrRenderAll();
+  const sels = document.querySelectorAll('#thrBiasBody [data-col="xn"]');
+  const last = sels[sels.length-1];
+  if(last){ if(last.scrollIntoView) last.scrollIntoView({block:'nearest'}); last.focus(); }
+}
+async function thrMakeFrame(){
+  const specific = thr.biasDev !== '__all' && thr.biasDev !== '__generic';
+  if(!specific) return;
+  const dev = thrDevName(thr.biasDev), dk = thr.biasDev;
+  let n = 0, noTea = 0;
+  thrGroups().forEach(g=>{
+    if(!g.inCatalog) return;
+    if(!g.hasTea){ noTea++; return; }
+    if(config.teaList.some(r => normalizeTestName(r.xn) === g.key && normalizeDeviceName(r.thietBi) === dk)) return;
+    const r = thrBlankRow(g.name, dev); r.tea = g.teaFirst; r.nguon = g.nguonFirst; r.ghiChu = g.ghiChu;
+    thrPinned.add(r); config.teaList.push(r); n++;
+  });
+  thrRenderAll();
+  if(n) await thrPersist('✔ Đã tạo ' + n + ' dòng cho ' + dev + (noTea ? ' (bỏ qua ' + noTea + ' xét nghiệm chưa có TEa)' : ''));
+  else setStatus(noTea ? 'Không có dòng mới: ' + noTea + ' xét nghiệm chưa có TEa, hãy khai ở tab TEa trước' : 'Thiết bị này đã có đủ dòng cho các xét nghiệm có TEa');
+}
+
+/* ---------- Sự kiện: ủy quyền trên tbody ---------- */
+function thrBind(){
+  thr.bound = true;
+  const teaB = document.getElementById('thrTeaBody'), biasB = document.getElementById('thrBiasBody');
+  teaB.addEventListener('change', thrOnTeaChange);
+  biasB.addEventListener('change', thrOnBiasChange);
+  [teaB, biasB].forEach(b => {
+    b.addEventListener('keydown', e => {
+      if(e.key !== 'Enter' || !e.target.matches('input[data-col]')) return;
+      e.preventDefault();
+      const tr = e.target.closest('tr'), col = e.target.dataset.col;
+      const next = tr.nextElementSibling && tr.nextElementSibling.querySelector(`[data-col="${col}"]`);
+      if(next){ next.focus(); if(next.select) next.select(); } else e.target.blur();
+    });
+    b.addEventListener('paste', e => thrOnPaste(e, b === teaB ? 'tea' : 'bias'));
+  });
+  teaB.addEventListener('click', e => {
+    const b = e.target.closest('[data-act]'); if(!b) return;
+    const g = thrTeaView[+b.closest('tr').dataset.i]; if(!g) return;
+    if(b.dataset.act === 'clear') thrClearTea(g);
+    if(b.dataset.act === 'gobias'){ thr.biasQ = g.name; document.getElementById('thrBiasSearch').value = g.name; thr.biasDev = '__all'; thrSwitchTab('bias'); }
+  });
+  biasB.addEventListener('click', e => {
+    const b = e.target.closest('[data-act]'); if(!b) return;
+    const row = thrBiasView[+b.closest('tr').dataset.i]; if(!row) return;
+    if(b.dataset.act === 'del') thrDelBias(row);
+    if(b.dataset.act === 'gotea'){ thr.teaQ = thrStr(row.xn); document.getElementById('thrTeaSearch').value = thr.teaQ; thr.teaF = 'all'; thrSwitchTab('tea'); }
+  });
+  document.getElementById('thrBiasChips').addEventListener('click', e => {
+    const b = e.target.closest('[data-dev]'); if(b) thrSetBiasDev(b.dataset.dev);
+  });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') thrCloseModal(); });
+}
+
+/* Dán nhiều ô từ Excel: tab TEa dán cột TEa; tab Bias dán vào ô Bias để điền Bias + SD/CV, vào ô SD/CV để điền SD/CV */
+async function thrOnPaste(e, kind){
+  const el = e.target;
+  if(!el.matches || !el.matches('input[data-col]')) return;
+  const col = el.dataset.col;
+  if(kind === 'tea' && col !== 'tea') return;
+  if(kind === 'bias' && col !== 'bias' && col !== 'sd') return;
+  const raw = (e.clipboardData || window.clipboardData).getData('text').replace(/\r/g,'').replace(/\n+$/,'');
+  if(!/[\n\t]/.test(raw)) return;           // một ô: dán bình thường
+  e.preventDefault();
+  const i0 = +el.closest('tr').dataset.i;
+  const r = thrPasteGrid(kind, i0, col, raw.split('\n').map(l => l.split('\t')));
+  thrRenderAll();
+  if(r.ok) await thrPersist();
+  setStatus((r.ok ? '✔ Đã dán ' + r.ok + ' giá trị' : 'Không dán được giá trị nào') + (r.bad ? ' · bỏ qua ' + r.bad + ' ô không phải số' : '') + (r.over ? ' · ' + r.over + ' dòng vượt quá danh sách đang hiển thị' : ''), !r.ok || r.bad > 0);
+}
+function thrPasteGrid(kind, i0, col, lines){
+  const res = {ok:0, bad:0, over:0};
+  lines.forEach((cells, k)=>{
+    const target = kind === 'tea' ? thrTeaView[i0+k] : thrBiasView[i0+k];
+    if(!target){ res.over++; return; }
+    const fields = kind === 'tea' ? ['tea'] : (col === 'bias' ? ['bias','sd'] : ['sd']);
+    fields.forEach((f, j)=>{
+      if(j >= cells.length) return;
+      const v = thrNorm(cells[j], f !== 'bias');
+      if(v === ''){ return; }                 // ô trống: giữ nguyên giá trị cũ
+      if(v === null){ res.bad++; return; }
+      if(kind === 'tea') thrApplyTea(target, 'tea', v);
+      else if(f === 'bias') target.biasPP = v; else target.sdcv = v;
+      res.ok++;
+    });
+  });
+  return res;
+}
+
+/* ---------- Excel: đọc / ghi ---------- */
+function thrClassifyHeader(h){
+  const n = normalizeTestName(h); if(!n) return null;
+  if(/^(xet nghiem|ten xet nghiem|xn|test|analyte|chi so|ten xn|ten chi so)$/.test(n)) return 'xn';
+  if(/(thiet bi|^may$|^may xn|he thong|analyzer|instrument|ten may)/.test(n)) return 'dev';
+  if(n.includes('bias')) return 'bias';
+  if(/(^| )(sd|cv)( |$)/.test(n) || n.includes('do lech chuan')) return 'sd';
+  if(/^tea( |$)/.test(n) || n.includes('total allowable') || n.includes('sai so cho phep')) return 'tea';
+  if(n.includes('nguon')) return 'nguon';
+  if(n.includes('ghi chu') || n === 'note' || n === 'notes') return 'note';
+  return null;
+}
+function thrSheetToRows(ws){
+  if(!ws || !ws['!ref']) return [];
+  const rg = XLSX.utils.decode_range(ws['!ref']), out = [];
+  for(let R = rg.s.r; R <= rg.e.r; R++){
+    const row = [];
+    for(let C = rg.s.c; C <= rg.e.c; C++){
+      const c = ws[XLSX.utils.encode_cell({r:R, c:C})];
+      if(!c || c.v == null){ row.push(''); continue; }
+      // ô định dạng % lưu 0.074 cho 7.4% → nhân 100 để khớp đơn vị (%) của bảng
+      if(c.t === 'n' && typeof c.z === 'string' && c.z.indexOf('%') >= 0) row.push(Math.round(c.v*100*1e6)/1e6);
+      else row.push(c.t === 'n' ? Math.round(c.v*1e9)/1e9 : c.v);
+    }
+    out.push(row);
+  }
+  return out;
+}
+function thrParseWorkbook(wb, kind){
+  for(const name of wb.SheetNames){
+    const rows = thrSheetToRows(wb.Sheets[name]);
+    for(let h = 0; h < Math.min(rows.length, 20); h++){
+      const map = {};
+      rows[h].forEach((cell, c) => { const t = thrClassifyHeader(cell); if(t && map[t] === undefined) map[t] = c; });
+      const ok = map.xn !== undefined && (kind === 'tea' ? map.tea !== undefined : (map.bias !== undefined || map.sd !== undefined));
+      if(!ok) continue;
+      const get = (r, k) => map[k] === undefined ? '' : r[map[k]];
+      const data = [];
+      for(let r = h+1; r < rows.length; r++){
+        const row = rows[r];
+        if(!row.some(x => thrStr(x) !== '')) continue;
+        if(thrStr(get(row,'xn')) === '') continue;
+        data.push({line:r+1, xn:thrStr(get(row,'xn')), dev:thrStr(get(row,'dev')), tea:get(row,'tea'), bias:get(row,'bias'), sd:get(row,'sd'), nguon:thrStr(get(row,'nguon')), note:thrStr(get(row,'note'))});
+      }
+      return {ok:true, sheet:name, hasDev:map.dev !== undefined, rows:data};
+    }
+  }
+  return {ok:false, error: kind === 'tea'
+    ? 'Không tìm thấy dòng tiêu đề có cột “Xét nghiệm” và “TEa (%)”. Hãy dùng nút “Tải Excel (mẫu / xuất)” để lấy file mẫu.'
+    : 'Không tìm thấy dòng tiêu đề có cột “Xét nghiệm” cùng “Bias hiệu năng PP (%)” hoặc “SD/CV nội bộ (%)”. Hãy dùng nút “Tải Excel (mẫu / xuất)” để lấy file mẫu.'};
+}
+function thrCanonName(raw, list){ const k = normalizeTestName(raw); return (list||[]).find(n => normalizeTestName(n) === k) || ''; }
+function thrNguonFrom(raw){
+  const s = thrStr(raw); if(!s) return {nguon:'', extra:''};
+  const k = normalizeTestName(s);
+  const hit = THR_NGUON.find(o => k === normalizeTestName(o) || k.startsWith(normalizeTestName(o).split(' ')[0]));
+  if(hit) return {nguon:hit, extra: k === normalizeTestName(hit) ? '' : s};
+  return {nguon:'Khác', extra:s};
+}
+const thrDiff = (cur, nv) => nv === '' ? false : (thrStr(cur) === '' || Number(cur) !== Number(nv));
+
+function thrPlanTea(parsed){
+  const groups = thrGroups(), byKey = new Map(groups.map(g => [g.key, g]));
+  const items = new Map(); let dups = 0;
+  parsed.rows.forEach(p=>{
+    const key = normalizeTestName(p.xn); if(!key) return;
+    const g = byKey.get(key);
+    const name = g ? g.name : p.xn;
+    const tea = thrNorm(p.tea, true);
+    const ng = thrNguonFrom(p.nguon);
+    const ghi = [p.note, ng.extra].filter(Boolean).join(' · ');
+    const it = {line:p.line, key, name, inCat:!!(g && g.inCatalog), tea, nguon:ng.nguon, ghiChu:ghi, status:'skip', msg:''};
+    if(tea === null){ it.status = 'error'; it.msg = 'TEa không phải số'; }
+    else if(tea === '' && !(g && g.hasTea && (ng.nguon || ghi))){ it.status = 'skip'; it.msg = 'Không có giá trị TEa'; }
+    else if(!g || !g.hasTea) it.status = 'new';
+    else if(g.teaMixed || thrDiff(g.tea, tea) || (ng.nguon && g.nguon !== ng.nguon) || (ghi && g.ghiChu !== ghi)) it.status = 'update';
+    else it.status = 'same';
+    it.apply = () => {
+      const tg = byKey.get(key) || {key, name};
+      if(tea !== '') thrApplyTea(tg, 'tea', tea);
+      if(ng.nguon) thrApplyTea(tg, 'nguon', ng.nguon);
+      if(ghi) thrApplyTea(tg, 'ghiChu', ghi);
+    };
+    if(items.has(key)) dups++;
+    items.set(key, it);
+  });
+  return {items:[...items.values()], dups};
+}
+function thrPlanBias(parsed, defDev){
+  const groups = thrGroups(), byKey = new Map(groups.map(g => [g.key, g]));
+  const items = new Map(); let dups = 0;
+  parsed.rows.forEach(p=>{
+    const key = normalizeTestName(p.xn); if(!key) return;
+    const g = byKey.get(key);
+    const name = g ? g.name : p.xn;
+    let dev;
+    if(p.dev){ dev = thrCanonName(p.dev, config.thietBi) || thrCanonName(p.dev, config.teaList.map(r => thrStr(r.thietBi)).filter(Boolean)) || p.dev; }
+    else dev = defDev;
+    const dk = normalizeDeviceName(dev);
+    const bias = thrNorm(p.bias, false), sd = thrNorm(p.sd, true);
+    const it = {line:p.line, key, name, dev, devKey:dk, inCat:!!(g && g.inCatalog), devInCat:!dev || !!thrCanonName(dev, config.thietBi),
+      bias:bias, sd:sd, noTea: !(g && g.hasTea), status:'skip', msg:''};
+    const existing = config.teaList.find(r => normalizeTestName(r.xn) === key && normalizeDeviceName(r.thietBi) === dk);
+    if(bias === null || sd === null){ it.status = 'error'; it.msg = bias === null ? 'Bias không phải số' : 'SD/CV phải là số không âm'; }
+    else if(bias === '' && sd === ''){ it.status = 'skip'; it.msg = 'Không có Bias / SD/CV'; }
+    else if(!existing) it.status = 'new';
+    else it.status = (thrDiff(existing.biasPP, bias) || thrDiff(existing.sdcv, sd)) ? 'update' : 'same';
+    it.existing = existing;
+    it.apply = () => {
+      let row = existing;
+      if(!row){
+        row = thrBlankRow(name, dev);
+        const src = byKey.get(key);
+        if(src && src.hasTea){ row.tea = src.teaFirst; row.nguon = src.nguonFirst; row.ghiChu = src.ghiChu; }
+        config.teaList.push(row);
+      }
+      if(bias !== '') row.biasPP = bias;
+      if(sd !== '') row.sdcv = sd;
+    };
+    const ik = key + '|' + dk;
+    if(items.has(ik)) dups++;
+    items.set(ik, it);
+  });
+  return {items:[...items.values()], dups};
+}
+
+/* ---------- Hộp thoại nhập Excel ---------- */
+function thrModal(html){
+  let m = document.getElementById('thrModal');
+  if(!m){
+    m = document.createElement('div'); m.id = 'thrModal'; m.className = 'thr-modal';
+    m.innerHTML = '<div class="thr-dialog" role="dialog" aria-modal="true" aria-labelledby="thrDlgTitle"></div>';
+    m.addEventListener('mousedown', e => { if(e.target === m) thrCloseModal(); });
+    document.body.appendChild(m);
+  }
+  m.firstChild.innerHTML = html; m.style.display = 'flex';
+}
+function thrCloseModal(){ const m = document.getElementById('thrModal'); if(m) m.style.display = 'none'; thrImp = null; }
+function thrOpenImport(kind){
+  if(typeof XLSX === 'undefined'){ setStatus('Không tải được thư viện Excel — kiểm tra kết nối mạng', true); return; }
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.xlsx,.xlsm,.xls,.csv';
+  inp.onchange = () => {
+    const f = inp.files && inp.files[0]; if(!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      let parsed;
+      try{ parsed = thrParseWorkbook(XLSX.read(rd.result, {type:'array', cellNF:true}), kind); }
+      catch(err){ parsed = {ok:false, error:'Không đọc được file: ' + (err && err.message || err)}; }
+      const specific = thr.biasDev !== '__all' && thr.biasDev !== '__generic';
+      thrImp = {kind, file:f.name, parsed, defDev: kind === 'bias' && specific ? thrDevName(thr.biasDev) : '', addXn:true, addDev:true};
+      thrRenderPreview();
+    };
+    rd.readAsArrayBuffer(f);
+  };
+  inp.click();
+}
+const THR_ST = {new:['Mới','ok'], update:['Cập nhật','info'], same:['Không đổi',''], skip:['Bỏ qua',''], error:['Lỗi','err']};
+function thrRenderPreview(){
+  const s = thrImp; if(!s) return;
+  const title = s.kind === 'tea' ? 'Nhập TEa từ Excel' : 'Nhập Bias & SD/CV từ Excel';
+  if(!s.parsed.ok){
+    thrModal(`<div class="thr-dlg-h"><h3 id="thrDlgTitle">${title}</h3><p>${thrEsc(s.file)}</p></div><div class="thr-dlg-b"><div class="thr-err">${thrEsc(s.parsed.error)}</div></div><div class="thr-dlg-f"><button class="thr-btn" onclick="thrCloseModal()">Đóng</button></div>`);
+    return;
+  }
+  s.plan = s.kind === 'tea' ? thrPlanTea(s.parsed) : thrPlanBias(s.parsed, s.defDev);
+  const items = s.plan.items;
+  const cnt = k => items.filter(x => x.status === k).length;
+  const changes = cnt('new') + cnt('update');
+  const newXn = [...new Set(items.filter(x => x.status!=='error' && x.status!=='skip' && !x.inCat).map(x => x.name))];
+  const newDev = s.kind === 'bias' ? [...new Set(items.filter(x => x.status!=='error' && x.status!=='skip' && !x.devInCat).map(x => x.dev))] : [];
+  const noTea = s.kind === 'bias' ? items.filter(x => (x.status==='new'||x.status==='update') && x.noTea).length : 0;
+  s.newXn = newXn; s.newDev = newDev;
+  const devOpts = ['<option value="">Mọi thiết bị (dự phòng)</option>'].concat((config.thietBi||[]).map(n => `<option value="${thrEsc(n)}" ${n===s.defDev?'selected':''}>${thrEsc(n)}</option>`)).join('');
+  const rowsHtml = items.slice(0, 200).map(x=>{
+    const st = THR_ST[x.status];
+    const cells = s.kind === 'tea'
+      ? `<td>${thrEsc(x.name)}${x.inCat||x.status==='error'||x.status==='skip'?'':'<span class="thr-chip caution">mới</span>'}</td><td class="num">${thrEsc(x.tea)}</td><td>${thrEsc(x.nguon)}</td><td>${thrEsc(x.ghiChu)}</td>`
+      : `<td>${thrEsc(x.name)}${x.inCat||x.status==='error'||x.status==='skip'?'':'<span class="thr-chip caution">mới</span>'}</td><td>${x.dev ? thrEsc(x.dev) : '<span style="color:#9aa3b5">Mọi thiết bị</span>'}${x.devInCat?'':'<span class="thr-chip caution">mới</span>'}</td><td class="num">${thrEsc(x.bias)}</td><td class="num">${thrEsc(x.sd)}</td>`;
+    return `<tr class="${x.status==='skip'||x.status==='same'?'skip':''}"><td class="num" style="color:#9aa3b5">${x.line}</td>${cells}<td><span class="thr-chip ${st[1]}" style="margin:0">${st[0]}</span>${x.msg?' <span style="color:var(--red)">'+thrEsc(x.msg)+'</span>':''}</td></tr>`;
+  }).join('');
+  const head = s.kind === 'tea'
+    ? '<th class="num">Dòng</th><th>Xét nghiệm</th><th class="num">TEa (%)</th><th>Nguồn</th><th>Ghi chú</th><th>Kết quả</th>'
+    : '<th class="num">Dòng</th><th>Xét nghiệm</th><th>Thiết bị</th><th class="num">Bias PP (%)</th><th class="num">SD/CV (%)</th><th>Kết quả</th>';
+  thrModal(`
+    <div class="thr-dlg-h"><h3 id="thrDlgTitle">${title}</h3><p>${thrEsc(s.file)} · sheet “${thrEsc(s.parsed.sheet)}” · ${s.parsed.rows.length} dòng dữ liệu. Chưa có gì được lưu cho đến khi bạn bấm “Áp dụng”.</p></div>
+    <div class="thr-dlg-b">
+      <div class="thr-sum">
+        <span class="thr-chip ok">${cnt('new')} mới</span><span class="thr-chip info">${cnt('update')} cập nhật</span>
+        <span class="thr-chip">${cnt('same')} không đổi</span><span class="thr-chip">${cnt('skip')} bỏ qua</span>
+        ${cnt('error') ? `<span class="thr-chip err">${cnt('error')} lỗi (sẽ không nhập)</span>` : ''}
+      </div>
+      ${s.kind==='bias' ? `<div class="thr-opt"><span>${s.parsed.hasDev ? 'Dòng để trống cột Thiết bị sẽ gán cho:' : 'File không có cột Thiết bị. Gán toàn bộ cho:'}</span><select onchange="thrImp.defDev=this.value; thrRenderPreview()">${devOpts}</select></div>` : ''}
+      ${newXn.length ? `<label class="thr-opt"><input type="checkbox" ${s.addXn?'checked':''} onchange="thrImp.addXn=this.checked"><span>Thêm ${newXn.length} xét nghiệm chưa có vào Danh mục xét nghiệm: ${thrEsc(newXn.slice(0,8).join(', '))}${newXn.length>8?'…':''}</span></label>` : ''}
+      ${newDev.length ? `<label class="thr-opt"><input type="checkbox" ${s.addDev?'checked':''} onchange="thrImp.addDev=this.checked"><span>Thêm ${newDev.length} thiết bị chưa có vào danh mục Thiết bị: ${thrEsc(newDev.join(', '))}</span></label>` : ''}
+      ${noTea ? `<div class="thr-opt" style="color:var(--goldtxt)">${noTea} dòng thuộc xét nghiệm chưa có TEa ở tab TEa. Vẫn nhập được, nhưng ΔSEcrit/ΔREcrit chưa tính được cho đến khi khai TEa.</div>` : ''}
+      ${s.plan.dups ? `<div class="thr-opt" style="color:var(--goldtxt)">${s.plan.dups} dòng bị trùng khoá trong file, dòng phía dưới được ưu tiên.</div>` : ''}
+      <table><thead><tr>${head}</tr></thead><tbody>${rowsHtml || '<tr><td colspan="6" class="thr-empty">Không có dòng dữ liệu.</td></tr>'}</tbody></table>
+      ${items.length > 200 ? `<div class="thr-tip" style="margin-top:8px">Hiển thị 200 dòng đầu; toàn bộ ${items.length} dòng đều được áp dụng.</div>` : ''}
+    </div>
+    <div class="thr-dlg-f"><span class="grow">${changes} thay đổi sẽ được áp dụng</span><button class="thr-btn" onclick="thrCloseModal()">Huỷ</button><button class="thr-btn primary" ${changes?'':'disabled'} onclick="thrApplyImport()">Áp dụng ${changes ? changes + ' thay đổi' : ''}</button></div>`);
+}
+async function thrApplyImport(){
+  const s = thrImp; if(!s || !s.plan) return;
+  if(s.addXn) s.newXn.forEach(n => { if(!config.xetNghiem.some(x => normalizeTestName(x) === normalizeTestName(n))) config.xetNghiem.push(n); });
+  if(s.addDev) s.newDev.forEach(n => { if(n && !config.thietBi.some(x => normalizeDeviceName(x) === normalizeDeviceName(n))) config.thietBi.push(n); });
+  const todo = s.plan.items.filter(x => x.status === 'new' || x.status === 'update');
+  todo.forEach(x => x.apply());
+  const kind = s.kind;
+  thrCloseModal();
+  renderAllConfigUI();
+  refreshFormDatalists();
+  await thrPersist('✔ Đã nhập ' + todo.length + ' dòng từ Excel');
+}
+
+/* ---------- Xuất / mẫu Excel ---------- */
+function thrXlsxOut(aoa, widths, sheet, file){
+  if(typeof XLSX === 'undefined'){ setStatus('Không tải được thư viện Excel — kiểm tra kết nối mạng', true); return; }
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols'] = widths.map(w => ({wch:w}));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheet);
+  const d = new Date(), p = n => String(n).padStart(2,'0');
+  XLSX.writeFile(wb, file + '-' + d.getFullYear() + p(d.getMonth()+1) + p(d.getDate()) + '.xlsx');
+}
+const thrNumOrStr = v => { const s = thrStr(v); return s !== '' && isFinite(Number(s.replace(',','.'))) ? Number(s.replace(',','.')) : s; };
+function thrExport(kind){
+  if(kind === 'tea'){
+    const aoa = [['Xét nghiệm','TEa (%)','Nguồn tham khảo','Ghi chú']];
+    thrGroups().forEach(g => aoa.push([g.name, g.teaMixed ? '' : thrNumOrStr(g.tea), g.nguonMixed ? '' : g.nguon, g.ghiChu]));
+    thrXlsxOut(aoa, [30,10,22,36], 'TEa', 'TEa-PXN');
+    return;
+  }
+  const specific = thr.biasDev !== '__all' && thr.biasDev !== '__generic';
+  const aoa = [['Xét nghiệm','Thiết bị','TEa (%) (tham khảo, không nhập)','Bias hiệu năng PP (%)','SD/CV nội bộ (%)']];
+  const teaOf = new Map(thrGroups().map(g => [g.key, g.teaFirst]));
+  let label = 'tat-ca-thiet-bi';
+  if(specific){
+    const dev = thrDevName(thr.biasDev); label = normalizeTestName(dev).replace(/ /g,'-') || 'thiet-bi';
+    (config.xetNghiem||[]).forEach(n=>{
+      const k = normalizeTestName(n);
+      const r = config.teaList.find(x => normalizeTestName(x.xn) === k && normalizeDeviceName(x.thietBi) === thr.biasDev);
+      aoa.push([n, dev, thrNumOrStr(teaOf.get(k)||''), r ? thrNumOrStr(r.biasPP) : '', r ? thrNumOrStr(r.sdcv) : '']);
+    });
+  } else {
+    const rows = config.teaList.filter(r => thrBiasVisible(r) && thrDevMatch(r));
+    if(rows.length) rows.forEach(r => aoa.push([r.xn, r.thietBi, thrNumOrStr(r.tea), thrNumOrStr(r.biasPP), thrNumOrStr(r.sdcv)]));
+    else (config.xetNghiem||[]).forEach(n => aoa.push([n, '', thrNumOrStr(teaOf.get(normalizeTestName(n))||''), '', '']));
+  }
+  thrXlsxOut(aoa, [30,24,16,20,18], 'Bias_SD', 'Bias-SD-' + label);
+}
+
+/* Giữ tên cũ để các chỗ khác trong ứng dụng vẫn gọi được */
+function renderTeaTable(){ thrRenderAll(); }
 
 function renderAllConfigUI(){
   renderTags('tags-caLamViec', config.caLamViec, 'caLamViec');
