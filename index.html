@@ -1868,7 +1868,7 @@ async function thrOnTeaChange(e){
 }
 async function thrClearTea(g){
   const withData = g.rows.filter(thrHasData).length;
-  if(!confirm('Xoá TEa, nguồn và ghi chú của “' + g.name + '”?' + (withData ? '\n' + withData + ' dòng Bias/SD của xét nghiệm này vẫn được giữ, nhưng sẽ chưa có TEa.' : ''))) return;
+  if(!(await thrConfirm('Xoá TEa, nguồn và ghi chú của “' + g.name + '”?' + (withData ? '\n' + withData + ' dòng Bias/SD của xét nghiệm này vẫn được giữ, nhưng sẽ chưa có TEa.' : '')))) return;
   ['tea','nguon','ghiChu'].forEach(f => thrApplyTea(g, f, ''));
   await thrPersist('✔ Đã xoá TEa');
   thrRenderAll();
@@ -1974,7 +1974,7 @@ async function thrDelBias(row){
   const loseTea = thrStr(row.tea) !== '' && !others.length;
   if(thrStr(row.biasPP) || thrStr(row.sdcv) || loseTea){
     const label = (thrStr(row.xn) || '(chưa chọn XN)') + (thrStr(row.thietBi) ? ' — ' + row.thietBi : '');
-    if(!confirm('Xoá dòng “' + label + '”?' + (loseTea ? '\nĐây là dòng cuối của xét nghiệm này nên TEa của xét nghiệm cũng sẽ mất khỏi tab TEa.' : ''))) return;
+    if(!(await thrConfirm('Xoá dòng “' + label + '”?' + (loseTea ? '\nĐây là dòng cuối của xét nghiệm này nên TEa của xét nghiệm cũng sẽ mất khỏi tab TEa.' : '')))) return;
   }
   thrRemoveRow(row);
   thrRenderAll();
@@ -2211,9 +2211,27 @@ function thrModal(html){
     m.addEventListener('mousedown', e => { if(e.target === m) thrCloseModal(); });
     document.body.appendChild(m);
   }
-  m.firstChild.innerHTML = html; m.style.display = 'flex';
+  m.firstChild.style.width = ''; m.firstChild.innerHTML = html; m.style.display = 'flex';
 }
-function thrCloseModal(){ const m = document.getElementById('thrModal'); if(m) m.style.display = 'none'; thrImp = null; }
+let thrConfirmResolve = null;
+function thrCloseModal(){
+  const m = document.getElementById('thrModal'); if(m) m.style.display = 'none'; thrImp = null;
+  if(thrConfirmResolve){ const r = thrConfirmResolve; thrConfirmResolve = null; r(false); }
+}
+/* Hộp xác nhận nằm trong trang (confirm() của trình duyệt bị chặn khi trang chạy trong khung/iframe) */
+function thrConfirm(msg, okLabel){
+  return new Promise(res => {
+    thrConfirmResolve = res;
+    thrModal('<div class="thr-dlg-h"><h3 id="thrDlgTitle">Xác nhận</h3></div><div class="thr-dlg-b" style="white-space:pre-line;font-size:13px">' + thrEsc(msg) + '</div><div class="thr-dlg-f"><button type="button" class="thr-btn" onclick="thrCloseModal()">Huỷ</button><button type="button" class="thr-btn primary" id="thrConfirmOk" onclick="thrConfirmDone()">' + (okLabel || 'Xoá') + '</button></div>');
+    document.querySelector('#thrModal .thr-dialog').style.width = 'min(440px,100%)';
+    const b = document.getElementById('thrConfirmOk'); if(b) b.focus();
+  });
+}
+function thrConfirmDone(){
+  const r = thrConfirmResolve; thrConfirmResolve = null;
+  const m = document.getElementById('thrModal'); if(m) m.style.display = 'none';
+  if(r) r(true);
+}
 function thrOpenImport(kind){
   if(typeof XLSX === 'undefined'){ setStatus('Không tải được thư viện Excel — kiểm tra kết nối mạng', true); return; }
   const inp = document.createElement('input');
